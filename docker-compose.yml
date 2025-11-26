@@ -1,0 +1,14 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: urbane-haauz-web
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    volumes:
+      # Mount for nginx logs (optional)
+      - ./nginx-logs:/var/log/nginx
+    environment:
+      - NODE_ENV=production

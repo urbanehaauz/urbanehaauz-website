@@ -21,14 +21,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          # Don't cache npm to avoid dependency issues
 
       - name: Install dependencies
         run: |
-          # Install dependencies with legacy peer deps to handle rollup issues
+          # Remove package-lock.json and node_modules to force fresh install
+          rm -rf node_modules package-lock.json
+          # Install dependencies with legacy peer deps
           npm install --legacy-peer-deps
-          # Rebuild rollup native dependencies for Linux
-          npm rebuild rollup --legacy-peer-deps || true
+          # Explicitly install rollup native dependencies for Linux
+          npm install @rollup/rollup-linux-x64-gnu --save-optional --legacy-peer-deps || true
 
       - name: Build application
         run: npm run build

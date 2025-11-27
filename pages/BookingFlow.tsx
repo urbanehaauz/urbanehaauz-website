@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { Room } from '../types';
 import { CheckCircle, Calendar, CreditCard, ChevronRight, Lock } from 'lucide-react';
 import DatePicker from '../components/DatePicker';
@@ -9,6 +10,7 @@ const BookingFlow: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { rooms, addBooking } = useApp();
+  const { user } = useAuth();
   const queryParams = new URLSearchParams(location.search);
   const initialRoomId = queryParams.get('room');
 
@@ -19,6 +21,17 @@ const BookingFlow: React.FC = () => {
   );
   const [dates, setDates] = useState({ checkIn: '', checkOut: '' });
   const [guests, setGuests] = useState({ name: '', email: '', phone: '', count: 1 });
+
+  // Pre-fill guest info if user is logged in
+  useEffect(() => {
+    if (user && user.email) {
+      setGuests(prev => ({
+        ...prev,
+        email: user.email || prev.email,
+        name: user.user_metadata?.full_name || prev.name,
+      }));
+    }
+  }, [user]);
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [bookingComplete, setBookingComplete] = useState(false);
   const [generatedBookingId, setGeneratedBookingId] = useState('');
@@ -241,32 +254,40 @@ const BookingFlow: React.FC = () => {
                   {!initialRoomId && (
                     <div className="mt-8">
                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Available Rooms</label>
-                      <div className="space-y-4 h-[400px] overflow-y-auto pr-2 scrollbar-hide">
-                        {rooms.map(room => (
-                          <div 
-                            key={room.id}
-                            onClick={() => setSelectedRoom(room)}
-                            className={`group flex flex-col sm:flex-row border cursor-pointer transition-all duration-300 hover:shadow-md ${selectedRoom?.id === room.id ? 'border-urbane-gold bg-amber-50/30' : 'border-gray-100 hover:border-urbane-gold/50'}`}
-                          >
-                            <div className="sm:w-40 h-32 sm:h-auto relative overflow-hidden">
-                                <img src={room.image} className="w-full h-full object-cover" alt={room.name} />
+                      {rooms.length === 0 ? (
+                        <div className="text-center py-10 text-gray-400">
+                          <Calendar className="h-12 w-12 mx-auto mb-2 opacity-20" />
+                          <p>No rooms available at the moment.</p>
+                          <p className="text-sm mt-1">Please check back later or contact us.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4 h-[400px] overflow-y-auto pr-2 scrollbar-hide">
+                          {rooms.filter(room => room.available).map(room => (
+                            <div 
+                              key={room.id}
+                              onClick={() => setSelectedRoom(room)}
+                              className={`group flex flex-col sm:flex-row border cursor-pointer transition-all duration-300 hover:shadow-md ${selectedRoom?.id === room.id ? 'border-urbane-gold bg-amber-50/30' : 'border-gray-100 hover:border-urbane-gold/50'}`}
+                            >
+                              <div className="sm:w-40 h-32 sm:h-auto relative overflow-hidden">
+                                  <img src={room.image} className="w-full h-full object-cover" alt={room.name} />
+                              </div>
+                              <div className="p-5 flex-grow flex flex-col justify-center">
+                                  <div className="flex justify-between items-start mb-2">
+                                      <div>
+                                          <span className="text-xs font-bold text-urbane-gold uppercase">{room.category}</span>
+                                          <h4 className="font-serif text-lg font-bold text-gray-800">{room.name}</h4>
+                                      </div>
+                                      <div className="text-right">
+                                          <span className="block font-serif text-xl font-bold text-urbane-green">₹{room.price}</span>
+                                          <span className="text-xs text-gray-400">/night</span>
+                                      </div>
+                                  </div>
+                                  <p className="text-sm text-gray-500 line-clamp-2">{room.description}</p>
+                              </div>
                             </div>
-                            <div className="p-5 flex-grow flex flex-col justify-center">
-                                <div className="flex justify-between items-start mb-2">
-                                    <div>
-                                        <span className="text-xs font-bold text-urbane-gold uppercase">{room.category}</span>
-                                        <h4 className="font-serif text-lg font-bold text-gray-800">{room.name}</h4>
-                                    </div>
-                                    <div className="text-right">
-                                        <span className="block font-serif text-xl font-bold text-urbane-green">₹{room.price}</span>
-                                        <span className="text-xs text-gray-400">/night</span>
-                                    </div>
-                                </div>
-                                <p className="text-sm text-gray-500 line-clamp-2">{room.description}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -286,6 +307,18 @@ const BookingFlow: React.FC = () => {
                    <div className="border-b pb-4 border-gray-100">
                       <h2 className="text-3xl font-serif font-bold text-urbane-charcoal">Guest Information</h2>
                       <p className="text-gray-500 mt-2">Who will be staying with us?</p>
+                      {user && (
+                        <div className="mt-3 bg-green-50 border border-green-200 text-green-700 px-4 py-2 rounded text-sm">
+                          ✓ Logged in as {user.email} - Your information has been pre-filled
+                        </div>
+                      )}
+                      {!user && (
+                        <p className="text-xs text-gray-400 mt-2">
+                          <Link to="/" className="text-urbane-gold hover:underline font-medium">
+                            Sign in
+                          </Link> (via navbar) to auto-fill your details
+                        </p>
+                      )}
                   </div>
                   
                   <div className="space-y-6">

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Mountain } from 'lucide-react';
+import { Menu, X, Mountain, User, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import LoginModal from './LoginModal';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { user, signOut, loading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,6 +60,39 @@ const Navbar: React.FC = () => {
                 Admin
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
+            {!loading && (
+              user ? (
+                <div className="relative group">
+                  <button className="flex items-center space-x-2 text-white hover:text-urbane-gold transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-urbane-gold flex items-center justify-center">
+                      <User size={16} className="text-urbane-darkGreen" />
+                    </div>
+                    <span className="text-sm font-medium">{user.email?.split('@')[0]}</span>
+                  </button>
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                    <div className="py-2">
+                      <div className="px-4 py-2 text-sm text-gray-700 border-b">
+                        {user.email}
+                      </div>
+                      <button
+                        onClick={signOut}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                      >
+                        <LogOut size={16} />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsLoginModalOpen(true)}
+                  className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors"
+                >
+                  Login
+                </button>
+              )
+            )}
             <Link
               to="/book"
               className="bg-gradient-to-r from-urbane-gold to-urbane-goldLight text-urbane-darkGreen px-8 py-2.5 rounded-none font-bold hover:shadow-gold hover:scale-105 transition-all duration-300 text-sm tracking-wide"
@@ -107,6 +144,8 @@ const Navbar: React.FC = () => {
           </div>
         </div>
       )}
+
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
     </nav>
   );
 };

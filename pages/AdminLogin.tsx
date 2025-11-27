@@ -1,32 +1,56 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { Lock, Mountain } from 'lucide-react';
 // @ts-ignore
 import heroImage from '../lib/hero-image.png';
 
 const AdminLogin: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { loginAdmin, adminBackgroundImage } = useApp();
+  const [loading, setLoading] = useState(false);
+  const { adminBackgroundImage } = useApp();
+  const { signIn, isAdmin } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Clean inputs to prevent whitespace errors
-    const cleanUser = username.trim().toLowerCase();
-    const cleanPass = password.trim();
-
-    if (cleanUser === 'admin' && cleanPass === 'admin') {
-      loginAdmin();
+  // Redirect if already admin
+  useEffect(() => {
+    if (isAdmin) {
       navigate('/admin');
-    } else {
-      setError('Invalid credentials. Try username: admin, password: admin');
-      // Clear password on failure for security/ux
+    }
+  }, [isAdmin, navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    
+    try {
+      const { error } = await signIn(email.trim(), password);
+      
+      if (error) {
+        setError(error.message || 'Invalid credentials. Please check your email and password.');
+        setPassword('');
+        setLoading(false);
+      } else {
+        // Wait a moment for auth state to update, then check admin status
+        setTimeout(() => {
+          if (isAdmin) {
+            navigate('/admin');
+          } else {
+            setError('Access denied. This account does not have admin privileges. Please contact your administrator.');
+            setPassword('');
+          }
+          setLoading(false);
+        }, 1000);
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred during login.');
       setPassword('');
+      setLoading(false);
     }
   };
 
@@ -57,14 +81,15 @@ const AdminLogin: React.FC = () => {
             )}
             
             <div className="space-y-2">
-              <label className="text-xs font-bold text-white uppercase tracking-widest">Username</label>
+              <label className="text-xs font-bold text-white uppercase tracking-widest">Email</label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-3 rounded text-gray-900 placeholder-gray-500 focus:border-urbane-gold focus:ring-2 focus:ring-urbane-gold outline-none transition-all"
-                placeholder="admin"
-                autoComplete="username"
+                placeholder="your-email@example.com"
+                autoComplete="email"
+                required
               />
             </div>
 
@@ -75,16 +100,19 @@ const AdminLogin: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full p-3 rounded text-gray-900 placeholder-gray-500 focus:border-urbane-gold focus:ring-2 focus:ring-urbane-gold outline-none transition-all"
-                placeholder="admin"
+                placeholder="Enter your password"
                 autoComplete="current-password"
+                required
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-urbane-gold text-urbane-darkGreen font-bold py-4 rounded uppercase tracking-widest hover:bg-white transition-all duration-300 flex items-center justify-center shadow-lg"
+              disabled={loading}
+              className="w-full bg-urbane-gold text-urbane-darkGreen font-bold py-4 rounded uppercase tracking-widest hover:bg-white transition-all duration-300 flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Lock size={16} className="mr-2" /> Login Securely
+              <Lock size={16} className="mr-2" /> 
+              {loading ? 'Signing in...' : 'Login Securely'}
             </button>
           </form>
           

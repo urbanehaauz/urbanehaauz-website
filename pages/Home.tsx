@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Cloud, Sun, Wifi, Coffee, ChevronRight, Star } from 'lucide-react';
-import { TESTIMONIALS, ROOMS } from '../lib/mockData';
+import { TESTIMONIALS } from '../lib/mockData';
 import { useApp } from '../context/AppContext';
 
 const Home: React.FC = () => {
-  const { homeHeroImage } = useApp();
+  const { homeHeroImage, rooms } = useApp();
 
   return (
     <div className="flex flex-col w-full font-sans">
@@ -102,7 +102,7 @@ const Home: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {ROOMS.slice(0, 2).map((room) => (
+            {rooms.filter(r => r.available).slice(0, 2).map((room) => (
               <div key={room.id} className="group relative overflow-hidden shadow-2xl h-[500px] cursor-pointer">
                  <div className="absolute inset-0">
                   <img src={room.image} alt={room.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />

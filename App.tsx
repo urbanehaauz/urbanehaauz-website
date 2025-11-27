@@ -7,7 +7,9 @@ import Rooms from './pages/Rooms';
 import BookingFlow from './pages/BookingFlow';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
+import AuthCallback from './pages/AuthCallback';
 import { AppProvider } from './context/AppContext';
+import { AuthProvider } from './context/AuthContext';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -35,20 +37,23 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const App: React.FC = () => {
   return (
-    <AppProvider>
-      <HashRouter>
-        <ScrollToTop />
-        <MainLayout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/rooms" element={<Rooms />} />
+    <AuthProvider>
+      <AppProvider>
+        <HashRouter>
+          <ScrollToTop />
+          <MainLayout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/rooms" element={<Rooms />} />
             <Route path="/book" element={<BookingFlow />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/login" element={<AdminLogin />} />
-          </Routes>
-        </MainLayout>
-      </HashRouter>
-    </AppProvider>
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            </Routes>
+          </MainLayout>
+        </HashRouter>
+      </AppProvider>
+    </AuthProvider>
   );
 };
 

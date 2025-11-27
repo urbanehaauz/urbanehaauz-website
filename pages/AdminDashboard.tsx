@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend } from 'recharts';
 import { DollarSign, Calendar, Users, TrendingUp, TrendingDown, Plus, X, LogOut, Briefcase, UserCheck, LayoutDashboard, BedDouble, CreditCard, Image as ImageIcon, Check, Lock, RotateCcw, Search, Filter, Settings, Upload, CheckCircle } from 'lucide-react';
 import DatePicker from '../components/DatePicker';
@@ -33,10 +34,11 @@ const StatCard = ({ title, value, icon: Icon, trend, trendUp }: any) => (
 
 const AdminDashboard: React.FC = () => {
   const { 
-    rooms, bookings, staff, investments, expenses, isAdminLoggedIn, logoutAdmin,
+    rooms, bookings, staff, investments, expenses,
     updateRoom, addRoom, addBooking, updateBooking, addStaff, addTask, toggleTask, addInvestment, addExpense,
     homeHeroImage, adminBackgroundImage, updateHomeHeroImage, updateAdminBackgroundImage
   } = useApp();
+  const { isAdmin, signOut, loading: authLoading } = useAuth();
   
   const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<'overview' | 'rooms' | 'bookings' | 'staff' | 'finance' | 'settings'>('overview');
@@ -49,12 +51,34 @@ const AdminDashboard: React.FC = () => {
   // Booking Status Management State
   const [editingRows, setEditingRows] = useState<Record<string, { status?: BookingStatus, paymentStatus?: PaymentStatus }>>({});
 
-  // Redirect if not logged in
+  // Redirect if not admin (wait for auth to finish loading)
   useEffect(() => {
-    if (!isAdminLoggedIn) {
-      navigate('/admin/login');
+    if (!authLoading) {
+      if (!isAdmin) {
+        console.log('❌ Not admin, redirecting to login...');
+        navigate('/admin/login');
+      } else {
+        console.log('✅ Admin authenticated, showing dashboard');
+      }
     }
-  }, [isAdminLoggedIn, navigate]);
+  }, [isAdmin, authLoading, navigate]);
+  
+  // Show loading state while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-urbane-mist">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-urbane-gold mx-auto mb-4"></div>
+          <p className="text-urbane-charcoal text-lg">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Don't render if not admin (will redirect in useEffect above)
+  if (!isAdmin) {
+    return null;
+  }
 
   // Derived Financial Data
   const totalRevenue = bookings.reduce((acc, curr) => acc + (curr.paymentStatus === 'Paid' ? curr.totalAmount : 0), 0);
@@ -115,7 +139,7 @@ const AdminDashboard: React.FC = () => {
   // New Booking Form State
   const [newBooking, setNewBooking] = useState({
     guestName: '',
-    roomName: rooms[0].name,
+    roomName: rooms.length > 0 ? rooms[0].name : '',
     checkIn: '',
     checkOut: '',
     amount: '',
@@ -374,7 +398,7 @@ const AdminDashboard: React.FC = () => {
               </button>
           </div>
           <div className="mb-8 pt-6 border-t border-white/10">
-            <button onClick={logoutAdmin} className="flex items-center space-x-2 text-red-300 hover:text-red-100 hover:bg-red-500/10 w-full p-3 rounded transition-colors">
+            <button onClick={signOut} className="flex items-center space-x-2 text-red-300 hover:text-red-100 hover:bg-red-500/10 w-full p-3 rounded transition-colors">
                 <LogOut size={18} /> <span>Logout</span>
             </button>
           </div>
@@ -402,7 +426,7 @@ const AdminDashboard: React.FC = () => {
             <button onClick={() => setCurrentView('settings')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'settings' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <Settings size={16} /> <span>Settings</span>
             </button>
-             <button onClick={logoutAdmin} className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors bg-red-50 text-red-500 border border-red-100">
+             <button onClick={signOut} className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors bg-red-50 text-red-500 border border-red-100">
                 <LogOut size={16} /> <span>Logout</span>
             </button>
         </div>

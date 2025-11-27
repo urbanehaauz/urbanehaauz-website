@@ -12,6 +12,13 @@ dist
 dist-ssr
 *.local
 
+# Database test files
+database/test_*.js
+
+# Logs
+nginx-logs/
+*.log
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

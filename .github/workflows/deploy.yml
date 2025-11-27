@@ -29,11 +29,13 @@ jobs:
           rm -rf node_modules package-lock.json
           # Clear npm cache to avoid any cached issues
           npm cache clean --force
-          # Install dependencies fresh with legacy peer deps
-          npm install --legacy-peer-deps --no-optional=false
+          # Install dependencies with optional dependencies enabled
+          npm install --legacy-peer-deps --include=optional
           # Verify rollup native dependency is installed
-          ls -la node_modules/@rollup/rollup-linux-x64-gnu || echo "Rollup native not found, installing..."
-          npm install @rollup/rollup-linux-x64-gnu --save-optional --legacy-peer-deps || npm install @rollup/rollup-linux-x64-gnu --legacy-peer-deps || true
+          if [ ! -d "node_modules/@rollup/rollup-linux-x64-gnu" ]; then
+            echo "⚠️ Rollup native dependency missing, installing explicitly..."
+            npm install @rollup/rollup-linux-x64-gnu@latest --legacy-peer-deps --no-save || true
+          fi
 
       - name: Build application
         run: npm run build

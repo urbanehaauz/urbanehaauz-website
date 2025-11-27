@@ -1,67 +1,50 @@
-# GitHub Actions Deployment Workflow
+# GitHub Actions CI/CD
 
-This workflow deploys the application to Vercel when:
-- A GitHub Release is published (tags)
-- Manual trigger from Actions tab
+## Workflow: Deploy to Vercel
 
-## Setup Required
+This workflow automatically deploys your application to Vercel.
 
-### 1. Vercel Secrets (Required)
+## When It Runs
 
-You need to add these secrets to your GitHub repository:
+### ✅ Automatic Triggers
 
-1. Go to your repository: `https://github.com/urbanehaauz/urbanehaauz-website/settings/secrets/actions`
-2. Click "New repository secret"
-3. Add these secrets:
+**Every push to `main` branch:**
+- Code is automatically built
+- Deployed to Vercel production
+- No manual action needed!
 
-#### VERCEL_TOKEN
-- Go to Vercel: https://vercel.com/account/tokens
-- Click "Create Token"
-- Name it (e.g., "GitHub Actions")
-- Copy the token
-- Add as `VERCEL_TOKEN` secret
+### 🖱️ Manual Trigger
 
-#### VERCEL_ORG_ID
-- Go to Vercel project settings
-- Copy "Organization ID"
-- Add as `VERCEL_ORG_ID` secret
+1. Go to GitHub → **Actions** tab
+2. Select **"Deploy to Vercel"** workflow
+3. Click **"Run workflow"**
+4. Select branch and click **"Run workflow"**
 
-#### VERCEL_PROJECT_ID
-- Go to Vercel project settings
-- Copy "Project ID"
-- Add as `VERCEL_PROJECT_ID` secret
+**Use manual trigger when:**
+- Testing deployment
+- Deploying without pushing to main
+- Retrying failed deployment
 
-#### VITE_SUPABASE_URL
-- Your Supabase project URL: `https://lqvccvtsydzptgsrncmz.supabase.co`
-- Add as `VITE_SUPABASE_URL` secret
+## Required Secrets
 
-#### VITE_SUPABASE_ANON_KEY
-- Your Supabase anon key (from Supabase dashboard)
-- Add as `VITE_SUPABASE_ANON_KEY` secret
+Add these in GitHub → Settings → Secrets and variables → Actions:
 
-### 2. How to Deploy
+- `VERCEL_TOKEN` - Vercel API token
+- `VERCEL_ORG_ID` - Vercel organization ID
+- `VERCEL_PROJECT_ID` - Vercel project ID
+- `VITE_SUPABASE_URL` - Supabase project URL
+- `VITE_SUPABASE_ANON_KEY` - Supabase anonymous key
 
-#### Option A: Create a GitHub Release
-```bash
-# Create a release tag
-git tag -a v1.0.0 -m "Release version 1.0.0"
-git push origin v1.0.0
+## Workflow Steps
 
-# Then create a release on GitHub:
-# Go to: https://github.com/urbanehaauz/urbanehaauz-website/releases/new
-# Select the tag, add release notes, click "Publish release"
-```
+1. Checkout code
+2. Setup Node.js 20
+3. Install dependencies
+4. Build application (with env vars)
+5. Install Vercel CLI
+6. Deploy to Vercel production
 
-#### Option B: Manual Trigger
-1. Go to: https://github.com/urbanehaauz/urbanehaauz-website/actions
-2. Select "Deploy to Vercel" workflow
-3. Click "Run workflow"
-4. Select branch: `main`
-5. Click "Run workflow"
+## Viewing Deployments
 
-## Notes
-
-- The workflow builds the app with environment variables
-- Deployment happens automatically to Vercel production
-- Make sure all secrets are set before deploying
-
+- **GitHub**: Actions tab → Select workflow run
+- **Vercel**: Dashboard → Project → Deployments

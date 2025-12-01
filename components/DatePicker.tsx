@@ -17,16 +17,29 @@ const DatePicker: React.FC<DatePickerProps> = ({ label, name, value, onChange, m
 
   // Helper to parse YYYY-MM-DD string as LOCAL date to avoid UTC timezone shifts
   const parseDate = (dateStr: string) => {
-    if (!dateStr) return new Date();
+    if (!dateStr) {
+      // Return current date in local timezone
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
     const parts = dateStr.split('-');
     if (parts.length === 3) {
         const [y, m, d] = parts.map(Number);
+        // Ensure we create a date in local timezone, not UTC
         return new Date(y, m - 1, d);
     }
-    return new Date(dateStr);
+    // Fallback: parse the date string but ensure local timezone
+    const parsed = new Date(dateStr);
+    return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
   };
 
-  const initialDate = value ? parseDate(value) : new Date();
+  // Always initialize with current date or parsed value - never allow invalid dates
+  const getCurrentDate = () => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  };
+
+  const initialDate = value ? parseDate(value) : getCurrentDate();
   const [viewDate, setViewDate] = useState(initialDate);
 
   useEffect(() => {

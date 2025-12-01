@@ -41,7 +41,13 @@ const BookingFlow: React.FC = () => {
     return null;
   });
   const [dates, setDates] = useState(savedState?.dates || { checkIn: '', checkOut: '' });
-  const [guests, setGuests] = useState(savedState?.guests || { name: '', email: '', phone: '', count: 1 });
+  const [guests, setGuests] = useState(savedState?.guests || {
+    name: '',
+    email: '',
+    phone: '',
+    adults: 2,
+    children: 0
+  });
 
   // Pre-fill guest info if user is logged in
   useEffect(() => {
@@ -111,11 +117,14 @@ const BookingFlow: React.FC = () => {
   const handleGuestChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    // Validate guest count doesn't exceed room capacity
-    if (name === 'count' && selectedRoom) {
-      const guestCount = parseInt(value);
-      if (guestCount > selectedRoom.maxOccupancy) {
-        // Prevent setting guest count higher than max capacity
+    // Validate total guest count doesn't exceed 6
+    if (name === 'adults' || name === 'children') {
+      const numValue = parseInt(value);
+      const newGuests = { ...guests, [name]: numValue };
+      const totalGuests = newGuests.adults + newGuests.children;
+
+      if (totalGuests > 6) {
+        // Prevent exceeding maximum capacity of 6 guests
         return;
       }
     }
@@ -131,10 +140,48 @@ const BookingFlow: React.FC = () => {
     const start = new Date(dates.checkIn);
     const end = new Date(dates.checkOut);
     const diffTime = end.getTime() - start.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    
-    if (diffDays <= 0) return selectedRoom.price; 
-    return diffDays * selectedRoom.price;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return selectedRoom.price;
+
+    // Calculate base room charges
+    let totalAmount = diffDays * selectedRoom.price;
+
+    // Add charges for extra guests
+    // Base price includes 2 adults + 1 child (free)
+    // Extra adults: ₹400 per night
+    // Extra children (beyond 1 free): ₹200 per night
+    const extraAdults = Math.max(0, guests.adults - 2);
+    const extraChildren = Math.max(0, guests.children - 1);
+
+    const extraGuestCharges = (extraAdults * 400 + extraChildren * 200) * diffDays;
+    totalAmount += extraGuestCharges;
+
+    return totalAmount;
+  };
+
+  // Helper to calculate guest charges breakdown
+  const calculateGuestCharges = () => {
+    if (!dates.checkIn || !dates.checkOut) return { extraAdults: 0, extraChildren: 0, total: 0 };
+
+    const start = new Date(dates.checkIn);
+    const end = new Date(dates.checkOut);
+    const diffTime = end.getTime() - start.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return { extraAdults: 0, extraChildren: 0, total: 0 };
+
+    const extraAdults = Math.max(0, guests.adults - 2);
+    const extraChildren = Math.max(0, guests.children - 1);
+
+    return {
+      extraAdults: extraAdults * 400 * diffDays,
+      extraChildren: extraChildren * 200 * diffDays,
+      total: (extraAdults * 400 + extraChildren * 200) * diffDays,
+      nights: diffDays,
+      extraAdultsCount: extraAdults,
+      extraChildrenCount: extraChildren
+    };
   };
 
   const handlePayment = () => {
@@ -267,15 +314,53 @@ const BookingFlow: React.FC = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Guests</span>
-                      <span className="font-bold text-gray-800">{guests.count} Adult(s)</span>
+                      <span className="font-bold text-gray-800">
+                        {guests.adults} Adult{guests.adults !== 1 ? 's' : ''}
+                        {guests.children > 0 && `, ${guests.children} Child${guests.children !== 1 ? 'ren' : ''}`}
+                      </span>
                     </div>
                   </div>
                   <div className="pt-4">
-                    <div className="flex justify-between items-end">
-                      <span className="text-gray-500 text-sm">Total Amount</span>
-                      <span className="text-3xl font-serif font-bold text-urbane-gold">₹{calculateTotal().toLocaleString('en-IN')}</span>
-                    </div>
-                    <p className="text-xs text-gray-400 text-right mt-1">Inclusive of all taxes</p>
+                    {(() => {
+                      const guestCharges = calculateGuestCharges();
+                      const baseAmount = selectedRoom && dates.checkIn && dates.checkOut
+                        ? selectedRoom.price * guestCharges.nights
+                        : 0;
+
+                      return (
+                        <div className="space-y-2">
+                          {guestCharges.nights > 0 && (
+                            <>
+                              <div className="flex justify-between text-xs text-gray-600">
+                                <span>Room ({guestCharges.nights} night{guestCharges.nights !== 1 ? 's' : ''})</span>
+                                <span>₹{baseAmount.toLocaleString('en-IN')}</span>
+                              </div>
+                              {guestCharges.extraAdultsCount > 0 && (
+                                <div className="flex justify-between text-xs text-gray-600">
+                                  <span>Extra Adults ({guestCharges.extraAdultsCount} × ₹400 × {guestCharges.nights})</span>
+                                  <span>₹{guestCharges.extraAdults.toLocaleString('en-IN')}</span>
+                                </div>
+                              )}
+                              {guestCharges.extraChildrenCount > 0 && (
+                                <div className="flex justify-between text-xs text-gray-600">
+                                  <span>Extra Children ({guestCharges.extraChildrenCount} × ₹200 × {guestCharges.nights})</span>
+                                  <span>₹{guestCharges.extraChildren.toLocaleString('en-IN')}</span>
+                                </div>
+                              )}
+                              <div className="border-t border-gray-200 my-2"></div>
+                            </>
+                          )}
+                          <div className="flex justify-between items-end">
+                            <span className="text-gray-500 text-sm">Total Amount</span>
+                            <span className="text-3xl font-serif font-bold text-urbane-gold">₹{calculateTotal().toLocaleString('en-IN')}</span>
+                          </div>
+                          <p className="text-xs text-gray-400 text-right">Inclusive of all taxes</p>
+                          {(guests.adults <= 2 && guests.children <= 1) && (
+                            <p className="text-xs text-green-600 text-right">✓ Base rate includes 2 adults + 1 child</p>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               ) : (
@@ -421,28 +506,96 @@ const BookingFlow: React.FC = () => {
                       </div>
                     </div>
                     <div>
-                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Number of Guests</label>
-                       <select
-                          name="count"
-                          className="w-full p-4 bg-white border border-gray-200 text-gray-900 focus:border-urbane-gold focus:ring-1 focus:ring-urbane-gold outline-none transition-all cursor-pointer"
-                          value={guests.count}
-                          onChange={handleGuestChange}
-                        >
-                         {[...Array(selectedRoom?.maxOccupancy || 4)].map((_, i) => (
-                           <option key={i + 1} value={i + 1} className="text-gray-900 bg-white">{i + 1} Guest{i > 0 ? 's' : ''}</option>
-                         ))}
-                       </select>
-                       <p className="text-xs text-gray-500 mt-2">
-                         Maximum capacity for this room: <span className="font-bold text-urbane-gold">{selectedRoom?.maxOccupancy || 4} guests</span>
-                       </p>
-                       {selectedRoom && guests.count > selectedRoom.maxOccupancy && (
+                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Number of Guests</label>
+
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         {/* Adults Counter */}
+                         <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                           <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">Adults (12+ years)</label>
+                           <div className="flex items-center justify-between">
+                             <button
+                               type="button"
+                               onClick={() => handleGuestChange({ target: { name: 'adults', value: Math.max(1, guests.adults - 1).toString() } } as any)}
+                               disabled={guests.adults <= 1}
+                               className="w-10 h-10 rounded-full bg-white border-2 border-urbane-gold text-urbane-gold font-bold hover:bg-urbane-gold hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                             >
+                               −
+                             </button>
+                             <span className="text-2xl font-bold text-urbane-charcoal">{guests.adults}</span>
+                             <button
+                               type="button"
+                               onClick={() => handleGuestChange({ target: { name: 'adults', value: (guests.adults + 1).toString() } } as any)}
+                               disabled={guests.adults + guests.children >= 6}
+                               className="w-10 h-10 rounded-full bg-white border-2 border-urbane-gold text-urbane-gold font-bold hover:bg-urbane-gold hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                             >
+                               +
+                             </button>
+                           </div>
+                           <p className="text-xs text-gray-500 mt-2 text-center">Base rate includes 2 adults</p>
+                         </div>
+
+                         {/* Children Counter */}
+                         <div className="bg-gray-50 p-4 rounded border border-gray-200">
+                           <label className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-3">Children (2-12 years)</label>
+                           <div className="flex items-center justify-between">
+                             <button
+                               type="button"
+                               onClick={() => handleGuestChange({ target: { name: 'children', value: Math.max(0, guests.children - 1).toString() } } as any)}
+                               disabled={guests.children <= 0}
+                               className="w-10 h-10 rounded-full bg-white border-2 border-urbane-gold text-urbane-gold font-bold hover:bg-urbane-gold hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                             >
+                               −
+                             </button>
+                             <span className="text-2xl font-bold text-urbane-charcoal">{guests.children}</span>
+                             <button
+                               type="button"
+                               onClick={() => handleGuestChange({ target: { name: 'children', value: (guests.children + 1).toString() } } as any)}
+                               disabled={guests.adults + guests.children >= 6}
+                               className="w-10 h-10 rounded-full bg-white border-2 border-urbane-gold text-urbane-gold font-bold hover:bg-urbane-gold hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                             >
+                               +
+                             </button>
+                           </div>
+                           <p className="text-xs text-gray-500 mt-2 text-center">1 child included free</p>
+                         </div>
+                       </div>
+
+                       <div className="mt-4 bg-blue-50 border border-blue-200 px-4 py-3 rounded text-sm text-blue-800">
+                         <p className="font-bold mb-1">📋 Guest Pricing Policy:</p>
+                         <ul className="text-xs space-y-1 ml-4 list-disc">
+                           <li>Base rate includes <strong>2 adults + 1 child (free)</strong></li>
+                           <li>Extra adults: <strong>₹400 per person per night</strong></li>
+                           <li>Extra children: <strong>₹200 per child per night</strong></li>
+                           <li>Maximum capacity: <strong>6 guests per room</strong></li>
+                         </ul>
+                       </div>
+
+                       {guests.adults + guests.children > 6 && (
                          <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
-                           <strong>⚠️ Capacity Exceeded:</strong> This room can accommodate a maximum of {selectedRoom.maxOccupancy} guests.
-                           {selectedRoom.maxOccupancy === 4 && selectedRoom.category === 'Dormitory' && (
-                             <span> For groups larger than 4, please book multiple rooms or contact us for assistance.</span>
-                           )}
+                           <strong>⚠️ Capacity Exceeded:</strong> Maximum capacity is 6 guests per room. Please reduce the number of guests or book multiple rooms.
                          </div>
                        )}
+
+                       {(() => {
+                         const extraAdults = Math.max(0, guests.adults - 2);
+                         const extraChildren = Math.max(0, guests.children - 1);
+                         if (extraAdults > 0 || extraChildren > 0) {
+                           return (
+                             <div className="mt-3 bg-amber-50 border border-amber-200 px-4 py-3 rounded text-sm">
+                               <p className="font-bold text-amber-800 mb-2">Additional Guest Charges:</p>
+                               <div className="text-xs text-amber-700 space-y-1">
+                                 {extraAdults > 0 && (
+                                   <p>• {extraAdults} extra adult{extraAdults > 1 ? 's' : ''}: ₹{extraAdults * 400} per night</p>
+                                 )}
+                                 {extraChildren > 0 && (
+                                   <p>• {extraChildren} extra child{extraChildren > 1 ? 'ren' : ''}: ₹{extraChildren * 200} per night</p>
+                                 )}
+                               </div>
+                             </div>
+                           );
+                         }
+                         return null;
+                       })()}
                     </div>
                   </div>
 
@@ -459,7 +612,8 @@ const BookingFlow: React.FC = () => {
                         !guests.name ||
                         !guests.email ||
                         !guests.phone ||
-                        (selectedRoom && guests.count > selectedRoom.maxOccupancy)
+                        guests.adults + guests.children > 6 ||
+                        guests.adults < 1
                       }
                       className="w-2/3 bg-urbane-charcoal text-white py-4 font-bold uppercase tracking-widest hover:bg-urbane-green transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >

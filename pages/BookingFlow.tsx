@@ -14,13 +14,34 @@ const BookingFlow: React.FC = () => {
   const queryParams = new URLSearchParams(location.search);
   const initialRoomId = queryParams.get('room');
 
-  // State
-  const [step, setStep] = useState(1);
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(
-    initialRoomId ? rooms.find(r => r.id === initialRoomId) || null : null
-  );
-  const [dates, setDates] = useState({ checkIn: '', checkOut: '' });
-  const [guests, setGuests] = useState({ name: '', email: '', phone: '', count: 1 });
+  // Load persisted booking state from sessionStorage
+  const loadBookingState = () => {
+    try {
+      const saved = sessionStorage.getItem('urbane-booking-state');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.error('Error loading booking state:', error);
+    }
+    return null;
+  };
+
+  const savedState = loadBookingState();
+
+  // State - Initialize from sessionStorage if available
+  const [step, setStep] = useState(savedState?.step || 1);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(() => {
+    if (initialRoomId) {
+      return rooms.find(r => r.id === initialRoomId) || null;
+    }
+    if (savedState?.selectedRoomId) {
+      return rooms.find(r => r.id === savedState.selectedRoomId) || null;
+    }
+    return null;
+  });
+  const [dates, setDates] = useState(savedState?.dates || { checkIn: '', checkOut: '' });
+  const [guests, setGuests] = useState(savedState?.guests || { name: '', email: '', phone: '', count: 1 });
 
   // Pre-fill guest info if user is logged in
   useEffect(() => {
@@ -32,6 +53,22 @@ const BookingFlow: React.FC = () => {
       }));
     }
   }, [user]);
+
+  // Persist booking state to sessionStorage whenever it changes
+  useEffect(() => {
+    try {
+      const stateToSave = {
+        step,
+        selectedRoomId: selectedRoom?.id || null,
+        dates,
+        guests
+      };
+      sessionStorage.setItem('urbane-booking-state', JSON.stringify(stateToSave));
+    } catch (error) {
+      console.error('Error saving booking state:', error);
+    }
+  }, [step, selectedRoom, dates, guests]);
+
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [bookingComplete, setBookingComplete] = useState(false);
   const [generatedBookingId, setGeneratedBookingId] = useState('');
@@ -39,12 +76,20 @@ const BookingFlow: React.FC = () => {
   // Helpers
   const getNextDay = (dateStr: string) => {
       if (!dateStr) return '';
-      // Create UTC date from string to avoid timezone shifts
-      const date = new Date(dateStr);
-      // Add 1 day
-      date.setDate(date.getDate() + 1);
-      // Return YYYY-MM-DD
-      return date.toISOString().split('T')[0];
+      // Parse YYYY-MM-DD string in local timezone to avoid UTC shifts
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        const [y, m, d] = parts.map(Number);
+        const date = new Date(y, m - 1, d);
+        // Add 1 day
+        date.setDate(date.getDate() + 1);
+        // Return YYYY-MM-DD in local timezone
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      return '';
   };
 
   // Handlers
@@ -64,7 +109,18 @@ const BookingFlow: React.FC = () => {
   };
 
   const handleGuestChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setGuests({ ...guests, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Validate guest count doesn't exceed room capacity
+    if (name === 'count' && selectedRoom) {
+      const guestCount = parseInt(value);
+      if (guestCount > selectedRoom.maxOccupancy) {
+        // Prevent setting guest count higher than max capacity
+        return;
+      }
+    }
+
+    setGuests({ ...guests, [name]: value });
   };
 
   const nextStep = () => setStep(s => s + 1);
@@ -83,7 +139,7 @@ const BookingFlow: React.FC = () => {
 
   const handlePayment = () => {
     setPaymentProcessing(true);
-    
+
     setTimeout(() => {
       const bookingId = `BK-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)}`;
       const newBooking = {
@@ -106,6 +162,13 @@ const BookingFlow: React.FC = () => {
       setGeneratedBookingId(bookingId);
       setPaymentProcessing(false);
       setBookingComplete(true);
+
+      // Clear the persisted booking state after successful booking
+      try {
+        sessionStorage.removeItem('urbane-booking-state');
+      } catch (error) {
+        console.error('Error clearing booking state:', error);
+      }
     }, 2000);
   };
 
@@ -359,8 +422,8 @@ const BookingFlow: React.FC = () => {
                     </div>
                     <div>
                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Number of Guests</label>
-                       <select 
-                          name="count" 
+                       <select
+                          name="count"
                           className="w-full p-4 bg-white border border-gray-200 text-gray-900 focus:border-urbane-gold focus:ring-1 focus:ring-urbane-gold outline-none transition-all cursor-pointer"
                           value={guests.count}
                           onChange={handleGuestChange}
@@ -369,20 +432,36 @@ const BookingFlow: React.FC = () => {
                            <option key={i + 1} value={i + 1} className="text-gray-900 bg-white">{i + 1} Guest{i > 0 ? 's' : ''}</option>
                          ))}
                        </select>
+                       <p className="text-xs text-gray-500 mt-2">
+                         Maximum capacity for this room: <span className="font-bold text-urbane-gold">{selectedRoom?.maxOccupancy || 4} guests</span>
+                       </p>
+                       {selectedRoom && guests.count > selectedRoom.maxOccupancy && (
+                         <div className="mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                           <strong>⚠️ Capacity Exceeded:</strong> This room can accommodate a maximum of {selectedRoom.maxOccupancy} guests.
+                           {selectedRoom.maxOccupancy === 4 && selectedRoom.category === 'Dormitory' && (
+                             <span> For groups larger than 4, please book multiple rooms or contact us for assistance.</span>
+                           )}
+                         </div>
+                       )}
                     </div>
                   </div>
 
                   <div className="flex space-x-4 pt-6">
-                    <button 
+                    <button
                       onClick={prevStep}
                       className="w-1/3 border border-gray-300 text-gray-600 py-4 font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-gray-900 transition-colors"
                     >
                       Back
                     </button>
-                    <button 
+                    <button
                       onClick={nextStep}
-                      disabled={!guests.name || !guests.email || !guests.phone}
-                      className="w-2/3 bg-urbane-charcoal text-white py-4 font-bold uppercase tracking-widest hover:bg-urbane-green transition-colors disabled:opacity-50"
+                      disabled={
+                        !guests.name ||
+                        !guests.email ||
+                        !guests.phone ||
+                        (selectedRoom && guests.count > selectedRoom.maxOccupancy)
+                      }
+                      className="w-2/3 bg-urbane-charcoal text-white py-4 font-bold uppercase tracking-widest hover:bg-urbane-green transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Review & Pay
                     </button>

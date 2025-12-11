@@ -262,10 +262,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     loadExpenses();
   }, [isAdmin]);
 
-  // Load settings (admin only)
+  // Load settings (for ALL users - hero image should be visible to everyone)
   useEffect(() => {
-    if (!isAdmin) return;
-
     const loadSettings = async () => {
       const { data, error } = await supabase
         .from('settings')
@@ -275,8 +273,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const heroSetting = data.find(s => s.key === 'home_hero_image');
         const adminSetting = data.find(s => s.key === 'admin_background_image');
         
-        if (heroSetting) setHomeHeroImage(heroSetting.value);
-        if (adminSetting) setAdminBackgroundImage(adminSetting.value);
+        // Load hero image for all users (public setting)
+        if (heroSetting && heroSetting.value) {
+          setHomeHeroImage(heroSetting.value);
+        }
+        
+        // Load admin background only for admins
+        if (isAdmin && adminSetting && adminSetting.value) {
+          setAdminBackgroundImage(adminSetting.value);
+        }
       }
     };
 
@@ -542,14 +547,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Settings Updaters
   const updateHomeHeroImage = async (url: string) => {
+    // Update local state immediately for UI responsiveness
     setHomeHeroImage(url);
-    localStorage.setItem('homeHeroImage', url);
     
+    // Only save to database if admin (security check)
     if (isAdmin) {
       try {
-        await supabase
+        const { error } = await supabase
           .from('settings')
           .upsert({ key: 'home_hero_image', value: url }, { onConflict: 'key' });
+        
+        if (error) {
+          console.error('Error saving hero image:', error);
+          // Revert on error
+          const { data } = await supabase
+            .from('settings')
+            .select('value')
+            .eq('key', 'home_hero_image')
+            .single();
+          if (data) setHomeHeroImage(data.value || DEFAULT_IMAGE);
+        }
       } catch (error) {
         console.error('Error saving hero image:', error);
       }
@@ -557,14 +574,26 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   const updateAdminBackgroundImage = async (url: string) => {
+    // Update local state immediately for UI responsiveness
     setAdminBackgroundImage(url);
-    localStorage.setItem('adminBackgroundImage', url);
     
+    // Only save to database if admin (security check)
     if (isAdmin) {
       try {
-        await supabase
+        const { error } = await supabase
           .from('settings')
           .upsert({ key: 'admin_background_image', value: url }, { onConflict: 'key' });
+        
+        if (error) {
+          console.error('Error saving admin background:', error);
+          // Revert on error
+          const { data } = await supabase
+            .from('settings')
+            .select('value')
+            .eq('key', 'admin_background_image')
+            .single();
+          if (data) setAdminBackgroundImage(data.value || DEFAULT_IMAGE);
+        }
       } catch (error) {
         console.error('Error saving admin background:', error);
       }

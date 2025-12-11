@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend } from 'recharts';
 import { DollarSign, Calendar, Users, TrendingUp, TrendingDown, Plus, X, LogOut, Briefcase, UserCheck, LayoutDashboard, BedDouble, CreditCard, Image as ImageIcon, Check, Lock, RotateCcw, Search, Filter, Settings, Upload, CheckCircle } from 'lucide-react';
 import DatePicker from '../components/DatePicker';
@@ -357,13 +358,78 @@ const AdminDashboard: React.FC = () => {
       }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      showNotification("Please select a valid image file", 'error');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      showNotification("Image size must be less than 5MB", 'error');
+      return;
+    }
+
+    try {
+      showNotification("Uploading image...", 'success');
+      
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `hero-images/${fileName}`;
+
+      // Upload to Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        // If bucket doesn't exist, try creating it or use public URL fallback
+        console.error('Upload error:', uploadError);
+        
+        // Fallback: Try to create bucket or use data URL temporarily
+        if (uploadError.message.includes('Bucket not found')) {
+          showNotification("Storage bucket 'images' not found. Please create it in Supabase Storage.", 'error');
+          // Fallback to data URL for now
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setter(reader.result as string);
+            showNotification("Image updated (using temporary storage). Please set up Supabase Storage bucket.", 'error');
+          };
+          reader.readAsDataURL(file);
+          return;
+        }
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('images')
+        .getPublicUrl(filePath);
+
+      if (urlData?.publicUrl) {
+        // Update the image using the setter (which saves to database)
+        setter(urlData.publicUrl);
+        showNotification("Image uploaded and updated successfully!");
+      } else {
+        throw new Error('Failed to get public URL');
+      }
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      showNotification(error.message || "Failed to upload image. Please try again.", 'error');
+      
+      // Fallback to data URL if upload fails
       const reader = new FileReader();
       reader.onloadend = () => {
         setter(reader.result as string);
-        showNotification("Image updated successfully!");
+        showNotification("Image updated locally. Upload to storage failed.", 'error');
       };
       reader.readAsDataURL(file);
     }

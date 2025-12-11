@@ -31,12 +31,17 @@ const Home: React.FC = () => {
           <p className="font-serif text-white/90 text-base md:text-xl mb-12 max-w-2xl italic tracking-wide leading-relaxed drop-shadow-md">
             - Where luxury meets the clouds.
           </p>
-          <Link
-            to="/book"
-            className="group bg-white text-urbane-green px-10 py-4 hover:bg-urbane-gold hover:text-white transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg hover:shadow-gold transform hover:-translate-y-1"
-          >
-            Check Availability
-          </Link>
+          <div className="flex flex-col items-center">
+            <button
+              disabled
+              className="group bg-white text-urbane-green px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg opacity-60 cursor-not-allowed line-through"
+            >
+              Check Availability
+            </button>
+            <p className="mt-4 text-white text-sm font-bold tracking-[0.2em] uppercase drop-shadow-md">
+              Loading....
+            </p>
+          </div>
 
           {/* Weather Widget Mock */}
           <div className="absolute bottom-10 right-10 hidden md:flex items-center space-x-6 bg-white/10 backdrop-blur-md p-6 rounded-none border-l-2 border-urbane-gold shadow-2xl">

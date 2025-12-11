@@ -9,7 +9,8 @@ INSERT INTO rooms (name, category, price, max_occupancy, image, description, ame
 ('Royal Summit Suite', 'Premium Suite', 7500, 4, 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1000&auto=format&fit=crop', 'Our finest suite with a separate living area, bathtub, and panoramic 180-degree views.', ARRAY['Living Room', 'Bathtub', 'Welcome Drink', 'Dedicated Service'], false)
 ON CONFLICT (name) DO NOTHING;
 
--- Insert initial settings
+-- Insert initial settings (default hero image)
+-- The image is stored in public/lib/hero-image.png and served from /lib/hero-image.png
 INSERT INTO settings (key, value) VALUES
 ('home_hero_image', '/lib/hero-image.png'),
 ('admin_background_image', '/lib/hero-image.png')

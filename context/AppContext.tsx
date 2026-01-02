@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Room, Booking, Staff, Investment, Expense } from '../types';
+import { Room, Booking, Staff, Investment, Expense, FinancialTrackerDaily, FinancialCalculations } from '../types';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
@@ -10,6 +10,7 @@ interface AppContextType {
   staff: Staff[];
   investments: Investment[];
   expenses: Expense[];
+  financialTrackerData: FinancialTrackerDaily[];
   loading: boolean;
   updateRoom: (updatedRoom: Room) => void;
   addRoom: (room: Room) => void;
@@ -20,6 +21,11 @@ interface AppContextType {
   toggleTask: (staffId: string, taskId: string) => void;
   addInvestment: (inv: Investment) => void;
   addExpense: (exp: Expense) => void;
+  loadFinancialTrackerData: () => Promise<void>;
+  addFinancialTrackerEntry: (entry: Omit<FinancialTrackerDaily, 'id'>) => Promise<void>;
+  updateFinancialTrackerEntry: (id: string, entry: Partial<FinancialTrackerDaily>) => Promise<void>;
+  deleteFinancialTrackerEntry: (id: string) => Promise<void>;
+  calculateFinancialMetrics: (entry: FinancialTrackerDaily) => FinancialCalculations;
   isAdminLoggedIn: boolean;
   loginAdmin: () => void;
   logoutAdmin: () => void;
@@ -40,6 +46,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [staff, setStaff] = useState<Staff[]>([]);
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [financialTrackerData, setFinancialTrackerData] = useState<FinancialTrackerDaily[]>([]);
   const [loading, setLoading] = useState(true);
   
   const [homeHeroImage, setHomeHeroImage] = useState<string>(() => {
@@ -260,6 +267,44 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
 
     loadExpenses();
+  }, [isAdmin]);
+
+  // Load financial tracker data (admin only)
+  useEffect(() => {
+    if (!isAdmin) {
+      setFinancialTrackerData([]);
+      return;
+    }
+
+    const loadFinancialTrackerData = async () => {
+      const { data, error } = await supabase
+        .from('financial_tracker_daily')
+        .select('*')
+        .order('date', { ascending: false });
+
+      if (error) {
+        console.error('Error loading financial tracker data:', error);
+      } else if (data) {
+        setFinancialTrackerData(data.map(entry => ({
+          id: entry.id,
+          date: entry.date,
+          total_rooms: Number(entry.total_rooms),
+          premium_room_occupancy: Number(entry.premium_room_occupancy),
+          driver_room_occupancy: Number(entry.driver_room_occupancy),
+          per_day_room_tariff: Number(entry.per_day_room_tariff),
+          per_day_driver_tariff: Number(entry.per_day_driver_tariff),
+          restaurant_inflow: Number(entry.restaurant_inflow || 0),
+          total_fixed_monthly_liability: Number(entry.total_fixed_monthly_liability),
+          total_variable_monthly_liability: Number(entry.total_variable_monthly_liability),
+          interest: Number(entry.interest || 0),
+          depreciation: Number(entry.depreciation || 0),
+          tax: Number(entry.tax || 0),
+          apportionment: Number(entry.apportionment || 0),
+        })));
+      }
+    };
+
+    loadFinancialTrackerData();
   }, [isAdmin]);
 
   // Load settings (for ALL users - hero image should be visible to everyone)
@@ -532,6 +577,178 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  // Financial Tracker Functions
+  const loadFinancialTrackerData = async () => {
+    if (!isAdmin) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('financial_tracker_daily')
+        .select('*')
+        .order('date', { ascending: false });
+
+      if (error) throw error;
+
+      if (data) {
+        setFinancialTrackerData(data.map(entry => ({
+          id: entry.id,
+          date: entry.date,
+          total_rooms: Number(entry.total_rooms),
+          premium_room_occupancy: Number(entry.premium_room_occupancy),
+          driver_room_occupancy: Number(entry.driver_room_occupancy),
+          per_day_room_tariff: Number(entry.per_day_room_tariff),
+          per_day_driver_tariff: Number(entry.per_day_driver_tariff),
+          restaurant_inflow: Number(entry.restaurant_inflow || 0),
+          total_fixed_monthly_liability: Number(entry.total_fixed_monthly_liability),
+          total_variable_monthly_liability: Number(entry.total_variable_monthly_liability),
+          interest: Number(entry.interest || 0),
+          depreciation: Number(entry.depreciation || 0),
+          tax: Number(entry.tax || 0),
+          apportionment: Number(entry.apportionment || 0),
+        })));
+      }
+    } catch (error) {
+      console.error('Error loading financial tracker data:', error);
+    }
+  };
+
+  const addFinancialTrackerEntry = async (entry: Omit<FinancialTrackerDaily, 'id'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('financial_tracker_daily')
+        .insert({
+          date: entry.date,
+          total_rooms: entry.total_rooms,
+          premium_room_occupancy: entry.premium_room_occupancy,
+          driver_room_occupancy: entry.driver_room_occupancy,
+          per_day_room_tariff: entry.per_day_room_tariff,
+          per_day_driver_tariff: entry.per_day_driver_tariff,
+          restaurant_inflow: entry.restaurant_inflow,
+          total_fixed_monthly_liability: entry.total_fixed_monthly_liability,
+          total_variable_monthly_liability: entry.total_variable_monthly_liability,
+          interest: entry.interest,
+          depreciation: entry.depreciation,
+          tax: entry.tax,
+          apportionment: entry.apportionment,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        const newEntry: FinancialTrackerDaily = {
+          id: data.id,
+          date: data.date,
+          total_rooms: Number(data.total_rooms),
+          premium_room_occupancy: Number(data.premium_room_occupancy),
+          driver_room_occupancy: Number(data.driver_room_occupancy),
+          per_day_room_tariff: Number(data.per_day_room_tariff),
+          per_day_driver_tariff: Number(data.per_day_driver_tariff),
+          restaurant_inflow: Number(data.restaurant_inflow || 0),
+          total_fixed_monthly_liability: Number(data.total_fixed_monthly_liability),
+          total_variable_monthly_liability: Number(data.total_variable_monthly_liability),
+          interest: Number(data.interest || 0),
+          depreciation: Number(data.depreciation || 0),
+          tax: Number(data.tax || 0),
+          apportionment: Number(data.apportionment || 0),
+        };
+        setFinancialTrackerData(prev => [newEntry, ...prev]);
+      }
+    } catch (error) {
+      console.error('Error adding financial tracker entry:', error);
+      throw error;
+    }
+  };
+
+  const updateFinancialTrackerEntry = async (id: string, entry: Partial<FinancialTrackerDaily>) => {
+    try {
+      const dbUpdates: any = {};
+      if (entry.date !== undefined) dbUpdates.date = entry.date;
+      if (entry.total_rooms !== undefined) dbUpdates.total_rooms = entry.total_rooms;
+      if (entry.premium_room_occupancy !== undefined) dbUpdates.premium_room_occupancy = entry.premium_room_occupancy;
+      if (entry.driver_room_occupancy !== undefined) dbUpdates.driver_room_occupancy = entry.driver_room_occupancy;
+      if (entry.per_day_room_tariff !== undefined) dbUpdates.per_day_room_tariff = entry.per_day_room_tariff;
+      if (entry.per_day_driver_tariff !== undefined) dbUpdates.per_day_driver_tariff = entry.per_day_driver_tariff;
+      if (entry.restaurant_inflow !== undefined) dbUpdates.restaurant_inflow = entry.restaurant_inflow;
+      if (entry.total_fixed_monthly_liability !== undefined) dbUpdates.total_fixed_monthly_liability = entry.total_fixed_monthly_liability;
+      if (entry.total_variable_monthly_liability !== undefined) dbUpdates.total_variable_monthly_liability = entry.total_variable_monthly_liability;
+      if (entry.interest !== undefined) dbUpdates.interest = entry.interest;
+      if (entry.depreciation !== undefined) dbUpdates.depreciation = entry.depreciation;
+      if (entry.tax !== undefined) dbUpdates.tax = entry.tax;
+      if (entry.apportionment !== undefined) dbUpdates.apportionment = entry.apportionment;
+
+      const { error } = await supabase
+        .from('financial_tracker_daily')
+        .update(dbUpdates)
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Reload data to get updated entry
+      await loadFinancialTrackerData();
+    } catch (error) {
+      console.error('Error updating financial tracker entry:', error);
+      throw error;
+    }
+  };
+
+  const deleteFinancialTrackerEntry = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('financial_tracker_daily')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setFinancialTrackerData(prev => prev.filter(entry => entry.id !== id));
+    } catch (error) {
+      console.error('Error deleting financial tracker entry:', error);
+      throw error;
+    }
+  };
+
+  const calculateFinancialMetrics = (entry: FinancialTrackerDaily): FinancialCalculations => {
+    // G = (B*D) + (E*C) + F
+    const totalPerDayInflow = (entry.premium_room_occupancy * entry.per_day_room_tariff) +
+                              (entry.driver_room_occupancy * entry.per_day_driver_tariff) +
+                              entry.restaurant_inflow;
+
+    // Get days in current month
+    const date = new Date(entry.date);
+    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+    // Monthly inflow = G * days in month
+    const totalMonthlyInflow = totalPerDayInflow * daysInMonth;
+
+    // J = Monthly Inflow - (H + I)
+    // Note: H and I are monthly liabilities, so we use them directly
+    const grossProfitEBITDA = totalMonthlyInflow - (entry.total_fixed_monthly_liability + entry.total_variable_monthly_liability);
+
+    // Net Profit = J - (K + L + M + N)
+    const netProfit = grossProfitEBITDA - (entry.interest + entry.depreciation + entry.tax + entry.apportionment);
+
+    // Break-even status (vs 3L = 300,000 target)
+    const breakEvenTarget = 300000;
+    let breakEvenStatus: 'above' | 'below' | 'at' = 'below';
+    if (totalMonthlyInflow > breakEvenTarget) {
+      breakEvenStatus = 'above';
+    } else if (totalMonthlyInflow === breakEvenTarget) {
+      breakEvenStatus = 'at';
+    }
+    const breakEvenPercentage = (totalMonthlyInflow / breakEvenTarget) * 100;
+
+    return {
+      totalPerDayInflow,
+      totalMonthlyInflow,
+      grossProfitEBITDA,
+      netProfit,
+      breakEvenStatus,
+      breakEvenPercentage,
+    };
+  };
+
   // Admin auth is now handled by AuthContext, but we keep these for compatibility
   const isAdminLoggedIn = isAdmin;
 
@@ -607,6 +824,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       staff,
       investments,
       expenses,
+      financialTrackerData,
       loading,
       updateRoom,
       addRoom,
@@ -617,6 +835,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       toggleTask,
       addInvestment,
       addExpense,
+      loadFinancialTrackerData,
+      addFinancialTrackerEntry,
+      updateFinancialTrackerEntry,
+      deleteFinancialTrackerEntry,
+      calculateFinancialMetrics,
       isAdminLoggedIn,
       loginAdmin,
       logoutAdmin,

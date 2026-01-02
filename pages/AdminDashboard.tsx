@@ -7,7 +7,7 @@ import { supabase } from '../lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend } from 'recharts';
 import { DollarSign, Calendar, Users, TrendingUp, TrendingDown, Plus, X, LogOut, Briefcase, UserCheck, LayoutDashboard, BedDouble, CreditCard, Image as ImageIcon, Check, Lock, RotateCcw, Search, Filter, Settings, Upload, CheckCircle } from 'lucide-react';
 import DatePicker from '../components/DatePicker';
-import { BookingStatus, RoomCategory, PaymentStatus } from '../types';
+import { BookingStatus, RoomCategory, PaymentStatus, FinancialTrackerDaily, FinancialCalculations } from '../types';
 
 // Updated colors to match new theme: Blue, Copper, Gold, Red
 const COLORS = ['#4A90E2', '#8C5E45', '#D4AF37', '#E74C3C'];
@@ -35,19 +35,39 @@ const StatCard = ({ title, value, icon: Icon, trend, trendUp }: any) => (
 
 const AdminDashboard: React.FC = () => {
   const { 
-    rooms, bookings, staff, investments, expenses,
+    rooms, bookings, staff, investments, expenses, financialTrackerData,
     updateRoom, addRoom, addBooking, updateBooking, addStaff, addTask, toggleTask, addInvestment, addExpense,
+    loadFinancialTrackerData, addFinancialTrackerEntry, updateFinancialTrackerEntry, deleteFinancialTrackerEntry, calculateFinancialMetrics,
     homeHeroImage, adminBackgroundImage, updateHomeHeroImage, updateAdminBackgroundImage
   } = useApp();
   const { isAdmin, signOut, loading: authLoading } = useAuth();
   
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState<'overview' | 'rooms' | 'bookings' | 'staff' | 'finance' | 'settings'>('overview');
+  const [currentView, setCurrentView] = useState<'overview' | 'rooms' | 'bookings' | 'staff' | 'finance' | 'financial-tracker' | 'settings'>('overview');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [isInvestmentModalOpen, setIsInvestmentModalOpen] = useState(false);
+  const [isFinancialTrackerModalOpen, setIsFinancialTrackerModalOpen] = useState(false);
+  const [editingFinancialEntry, setEditingFinancialEntry] = useState<FinancialTrackerDaily | null>(null);
   const [notification, setNotification] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  
+  // Financial Tracker Form State
+  const [financialForm, setFinancialForm] = useState<Omit<FinancialTrackerDaily, 'id'>>({
+    date: new Date().toISOString().split('T')[0],
+    total_rooms: 0,
+    premium_room_occupancy: 0,
+    driver_room_occupancy: 0,
+    per_day_room_tariff: 0,
+    per_day_driver_tariff: 0,
+    restaurant_inflow: 0,
+    total_fixed_monthly_liability: 0,
+    total_variable_monthly_liability: 0,
+    interest: 0,
+    depreciation: 0,
+    tax: 0,
+    apportionment: 0,
+  });
   
   // Booking Status Management State
   const [editingRows, setEditingRows] = useState<Record<string, { status?: BookingStatus, paymentStatus?: PaymentStatus }>>({});
@@ -458,6 +478,10 @@ const AdminDashboard: React.FC = () => {
                   <CreditCard size={20} className={currentView === 'finance' ? 'text-urbane-gold' : 'text-gray-400'} /> 
                   <span className={`font-medium ${currentView === 'finance' ? 'text-white' : 'text-gray-300'}`}>Financials</span>
               </button>
+              <button onClick={() => setCurrentView('financial-tracker')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'financial-tracker' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
+                  <TrendingUp size={20} className={currentView === 'financial-tracker' ? 'text-urbane-gold' : 'text-gray-400'} /> 
+                  <span className={`font-medium ${currentView === 'financial-tracker' ? 'text-white' : 'text-gray-300'}`}>Financial Tracker</span>
+              </button>
               <button onClick={() => setCurrentView('settings')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'settings' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
                   <Settings size={20} className={currentView === 'settings' ? 'text-urbane-gold' : 'text-gray-400'} /> 
                   <span className={`font-medium ${currentView === 'settings' ? 'text-white' : 'text-gray-300'}`}>Settings</span>
@@ -489,6 +513,9 @@ const AdminDashboard: React.FC = () => {
             <button onClick={() => setCurrentView('finance')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'finance' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <CreditCard size={16} /> <span>Finance</span>
             </button>
+            <button onClick={() => setCurrentView('financial-tracker')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'financial-tracker' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
+                <TrendingUp size={16} /> <span>Tracker</span>
+            </button>
             <button onClick={() => setCurrentView('settings')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'settings' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <Settings size={16} /> <span>Settings</span>
             </button>
@@ -510,7 +537,10 @@ const AdminDashboard: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-12">
           <div className="mb-4 md:mb-0">
             <h1 className="font-serif text-4xl font-bold text-urbane-charcoal capitalize tracking-tight">
-              {currentView === 'finance' ? 'Financial Management' : currentView === 'staff' ? 'Staff & Task Management' : currentView}
+              {currentView === 'finance' ? 'Financial Management' : 
+               currentView === 'staff' ? 'Staff & Task Management' : 
+               currentView === 'financial-tracker' ? 'Financial Tracker' :
+               currentView}
             </h1>
             <p className="text-gray-500 mt-2 text-sm font-medium">Manage your property efficiently.</p>
           </div>
@@ -743,7 +773,7 @@ const AdminDashboard: React.FC = () => {
                         }, {} as Record<string, number>);
                         const expenseChartData = Object.entries(expenseCategories).map(([name, value]) => ({
                             name,
-                            value,
+                            value: Number(value),
                         }));
                         const totalExpenseValue = expenseChartData.reduce((sum, item) => sum + item.value, 0);
                         const expenseChartDataWithPercent = expenseChartData.map(item => ({
@@ -862,6 +892,243 @@ const AdminDashboard: React.FC = () => {
                     </div>
                 </div>
             </div>
+        )}
+
+        {currentView === 'financial-tracker' && (
+          <div className="animate-fade-in space-y-8">
+            {/* Header */}
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="font-serif text-4xl font-bold text-urbane-charcoal">Financial Tracker</h1>
+                <p className="text-gray-500 mt-2 text-sm font-medium">Track daily revenue, occupancy, and profitability metrics</p>
+              </div>
+              <button
+                onClick={() => {
+                  setEditingFinancialEntry(null);
+                  setFinancialForm({
+                    date: new Date().toISOString().split('T')[0],
+                    total_rooms: rooms.length,
+                    premium_room_occupancy: 0,
+                    driver_room_occupancy: 0,
+                    per_day_room_tariff: 0,
+                    per_day_driver_tariff: 0,
+                    restaurant_inflow: 0,
+                    total_fixed_monthly_liability: 0,
+                    total_variable_monthly_liability: 0,
+                    interest: 0,
+                    depreciation: 0,
+                    tax: 0,
+                    apportionment: 0,
+                  });
+                  setIsFinancialTrackerModalOpen(true);
+                }}
+                className="bg-urbane-gold hover:bg-opacity-90 text-white px-6 py-3 rounded-lg font-bold text-sm uppercase tracking-wider flex items-center space-x-2 shadow-lg"
+              >
+                <Plus size={18} /> <span>Add Daily Entry</span>
+              </button>
+            </div>
+
+            {/* KPI Cards */}
+            {financialTrackerData.length > 0 && (() => {
+              const latestEntry = financialTrackerData[0];
+              const metrics = calculateFinancialMetrics(latestEntry);
+              const breakEvenTarget = 300000;
+              
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                  <StatCard
+                    title="Daily Inflow (G)"
+                    value={`₹${metrics.totalPerDayInflow.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+                    icon={DollarSign}
+                    trend={`${metrics.totalPerDayInflow >= 10000 ? '✓' : '⚠'}`}
+                    trendUp={metrics.totalPerDayInflow >= 10000}
+                  />
+                  <StatCard
+                    title="Monthly Inflow"
+                    value={`₹${metrics.totalMonthlyInflow.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+                    icon={TrendingUp}
+                    trend={`${metrics.breakEvenPercentage.toFixed(1)}%`}
+                    trendUp={metrics.breakEvenStatus === 'above'}
+                  />
+                  <StatCard
+                    title="EBITDA (J)"
+                    value={`₹${metrics.grossProfitEBITDA.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+                    icon={TrendingUp}
+                    trend={metrics.grossProfitEBITDA >= 0 ? 'Profit' : 'Loss'}
+                    trendUp={metrics.grossProfitEBITDA >= 0}
+                  />
+                  <StatCard
+                    title="Net Profit"
+                    value={`₹${metrics.netProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`}
+                    icon={DollarSign}
+                    trend={metrics.netProfit >= 0 ? 'Positive' : 'Negative'}
+                    trendUp={metrics.netProfit >= 0}
+                  />
+                  <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-urbane-gold">
+                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-2">Break-Even Status</p>
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-600">Target: ₹3L</span>
+                        <span className={`text-sm font-bold ${metrics.breakEvenStatus === 'above' ? 'text-green-600' : 'text-red-600'}`}>
+                          {metrics.breakEvenStatus === 'above' ? '✓ Above' : metrics.breakEvenStatus === 'at' ? 'At Target' : 'Below'}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-3">
+                        <div
+                          className={`h-3 rounded-full transition-all ${metrics.breakEvenStatus === 'above' ? 'bg-green-500' : 'bg-red-500'}`}
+                          style={{ width: `${Math.min(metrics.breakEvenPercentage, 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        {metrics.totalMonthlyInflow.toLocaleString('en-IN')} / {breakEvenTarget.toLocaleString('en-IN')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Charts */}
+            {financialTrackerData.length > 0 && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Daily Inflow Trend */}
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">Daily Inflow Trend</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <AreaChart data={financialTrackerData.slice(0, 30).reverse().map(entry => ({
+                      date: new Date(entry.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }),
+                      inflow: calculateFinancialMetrics(entry).totalPerDayInflow,
+                    }))}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip formatter={(value: number) => `₹${value.toLocaleString('en-IN')}`} />
+                      <Area type="monotone" dataKey="inflow" stroke="#D4AF37" fill="#D4AF37" fillOpacity={0.3} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Monthly Comparison */}
+                <div className="bg-white rounded-xl p-6 shadow-lg">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">Monthly Inflow vs Target</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={(() => {
+                      const latestEntry = financialTrackerData[0];
+                      const metrics = calculateFinancialMetrics(latestEntry);
+                      return [{
+                        name: 'Current',
+                        inflow: metrics.totalMonthlyInflow,
+                        target: 300000,
+                      }];
+                    })()}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip formatter={(value: number) => `₹${value.toLocaleString('en-IN')}`} />
+                      <Legend />
+                      <Bar dataKey="inflow" fill="#D4AF37" name="Current Monthly" />
+                      <Bar dataKey="target" fill="#8C5E45" name="Target (3L)" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+
+            {/* Historical Data Table */}
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div className="p-6 border-b border-gray-100">
+                <h3 className="text-lg font-bold text-gray-800">Historical Entries</h3>
+                <p className="text-sm text-gray-500 mt-1">View and edit past financial entries</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Daily Inflow</th>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Monthly Inflow</th>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">EBITDA</th>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Net Profit</th>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {financialTrackerData.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                          No financial entries yet. Click "Add Daily Entry" to get started.
+                        </td>
+                      </tr>
+                    ) : (
+                      financialTrackerData.map((entry) => {
+                        const metrics = calculateFinancialMetrics(entry);
+                        return (
+                          <tr key={entry.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {new Date(entry.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                              ₹{metrics.totalPerDayInflow.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                              ₹{metrics.totalMonthlyInflow.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                            </td>
+                            <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${metrics.grossProfitEBITDA >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              ₹{metrics.grossProfitEBITDA.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                            </td>
+                            <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${metrics.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              ₹{metrics.netProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              <button
+                                onClick={() => {
+                                  setEditingFinancialEntry(entry);
+                                  setFinancialForm({
+                                    date: entry.date,
+                                    total_rooms: entry.total_rooms,
+                                    premium_room_occupancy: entry.premium_room_occupancy,
+                                    driver_room_occupancy: entry.driver_room_occupancy,
+                                    per_day_room_tariff: entry.per_day_room_tariff,
+                                    per_day_driver_tariff: entry.per_day_driver_tariff,
+                                    restaurant_inflow: entry.restaurant_inflow,
+                                    total_fixed_monthly_liability: entry.total_fixed_monthly_liability,
+                                    total_variable_monthly_liability: entry.total_variable_monthly_liability,
+                                    interest: entry.interest,
+                                    depreciation: entry.depreciation,
+                                    tax: entry.tax,
+                                    apportionment: entry.apportionment,
+                                  });
+                                  setIsFinancialTrackerModalOpen(true);
+                                }}
+                                className="text-urbane-gold hover:text-urbane-darkGreen mr-4"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  if (confirm('Are you sure you want to delete this entry?')) {
+                                    try {
+                                      await deleteFinancialTrackerEntry(entry.id);
+                                      showNotification('Entry deleted successfully');
+                                    } catch (error) {
+                                      showNotification('Error deleting entry', 'error');
+                                    }
+                                  }
+                                }}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         )}
 
         {currentView === 'settings' && (
@@ -1413,6 +1680,311 @@ const AdminDashboard: React.FC = () => {
               <button type="submit" className="w-full bg-urbane-gold text-white py-4 font-bold uppercase tracking-widest rounded hover:shadow-lg transition-all transform hover:-translate-y-0.5">
                 Add Investment
               </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Financial Tracker Modal */}
+      {isFinancialTrackerModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="bg-urbane-darkGreen p-6 flex justify-between items-center text-white sticky top-0 z-10">
+              <h3 className="font-serif text-xl font-bold">
+                {editingFinancialEntry ? 'Edit Financial Entry' : 'Add Daily Financial Entry'}
+              </h3>
+              <button
+                onClick={() => {
+                  setIsFinancialTrackerModalOpen(false);
+                  setEditingFinancialEntry(null);
+                }}
+                className="hover:bg-white/10 p-1 rounded transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  if (editingFinancialEntry) {
+                    await updateFinancialTrackerEntry(editingFinancialEntry.id, financialForm);
+                    showNotification('Financial entry updated successfully');
+                  } else {
+                    await addFinancialTrackerEntry(financialForm);
+                    showNotification('Financial entry added successfully');
+                  }
+                  setIsFinancialTrackerModalOpen(false);
+                  setEditingFinancialEntry(null);
+                  setFinancialForm({
+                    date: new Date().toISOString().split('T')[0],
+                    total_rooms: rooms.length,
+                    premium_room_occupancy: 0,
+                    driver_room_occupancy: 0,
+                    per_day_room_tariff: 0,
+                    per_day_driver_tariff: 0,
+                    restaurant_inflow: 0,
+                    total_fixed_monthly_liability: 0,
+                    total_variable_monthly_liability: 0,
+                    interest: 0,
+                    depreciation: 0,
+                    tax: 0,
+                    apportionment: 0,
+                  });
+                } catch (error: any) {
+                  showNotification(error.message || 'Error saving entry', 'error');
+                }
+              }}
+              className="p-8 space-y-6"
+            >
+              {/* Real-time Calculations Display */}
+              {(() => {
+                const tempEntry: FinancialTrackerDaily = {
+                  id: '',
+                  ...financialForm,
+                };
+                const calc = calculateFinancialMetrics(tempEntry);
+                const daysInMonth = new Date(financialForm.date).getDate() === 31 ? 31 : 30;
+                
+                return (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <h4 className="font-bold text-blue-900 mb-3">Calculated Values (Real-time)</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <p className="text-blue-600 font-medium">Daily Inflow (G)</p>
+                        <p className="text-lg font-bold text-blue-900">₹{calc.totalPerDayInflow.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
+                        {calc.totalPerDayInflow < 10000 && (
+                          <p className="text-xs text-red-600 mt-1">⚠ Below 10K obligation</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-blue-600 font-medium">Monthly Inflow</p>
+                        <p className="text-lg font-bold text-blue-900">₹{calc.totalMonthlyInflow.toLocaleString('en-IN', { maximumFractionDigits: 0 })}</p>
+                      </div>
+                      <div>
+                        <p className="text-blue-600 font-medium">EBITDA (J)</p>
+                        <p className={`text-lg font-bold ${calc.grossProfitEBITDA >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          ₹{calc.grossProfitEBITDA.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-blue-600 font-medium">Net Profit</p>
+                        <p className={`text-lg font-bold ${calc.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          ₹{calc.netProfit.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Date */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Date</label>
+                  <DatePicker
+                    label=""
+                    name="date"
+                    value={financialForm.date}
+                    onChange={(name, value) => setFinancialForm({ ...financialForm, date: value })}
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+
+                {/* Total Rooms (A) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Rooms (A) - Fixed</label>
+                  <input
+                    type="number"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.total_rooms || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, total_rooms: parseInt(e.target.value) || 0 })}
+                    required
+                    min="0"
+                  />
+                </div>
+
+                {/* Premium Room Occupancy (B) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Premium Room Occupancy (B) - Variable</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.premium_room_occupancy || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, premium_room_occupancy: parseFloat(e.target.value) || 0 })}
+                    required
+                    min="0"
+                    placeholder="Number or percentage"
+                  />
+                </div>
+
+                {/* Driver Room Occupancy (C) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Driver Room Occupancy (C) - Variable</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.driver_room_occupancy || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, driver_room_occupancy: parseFloat(e.target.value) || 0 })}
+                    required
+                    min="0"
+                    placeholder="Number or percentage"
+                  />
+                </div>
+
+                {/* Per Day Room Tariff (D) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Per Day Room Tariff (D) - Variable</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.per_day_room_tariff || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, per_day_room_tariff: parseFloat(e.target.value) || 0 })}
+                    required
+                    min="0"
+                    placeholder="₹"
+                  />
+                </div>
+
+                {/* Per Day Driver Tariff (E) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Per Day Driver Tariff (E) - Variable</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.per_day_driver_tariff || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, per_day_driver_tariff: parseFloat(e.target.value) || 0 })}
+                    required
+                    min="0"
+                    placeholder="₹"
+                  />
+                </div>
+
+                {/* Restaurant Inflow (F) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Restaurant Inflow (F) - Variable</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.restaurant_inflow || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, restaurant_inflow: parseFloat(e.target.value) || 0 })}
+                    min="0"
+                    placeholder="₹ (Placeholder for future integration)"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Placeholder - will integrate with restaurant POS system</p>
+                </div>
+
+                {/* Fixed Monthly Liability (H) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Fixed Monthly Liability (H) - Fixed</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.total_fixed_monthly_liability || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, total_fixed_monthly_liability: parseFloat(e.target.value) || 0 })}
+                    required
+                    min="0"
+                    placeholder="₹"
+                  />
+                </div>
+
+                {/* Variable Monthly Liability (I) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Variable Monthly Liability (I) - Variable</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.total_variable_monthly_liability || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, total_variable_monthly_liability: parseFloat(e.target.value) || 0 })}
+                    required
+                    min="0"
+                    placeholder="₹"
+                  />
+                </div>
+
+                {/* Interest (K) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Interest (K)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.interest || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, interest: parseFloat(e.target.value) || 0 })}
+                    min="0"
+                    placeholder="₹"
+                  />
+                </div>
+
+                {/* Depreciation (L) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Depreciation (L)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.depreciation || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, depreciation: parseFloat(e.target.value) || 0 })}
+                    min="0"
+                    placeholder="₹"
+                  />
+                </div>
+
+                {/* Tax (M) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Tax (M)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.tax || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, tax: parseFloat(e.target.value) || 0 })}
+                    min="0"
+                    placeholder="₹"
+                  />
+                </div>
+
+                {/* Apportionment (N) */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Apportionment (N)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    className="w-full p-3 bg-gray-50 rounded border border-gray-200 text-sm focus:border-urbane-gold outline-none"
+                    value={financialForm.apportionment || ''}
+                    onChange={(e) => setFinancialForm({ ...financialForm, apportionment: parseFloat(e.target.value) || 0 })}
+                    min="0"
+                    placeholder="₹"
+                  />
+                </div>
+              </div>
+
+              <div className="flex space-x-4 pt-6 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsFinancialTrackerModalOpen(false);
+                    setEditingFinancialEntry(null);
+                  }}
+                  className="flex-1 border border-gray-300 text-gray-600 py-3 font-bold uppercase tracking-widest hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-urbane-gold hover:bg-opacity-90 text-white py-3 font-bold uppercase tracking-widest shadow-lg transition-all"
+                >
+                  {editingFinancialEntry ? 'Update Entry' : 'Save Entry'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

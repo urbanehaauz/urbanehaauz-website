@@ -79,3 +79,29 @@ export interface FinancialSummary {
   totalInvestment: number;
   netProfit: number;
 }
+
+export interface FinancialTrackerDaily {
+  id: string;
+  date: string;
+  total_rooms: number; // A
+  premium_room_occupancy: number; // B
+  driver_room_occupancy: number; // C
+  per_day_room_tariff: number; // D
+  per_day_driver_tariff: number; // E
+  restaurant_inflow: number; // F
+  total_fixed_monthly_liability: number; // H
+  total_variable_monthly_liability: number; // I
+  interest: number; // K
+  depreciation: number; // L
+  tax: number; // M
+  apportionment: number; // N
+}
+
+export interface FinancialCalculations {
+  totalPerDayInflow: number; // G = (B*D) + (E*C) + F
+  totalMonthlyInflow: number; // G * 30 or 31
+  grossProfitEBITDA: number; // J = G - (H+I)
+  netProfit: number; // J - (K+L+M+N)
+  breakEvenStatus: 'above' | 'below' | 'at'; // vs 3L target
+  breakEvenPercentage: number; // percentage of 3L target
+}

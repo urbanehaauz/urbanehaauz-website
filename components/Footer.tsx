@@ -1,6 +1,19 @@
 import React from 'react';
-import { Mountain, MapPin, Phone, Mail, Instagram, Facebook } from 'lucide-react';
+import { Mountain, MapPin, Phone, Mail, Instagram, Facebook, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+// Hotel contact information - centralized for easy updates
+export const HOTEL_CONTACT = {
+  phone: '+91 9136032524',
+  phoneClean: '+919136032524',
+  email: 'urbanehaauz@gmail.com',
+  whatsapp: '+919136032524',
+  address: 'SH-510, Pelling, West Sikkim',
+  city: 'Sikkim, India 737113',
+  instagram: 'https://instagram.com/urbanehaauz',
+  facebook: 'https://facebook.com/urbanehaauz',
+  gstin: '11AAAAA0000A1Z5',
+};
 
 const Footer: React.FC = () => {
   return (
@@ -32,15 +45,26 @@ const Footer: React.FC = () => {
             <ul className="space-y-3 text-gray-300">
               <li className="flex items-start space-x-3">
                 <MapPin size={18} className="mt-1 flex-shrink-0" />
-                <span>SH-510, Pelling, West Sikkim<br />Sikkim, India 737113</span>
+                <span>{HOTEL_CONTACT.address}<br />{HOTEL_CONTACT.city}</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={18} />
-                <a href="tel:+919876543210" className="hover:text-urbane-gold transition-colors">+91 98765 43210</a>
+                <a href={`tel:${HOTEL_CONTACT.phoneClean}`} className="hover:text-urbane-gold transition-colors">{HOTEL_CONTACT.phone}</a>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={18} />
-                <a href="mailto:stay@urbanehaauz.com" className="hover:text-urbane-gold transition-colors">stay@urbanehaauz.com</a>
+                <a href={`mailto:${HOTEL_CONTACT.email}`} className="hover:text-urbane-gold transition-colors">{HOTEL_CONTACT.email}</a>
+              </li>
+              <li className="flex items-center space-x-3">
+                <MessageCircle size={18} />
+                <a
+                  href={`https://wa.me/${HOTEL_CONTACT.whatsapp}?text=Hi! I'm interested in booking a stay at Urbane Haauz.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-urbane-gold transition-colors"
+                >
+                  WhatsApp Us
+                </a>
               </li>
             </ul>
           </div>
@@ -48,15 +72,24 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-serif text-lg font-semibold text-urbane-gold mb-4">Follow Us</h3>
             <div className="flex space-x-4">
-              <a href="https://instagram.com/urbanehaauz" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="bg-white/10 p-2 rounded-full hover:bg-urbane-gold hover:text-urbane-darkGreen transition-colors">
+              <a href={HOTEL_CONTACT.instagram} target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="bg-white/10 p-2 rounded-full hover:bg-urbane-gold hover:text-urbane-darkGreen transition-colors">
                 <Instagram size={20} />
               </a>
-              <a href="https://facebook.com/urbanehaauz" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="bg-white/10 p-2 rounded-full hover:bg-urbane-gold hover:text-urbane-darkGreen transition-colors">
+              <a href={HOTEL_CONTACT.facebook} target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="bg-white/10 p-2 rounded-full hover:bg-urbane-gold hover:text-urbane-darkGreen transition-colors">
                 <Facebook size={20} />
+              </a>
+              <a
+                href={`https://wa.me/${HOTEL_CONTACT.whatsapp}?text=Hi! I'm interested in booking a stay at Urbane Haauz.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Chat with us on WhatsApp"
+                className="bg-white/10 p-2 rounded-full hover:bg-green-500 hover:text-white transition-colors"
+              >
+                <MessageCircle size={20} />
               </a>
             </div>
             <div className="mt-6">
-              <p className="text-sm text-gray-400">GSTIN: 11AAAAA0000A1Z5</p>
+              <p className="text-sm text-gray-400">GSTIN: {HOTEL_CONTACT.gstin}</p>
             </div>
           </div>
         </div>

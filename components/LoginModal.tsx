@@ -124,7 +124,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         // Close modal when clicking backdrop
         if (e.target === e.currentTarget) onClose();
       }}
-      onWheel={handleWheel}
     >
       <div
       className="modal-content bg-white rounded-xl shadow-2xl w-full max-w-md animate-fade-in-up my-8 max-h-[90vh] overflow-y-auto"

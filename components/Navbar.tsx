@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Mountain, User, LogOut } from 'lucide-react';
+import { Menu, X, Mountain, User, LogOut, CalendarCheck, MapPin, Mail } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import LoginModal from './LoginModal';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +13,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const { user, signOut, loading, isAdmin } = useAuth();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,18 +50,26 @@ const Navbar: React.FC = () => {
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             <Link to="/" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
-                Home
+                {t.home}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
             <Link to="/rooms" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
-                Rooms
+                {t.rooms}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
+            </Link>
+            <Link to="/experiences" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
+                {t.experiences}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
+            </Link>
+            <Link to="/contact" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
+                {t.contact}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
             {isAdmin && (
               <Link to="/admin" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
-                  Admin
+                  {t.admin}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
               </Link>
             )}
@@ -71,17 +82,24 @@ const Navbar: React.FC = () => {
                     </div>
                     <span className="text-sm font-medium">{user.email?.split('@')[0]}</span>
                   </button>
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-2">
                       <div className="px-4 py-2 text-sm text-gray-700 border-b">
                         {user.email}
                       </div>
+                      <Link
+                        to="/my-bookings"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
+                      >
+                        <CalendarCheck size={16} />
+                        <span>{t.myBookings}</span>
+                      </Link>
                       <button
                         onClick={signOut}
                         className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2"
                       >
                         <LogOut size={16} />
-                        <span>Sign Out</span>
+                        <span>{t.logout}</span>
                       </button>
                     </div>
                   </div>
@@ -91,15 +109,16 @@ const Navbar: React.FC = () => {
                   onClick={() => setIsLoginModalOpen(true)}
                   className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors"
                 >
-                  Login
+                  {t.login}
                 </button>
               )
             )}
+            <LanguageSwitcher variant="navbar" />
             <Link
               to="/book"
-              className="bg-gradient-to-r from-urbane-gold to-urbane-goldLight text-urbane-darkGreen px-8 py-2.5 rounded-none font-bold hover:shadow-gold hover:scale-105 transition-all duration-300 text-sm tracking-wide"
+              className="bg-gradient-to-r from-urbane-gold to-urbane-goldLight text-urbane-darkGreen px-6 py-2.5 rounded-none font-bold hover:shadow-gold hover:scale-105 transition-all duration-300 text-sm tracking-wide"
             >
-              BOOK NOW
+              {t.bookNow.toUpperCase()}
             </Link>
           </div>
 
@@ -115,35 +134,84 @@ const Navbar: React.FC = () => {
       {isOpen && (
         <div className="md:hidden glass-dark absolute w-full shadow-xl border-t border-white/10">
           <div className="px-4 pt-4 pb-8 space-y-4 flex flex-col items-center">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="text-white text-lg font-serif hover:text-urbane-gold"
               onClick={() => setIsOpen(false)}
             >
-              Home
+              {t.home}
             </Link>
-            <Link 
-              to="/rooms" 
+            <Link
+              to="/rooms"
               className="text-white text-lg font-serif hover:text-urbane-gold"
               onClick={() => setIsOpen(false)}
             >
-              Accommodation
+              {t.rooms}
             </Link>
+            <Link
+              to="/experiences"
+              className="text-white text-lg font-serif hover:text-urbane-gold"
+              onClick={() => setIsOpen(false)}
+            >
+              {t.experiences}
+            </Link>
+            <Link
+              to="/contact"
+              className="text-white text-lg font-serif hover:text-urbane-gold"
+              onClick={() => setIsOpen(false)}
+            >
+              {t.contact}
+            </Link>
+            {user && (
+              <Link
+                to="/my-bookings"
+                className="text-white text-lg font-serif hover:text-urbane-gold"
+                onClick={() => setIsOpen(false)}
+              >
+                {t.myBookings}
+              </Link>
+            )}
             {isAdmin && (
               <Link
                 to="/admin"
                 className="text-white text-lg font-serif hover:text-urbane-gold"
                 onClick={() => setIsOpen(false)}
               >
-                Admin Panel
+                {t.admin}
               </Link>
             )}
-            <Link 
-              to="/book" 
+            {!loading && !user && (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  setIsLoginModalOpen(true);
+                }}
+                className="text-white text-lg font-serif hover:text-urbane-gold"
+              >
+                {t.login}
+              </button>
+            )}
+            {user && (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  signOut();
+                }}
+                className="text-gray-300 text-sm hover:text-urbane-gold flex items-center space-x-2"
+              >
+                <LogOut size={16} />
+                <span>{t.logout}</span>
+              </button>
+            )}
+            <div className="pt-2">
+              <LanguageSwitcher variant="navbar" />
+            </div>
+            <Link
+              to="/book"
               className="w-full max-w-xs bg-urbane-gold text-urbane-green font-bold py-3 rounded-none text-center mt-4"
               onClick={() => setIsOpen(false)}
             >
-              BOOK YOUR STAY
+              {t.bookYourStay.toUpperCase()}
             </Link>
           </div>
         </div>

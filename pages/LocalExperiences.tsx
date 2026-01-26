@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mountain, Camera, Footprints, TreePine, Landmark, Waves, ChevronRight, MapPin, Clock, Star } from 'lucide-react';
+import { Mountain, Camera, Footprints, TreePine, Landmark, Waves, ChevronRight, MapPin, Clock, Star, MessageCircle } from 'lucide-react';
+import { HOTEL_CONTACT } from '../components/Footer';
 
 interface Experience {
   id: number;
@@ -219,10 +220,19 @@ const LocalExperiences: React.FC = () => {
               Book Your Stay
             </Link>
             <a
-              href="tel:+919876543210"
+              href={`tel:${HOTEL_CONTACT.phoneClean}`}
               className="inline-block border-2 border-urbane-charcoal text-urbane-charcoal px-10 py-4 hover:bg-urbane-charcoal hover:text-white transition-all duration-300 font-bold tracking-widest uppercase text-sm"
             >
-              Call Us: +91 98765 43210
+              Call Us: {HOTEL_CONTACT.phone}
+            </a>
+            <a
+              href={`https://wa.me/${HOTEL_CONTACT.whatsapp}?text=Hi! I'd like to know more about local experiences near Urbane Haauz.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-green-500 text-white px-10 py-4 shadow-xl hover:bg-green-600 hover:-translate-y-1 transition-all duration-300 font-bold tracking-widest uppercase text-sm"
+            >
+              <MessageCircle size={18} />
+              WhatsApp
             </a>
           </div>
         </div>

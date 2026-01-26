@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mountain, Camera, Footprints, TreePine, Landmark, Waves, ChevronRight, MapPin, Clock, Star, MessageCircle } from 'lucide-react';
+import { Mountain, Footprints, Landmark, Waves, MapPin, Clock, Star, MessageCircle } from 'lucide-react';
 import { HOTEL_CONTACT } from '../components/Footer';
 
 interface Experience {
   id: number;
   title: string;
   description: string;
-  image: string;
   duration: string;
   difficulty: string;
   distance: string;
@@ -20,7 +19,6 @@ const experiences: Experience[] = [
     id: 1,
     title: "Pelling Skywalk",
     description: "Walk among the clouds on India's first glass skywalk. Experience breathtaking panoramic views of the Kanchenjunga range from 7,200 feet above sea level.",
-    image: "https://images.unsplash.com/photo-1724525169507-dcc4dcb0b99e?w=800&q=80",
     duration: "2-3 hours",
     difficulty: "Easy",
     distance: "2 km from hotel",
@@ -31,7 +29,6 @@ const experiences: Experience[] = [
     id: 2,
     title: "Rabdentse Ruins",
     description: "Explore the ancient ruins of Sikkim's second capital. These 17th-century palace remains offer a glimpse into the region's rich Buddhist heritage.",
-    image: "https://images.unsplash.com/photo-1609766857041-ed402ea8069a?w=800&q=80",
     duration: "3-4 hours",
     difficulty: "Moderate",
     distance: "3 km from hotel",
@@ -42,7 +39,6 @@ const experiences: Experience[] = [
     id: 3,
     title: "Khecheopalri Lake",
     description: "Visit the sacred 'Wish-fulfilling Lake' surrounded by dense forests. Legend says leaves that fall on the lake are picked up by birds to keep it clean.",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
     duration: "Half day",
     difficulty: "Easy",
     distance: "28 km from hotel",
@@ -53,7 +49,6 @@ const experiences: Experience[] = [
     id: 4,
     title: "Kanchenjunga Falls",
     description: "Witness one of Sikkim's most stunning waterfalls cascading down from a height of 100 feet, surrounded by lush greenery and misty mountains.",
-    image: "https://images.unsplash.com/photo-1475113548554-5a36f1f523d6?w=800&q=80",
     duration: "2-3 hours",
     difficulty: "Easy",
     distance: "5 km from hotel",
@@ -64,7 +59,6 @@ const experiences: Experience[] = [
     id: 5,
     title: "Singshore Bridge Trek",
     description: "Walk across Asia's second-highest suspension bridge and enjoy spectacular valley views. The trek through rhododendron forests is unforgettable.",
-    image: "https://images.unsplash.com/photo-1545893835-abaa50cbe628?w=800&q=80",
     duration: "4-5 hours",
     difficulty: "Moderate",
     distance: "8 km from hotel",
@@ -75,7 +69,6 @@ const experiences: Experience[] = [
     id: 6,
     title: "Pemayangtse Monastery",
     description: "One of Sikkim's oldest and most significant monasteries. Marvel at the intricate wooden sculpture depicting the heavenly abode of Guru Padmasambhava.",
-    image: "https://images.unsplash.com/photo-1567502429577-ad05e2d7e819?w=800&q=80",
     duration: "2-3 hours",
     difficulty: "Easy",
     distance: "1.5 km from hotel",
@@ -88,24 +81,21 @@ const LocalExperiences: React.FC = () => {
   return (
     <div className="flex flex-col w-full font-sans">
       {/* Hero Section */}
-      <section className="relative h-[60vh] w-full overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=1600&q=80"
-            alt="Kanchenjunga view from Pelling, Sikkim"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
+      <section className="relative h-[40vh] w-full overflow-hidden bg-gradient-to-br from-urbane-darkGreen via-urbane-green to-urbane-darkGreen">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }} />
         </div>
 
         <div className="relative h-full flex flex-col justify-center items-center text-center px-4 z-10 pt-20">
-          <span className="text-white uppercase tracking-[0.3em] text-xs md:text-sm mb-6 font-semibold animate-fade-in-up border-b border-white/50 pb-2 drop-shadow-md">
+          <span className="text-white uppercase tracking-[0.3em] text-xs md:text-sm mb-6 font-semibold animate-fade-in-up border-b border-white/50 pb-2">
             Discover Pelling
           </span>
-          <h1 className="font-serif text-4xl md:text-7xl text-white font-normal mb-6 max-w-5xl leading-tight text-shadow drop-shadow-xl">
-            Local <span className="text-white italic font-light">Experiences</span>
+          <h1 className="font-serif text-4xl md:text-6xl text-white font-normal mb-6 max-w-5xl leading-tight">
+            Local <span className="text-urbane-gold italic font-light">Experiences</span>
           </h1>
-          <p className="font-serif text-white/90 text-base md:text-xl mb-8 max-w-2xl italic tracking-wide leading-relaxed drop-shadow-md">
+          <p className="font-serif text-white/90 text-base md:text-xl mb-8 max-w-2xl italic tracking-wide leading-relaxed">
             Immerse yourself in the magic of West Sikkim
           </p>
         </div>
@@ -125,45 +115,38 @@ const LocalExperiences: React.FC = () => {
         </div>
       </section>
 
-      {/* Experiences Grid */}
+      {/* Experiences Grid - Card style without images */}
       <section className="py-16 bg-urbane-mist">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {experiences.map((exp) => (
-              <div key={exp.id} className="bg-white rounded-none shadow-soft hover:shadow-xl transition-all duration-500 overflow-hidden group">
-                <div className="relative h-56 overflow-hidden">
-                  <img
-                    src={exp.image}
-                    alt={exp.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-urbane-gold text-white px-3 py-1 text-xs font-bold uppercase tracking-wider">
+              <div key={exp.id} className="bg-white rounded-none shadow-soft hover:shadow-xl transition-all duration-500 overflow-hidden group border-t-4 border-urbane-gold">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 bg-urbane-mist rounded-full">
+                      <exp.icon className="h-6 w-6 text-urbane-green" />
+                    </div>
+                    <span className="bg-urbane-gold/10 text-urbane-gold px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full">
                       {exp.difficulty}
                     </span>
                   </div>
-                </div>
 
-                <div className="p-6">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <exp.icon className="h-5 w-5 text-urbane-green" />
-                    <h3 className="font-serif text-xl font-bold text-urbane-charcoal">{exp.title}</h3>
-                  </div>
+                  <h3 className="font-serif text-xl font-bold text-urbane-charcoal mb-3">{exp.title}</h3>
 
                   <p className="text-gray-600 text-sm leading-relaxed mb-4">
                     {exp.description}
                   </p>
 
-                  <div className="flex flex-wrap gap-4 text-xs text-gray-500 mb-4">
+                  <div className="flex flex-wrap gap-4 text-xs text-gray-500 mb-4 pb-4 border-b border-gray-100">
                     <span className="flex items-center">
-                      <Clock size={14} className="mr-1" /> {exp.duration}
+                      <Clock size={14} className="mr-1 text-urbane-gold" /> {exp.duration}
                     </span>
                     <span className="flex items-center">
-                      <MapPin size={14} className="mr-1" /> {exp.distance}
+                      <MapPin size={14} className="mr-1 text-urbane-gold" /> {exp.distance}
                     </span>
                   </div>
 
-                  <div className="border-t border-gray-100 pt-4">
+                  <div>
                     <p className="text-xs font-semibold text-urbane-charcoal mb-2">Highlights:</p>
                     <div className="flex flex-wrap gap-2">
                       {exp.highlights.map((highlight, idx) => (

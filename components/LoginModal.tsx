@@ -76,29 +76,61 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // Lock body scroll when modal is open
+  // Lock body scroll when modal is open - robust solution for all browsers
   React.useEffect(() => {
     if (isOpen) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
       document.body.style.overflow = 'hidden';
     } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.overflow = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
+      }
     }
     return () => {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.overflow = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
+      }
     };
   }, [isOpen]);
+
+  // Prevent scroll events from propagating to the background
+  const handleWheel = (e: React.WheelEvent) => {
+    e.stopPropagation();
+  };
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={(e) => {
         // Close modal when clicking backdrop
         if (e.target === e.currentTarget) onClose();
       }}
+      onWheel={handleWheel}
     >
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md animate-fade-in-up my-8 max-h-[90vh] overflow-y-auto">
+      <div
+      className="bg-white rounded-xl shadow-2xl w-full max-w-md animate-fade-in-up my-8 max-h-[90vh] overflow-y-auto"
+      style={{ overscrollBehavior: 'contain' }}
+    >
         <div className="bg-urbane-darkGreen p-6 flex justify-between items-center text-white">
           <h3 className="font-serif text-xl font-bold">
             {isLogin ? 'Sign In' : 'Create Account'}

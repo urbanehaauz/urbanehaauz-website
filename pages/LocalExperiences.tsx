@@ -20,29 +20,29 @@ const experiences: Experience[] = [
     id: 1,
     title: "Pelling Skywalk",
     description: "Walk among the clouds on India's first glass skywalk. Experience breathtaking panoramic views of the Kanchenjunga range from 7,200 feet above sea level.",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Pelling_Sky_Walk_4.jpg/1280px-Pelling_Sky_Walk_4.jpg",
     duration: "2-3 hours",
     difficulty: "Easy",
     distance: "2 km from hotel",
-    highlights: ["Glass floor walkway", "360° mountain views", "Suspension bridge", "Best at sunrise"],
+    highlights: ["Glass floor walkway", "360° mountain views", "Chenrezig Statue", "Best at sunrise"],
     icon: Mountain
   },
   {
     id: 2,
     title: "Rabdentse Ruins",
     description: "Explore the ancient ruins of Sikkim's second capital. These 17th-century palace remains offer a glimpse into the region's rich Buddhist heritage.",
-    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Ruins_of_Rabdentse%2C_second_capital_of_Sikkim_near_Pelling%2C_West_Sikkim_02.jpg/1280px-Ruins_of_Rabdentse%2C_second_capital_of_Sikkim_near_Pelling%2C_West_Sikkim_02.jpg",
     duration: "3-4 hours",
     difficulty: "Moderate",
     distance: "3 km from hotel",
-    highlights: ["UNESCO tentative site", "Historic palace ruins", "Scenic hiking trail", "Monastery nearby"],
+    highlights: ["National monument", "Historic palace ruins", "Scenic hiking trail", "Monastery nearby"],
     icon: Landmark
   },
   {
     id: 3,
     title: "Khecheopalri Lake",
     description: "Visit the sacred 'Wish-fulfilling Lake' surrounded by dense forests. Legend says leaves that fall on the lake are picked up by birds to keep it clean.",
-    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=80",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Khecheopalri_Lake%2C_Sikkim%2C_India.jpg/1280px-Khecheopalri_Lake%2C_Sikkim%2C_India.jpg",
     duration: "Half day",
     difficulty: "Easy",
     distance: "28 km from hotel",
@@ -53,7 +53,7 @@ const experiences: Experience[] = [
     id: 4,
     title: "Kanchenjunga Falls",
     description: "Witness one of Sikkim's most stunning waterfalls cascading down from a height of 100 feet, surrounded by lush greenery and misty mountains.",
-    image: "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=800&q=80",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Kanchenjunga_waterfalls.jpg/800px-Kanchenjunga_waterfalls.jpg",
     duration: "2-3 hours",
     difficulty: "Easy",
     distance: "5 km from hotel",
@@ -64,18 +64,18 @@ const experiences: Experience[] = [
     id: 5,
     title: "Singshore Bridge Trek",
     description: "Walk across Asia's second-highest suspension bridge and enjoy spectacular valley views. The trek through rhododendron forests is unforgettable.",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Singshore_Bridge%2C_Pelling%2C_Sikkim.jpg/1280px-Singshore_Bridge%2C_Pelling%2C_Sikkim.jpg",
     duration: "4-5 hours",
     difficulty: "Moderate",
     distance: "8 km from hotel",
-    highlights: ["198m suspension bridge", "Valley views", "Rhododendron forest", "Adventure walk"],
+    highlights: ["240m suspension bridge", "Valley views", "Rhododendron forest", "Adventure walk"],
     icon: Footprints
   },
   {
     id: 6,
     title: "Pemayangtse Monastery",
     description: "One of Sikkim's oldest and most significant monasteries. Marvel at the intricate wooden sculpture depicting the heavenly abode of Guru Padmasambhava.",
-    image: "https://images.unsplash.com/photo-1545562083-c583d014b4f2?w=800&q=80",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Pemayangtse_Monastery_in_Sikkim.jpg/1280px-Pemayangtse_Monastery_in_Sikkim.jpg",
     duration: "2-3 hours",
     difficulty: "Easy",
     distance: "1.5 km from hotel",
@@ -91,8 +91,8 @@ const LocalExperiences: React.FC = () => {
       <section className="relative h-[60vh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=1600&q=80"
-            alt="Sikkim Mountains and Monastery"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Kangchenjunga_from_Pelling.jpg/1920px-Kangchenjunga_from_Pelling.jpg"
+            alt="Kanchenjunga view from Pelling, Sikkim"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />

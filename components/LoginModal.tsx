@@ -81,40 +81,39 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     if (isOpen) {
       // Save current scroll position
       const scrollY = window.scrollY;
+      // Apply styles to lock scroll
       document.body.style.position = 'fixed';
       document.body.style.top = `-${scrollY}px`;
       document.body.style.left = '0';
       document.body.style.right = '0';
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
-    } else {
-      // Restore scroll position
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.overflow = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
-      }
-    }
-    return () => {
-      const scrollY = document.body.style.top;
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.overflow = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY || '0', 10) * -1);
-      }
-    };
-  }, [isOpen]);
 
-  // Prevent scroll events from propagating to the background
-  const handleWheel = (e: React.WheelEvent) => {
-    e.stopPropagation();
-  };
+      // Also prevent touchmove on the body for mobile
+      const preventScroll = (e: TouchEvent | WheelEvent) => {
+        const target = e.target as HTMLElement;
+        // Allow scroll inside modal content
+        if (target.closest('.modal-content')) return;
+        e.preventDefault();
+      };
+
+      document.addEventListener('touchmove', preventScroll, { passive: false });
+      document.addEventListener('wheel', preventScroll, { passive: false });
+
+      return () => {
+        document.removeEventListener('touchmove', preventScroll);
+        document.removeEventListener('wheel', preventScroll);
+        // Restore scroll position
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -128,7 +127,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       onWheel={handleWheel}
     >
       <div
-      className="bg-white rounded-xl shadow-2xl w-full max-w-md animate-fade-in-up my-8 max-h-[90vh] overflow-y-auto"
+      className="modal-content bg-white rounded-xl shadow-2xl w-full max-w-md animate-fade-in-up my-8 max-h-[90vh] overflow-y-auto"
       style={{ overscrollBehavior: 'contain' }}
     >
         <div className="bg-urbane-darkGreen p-6 flex justify-between items-center text-white">

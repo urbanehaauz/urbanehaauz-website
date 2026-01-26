@@ -8,6 +8,7 @@ import BookingFlow from './pages/BookingFlow';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import AuthCallback from './pages/AuthCallback';
+import LocalExperiences from './pages/LocalExperiences';
 import { AppProvider } from './context/AppContext';
 import { AuthProvider } from './context/AuthContext';
 
@@ -45,7 +46,8 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/rooms" element={<Rooms />} />
-            <Route path="/book" element={<BookingFlow />} />
+              <Route path="/experiences" element={<LocalExperiences />} />
+              <Route path="/book" element={<BookingFlow />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/auth/callback" element={<AuthCallback />} />

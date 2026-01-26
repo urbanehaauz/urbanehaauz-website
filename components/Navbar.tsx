@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === '/';
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut, loading, isAdmin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,10 +56,12 @@ const Navbar: React.FC = () => {
                 Rooms
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
-            <Link to="/admin" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
-                Admin
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
-            </Link>
+            {isAdmin && (
+              <Link to="/admin" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
+                  Admin
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
+              </Link>
+            )}
             {!loading && (
               user ? (
                 <div className="relative group">
@@ -127,13 +129,15 @@ const Navbar: React.FC = () => {
             >
               Accommodation
             </Link>
-            <Link 
-              to="/admin" 
-              className="text-white text-lg font-serif hover:text-urbane-gold"
-              onClick={() => setIsOpen(false)}
-            >
-              Admin Panel
-            </Link>
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="text-white text-lg font-serif hover:text-urbane-gold"
+                onClick={() => setIsOpen(false)}
+              >
+                Admin Panel
+              </Link>
+            )}
             <Link 
               to="/book" 
               className="w-full max-w-xs bg-urbane-gold text-urbane-green font-bold py-3 rounded-none text-center mt-4"

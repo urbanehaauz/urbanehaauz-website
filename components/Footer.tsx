@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
               <li><Link to="/" className="hover:text-white">Home</Link></li>
               <li><Link to="/rooms" className="hover:text-white">Accommodation</Link></li>
               <li><Link to="/book" className="hover:text-white">Book Now</Link></li>
-              <li><a href="#" className="hover:text-white">Local Experiences</a></li>
+              <li><Link to="/experiences" className="hover:text-white">Local Experiences</Link></li>
             </ul>
           </div>
 
@@ -36,11 +36,11 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center space-x-3">
                 <Phone size={18} />
-                <span>+91 98765 43210</span>
+                <a href="tel:+919876543210" className="hover:text-urbane-gold transition-colors">+91 98765 43210</a>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail size={18} />
-                <span>stay@urbanehaauz.com</span>
+                <a href="mailto:stay@urbanehaauz.com" className="hover:text-urbane-gold transition-colors">stay@urbanehaauz.com</a>
               </li>
             </ul>
           </div>
@@ -48,10 +48,10 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="font-serif text-lg font-semibold text-urbane-gold mb-4">Follow Us</h3>
             <div className="flex space-x-4">
-              <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-urbane-gold hover:text-urbane-darkGreen transition-colors">
+              <a href="https://instagram.com/urbanehaauz" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="bg-white/10 p-2 rounded-full hover:bg-urbane-gold hover:text-urbane-darkGreen transition-colors">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="bg-white/10 p-2 rounded-full hover:bg-urbane-gold hover:text-urbane-darkGreen transition-colors">
+              <a href="https://facebook.com/urbanehaauz" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="bg-white/10 p-2 rounded-full hover:bg-urbane-gold hover:text-urbane-darkGreen transition-colors">
                 <Facebook size={20} />
               </a>
             </div>

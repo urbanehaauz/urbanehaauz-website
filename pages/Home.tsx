@@ -32,14 +32,14 @@ const Home: React.FC = () => {
             - Where luxury meets the clouds.
           </p>
           <div className="flex flex-col items-center">
-            <button
-              disabled
-              className="group bg-white text-urbane-green px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg opacity-60 cursor-not-allowed line-through"
+            <Link
+              to="/book"
+              className="group bg-white text-urbane-green px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg hover:bg-urbane-gold hover:text-white hover:shadow-xl hover:-translate-y-1"
             >
               Check Availability
-            </button>
-            <p className="mt-4 text-white text-sm font-bold tracking-[0.2em] uppercase drop-shadow-md">
-              Loading....
+            </Link>
+            <p className="mt-4 text-white/80 text-xs tracking-[0.15em] uppercase drop-shadow-md">
+              Best Rate Guarantee · Instant Confirmation
             </p>
           </div>
 

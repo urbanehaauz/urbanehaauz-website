@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshCw, TrendingUp, TrendingDown, Wallet, BedDouble, Utensils, Car, Package, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import { RefreshCw, TrendingUp, TrendingDown, Wallet, BedDouble, Utensils, Car, AlertCircle, Users, Moon, Smartphone, Banknote, Clock, Percent, Target, Activity } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 type Tab = { name: string; values: string[][] };
@@ -47,6 +47,13 @@ const sumColRequiring = (
 const findTab = (tabs: Tab[], name: string): Tab | undefined =>
   tabs.find(t => t.name.trim().toLowerCase() === name.trim().toLowerCase());
 
+// Parse a "Total Pax" cell like "4+2", "6+3", or "7" into a total head count.
+const parsePax = (raw: unknown): number => {
+  if (!raw) return 0;
+  const parts = String(raw).split(/[+,\/-]/).map(p => parseInt(p.trim(), 10)).filter(n => Number.isFinite(n) && n > 0);
+  return parts.reduce((a, b) => a + b, 0);
+};
+
 interface Props {
   // When true, render nothing (lets parent conditionally mount).
   hidden?: boolean;
@@ -56,7 +63,6 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
   const [data, setData] = useState<SheetPayload | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [openTab, setOpenTab] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -78,56 +84,104 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
   }, [hidden, load]);
 
   const metrics = useMemo(() => {
-    if (!data) {
-      return {
-        totalInvestment: 0,
-        totalExpenses: 0,
-        netBalance: 0,
-        roomRevenue: 0,
-        driverRevenue: 0,
-        restaurantRevenue: 0,
-        totalRevenue: 0,
-        roomCount: 0,
-        driverCount: 0,
-        restaurantCount: 0,
-      };
-    }
+    const empty = {
+      totalInvestment: 0, totalExpenses: 0, netBalance: 0,
+      roomRevenue: 0, driverRevenue: 0, restaurantRevenue: 0, totalRevenue: 0,
+      roomCount: 0, driverCount: 0, restaurantCount: 0,
+      totalNights: 0, totalRoomsSold: 0, totalGuests: 0,
+      upiCollected: 0, cashCollected: 0, dueAmount: 0,
+      avgBookingValue: 0, avgRestaurantBill: 0, avgDriverBookingValue: 0,
+      revenuePerNight: 0, expenseRatio: 0, restaurantAttach: 0,
+      roiProgress: 0, burnRate: 0,
+    };
+    if (!data) return empty;
+
     const balance = findTab(data.tabs, 'BalanceSheet');
     const roomBookings = findTab(data.tabs, 'Room bookings');
     const driver = findTab(data.tabs, 'Driver Room Bookings');
     const restaurant = findTab(data.tabs, 'Restaurant Billing');
     const ops = findTab(data.tabs, 'UH Ops Expenses');
 
-    // BalanceSheet has two header rows (title row + column headers), so skip 2.
-    // Columns (0-indexed): A=0 Investment Date, B=1 Name, C=2 Amount,
-    //                      I=8 Expense blank, J=9 Description, K=10 Amount
-    // Gate on Name (col B) being set for investments and Description (col J) for
-    // expenses so orphan subtotal cells further down the sheet don't double-count.
     const totalInvestment = sumColRequiring(balance, 2, 1, 2);
     const balanceExpenses = sumColRequiring(balance, 10, 9, 2);
     const opsExpenses = sumCol(ops, 1, 1);
     const totalExpenses = balanceExpenses + opsExpenses;
-    const netBalance = totalInvestment - totalExpenses;
 
-    // Room bookings: col I=8 "Total sales"
-    const roomRevenue = sumCol(roomBookings, 8, 1);
-    // Driver: col E=4 "Total Daily Sales"
-    const driverRevenue = sumCol(driver, 4, 1);
-    // Restaurant: col F=5 "Final amount"
-    const restaurantRevenue = sumCol(restaurant, 5, 1);
+    // Room bookings aggregations (gate on col 0 Check-in Date being set to skip blank rows)
+    let roomRevenue = 0, totalNights = 0, totalRoomsSold = 0, totalGuests = 0;
+    let upiCollected = 0, cashCollected = 0, dueAmount = 0, roomCount = 0;
+    if (roomBookings) {
+      for (let i = 1; i < roomBookings.values.length; i++) {
+        const row = roomBookings.values[i] ?? [];
+        const gate = row[0];
+        if (!gate || !String(gate).trim()) continue;
+        const amt = parseNum(row[8]);
+        if (amt > 0) roomCount += 1;
+        roomRevenue += amt;
+        totalNights += parseNum(row[2]);
+        totalRoomsSold += parseNum(row[3]);
+        totalGuests += parsePax(row[1]);
+        upiCollected += parseNum(row[11]);
+        cashCollected += parseNum(row[12]);
+        dueAmount += parseNum(row[10]);
+      }
+    }
+
+    // Driver bookings (col 4 = Total Daily Sales)
+    let driverRevenue = 0, driverCount = 0;
+    if (driver) {
+      for (let i = 1; i < driver.values.length; i++) {
+        const row = driver.values[i] ?? [];
+        if (!row[0] || !String(row[0]).trim()) continue;
+        const amt = parseNum(row[4]);
+        driverRevenue += amt;
+        if (amt > 0) driverCount += 1;
+        upiCollected += parseNum(row[8]);
+        cashCollected += parseNum(row[9]);
+      }
+    }
+
+    // Restaurant (col 5 = Final amount)
+    let restaurantRevenue = 0, restaurantCount = 0;
+    if (restaurant) {
+      for (let i = 1; i < restaurant.values.length; i++) {
+        const row = restaurant.values[i] ?? [];
+        if (!row[0] || !String(row[0]).trim()) continue;
+        const amt = parseNum(row[5]);
+        restaurantRevenue += amt;
+        if (amt > 0) restaurantCount += 1;
+        upiCollected += parseNum(row[7]);
+        cashCollected += parseNum(row[8]);
+      }
+    }
+
     const totalRevenue = roomRevenue + driverRevenue + restaurantRevenue;
+    const netBalance = totalInvestment + totalRevenue - totalExpenses;
+
+    // Analytics
+    const avgBookingValue = roomCount > 0 ? roomRevenue / roomCount : 0;
+    const avgRestaurantBill = restaurantCount > 0 ? restaurantRevenue / restaurantCount : 0;
+    const avgDriverBookingValue = driverCount > 0 ? driverRevenue / driverCount : 0;
+    const revenuePerNight = totalNights > 0 ? roomRevenue / totalNights : 0;
+    const expenseRatio = totalInvestment + totalRevenue > 0
+      ? (totalExpenses / (totalInvestment + totalRevenue)) * 100
+      : 0;
+    // Restaurant attach: how much of room-booking customers also spent on restaurant
+    // (using the "Restaurant sales" col 7 inside Room bookings tab)
+    const restaurantFromRoomBookings = sumCol(roomBookings, 7, 1);
+    const restaurantAttach = roomCount > 0 ? restaurantFromRoomBookings / roomCount : 0;
+    // Recovery / ROI: how much of investment has been earned back via revenue
+    const roiProgress = totalInvestment > 0 ? (totalRevenue / totalInvestment) * 100 : 0;
 
     return {
-      totalInvestment,
-      totalExpenses,
-      netBalance,
-      roomRevenue,
-      driverRevenue,
-      restaurantRevenue,
-      totalRevenue,
-      roomCount: Math.max(0, (roomBookings?.values.length ?? 0) - 1),
-      driverCount: Math.max(0, (driver?.values.length ?? 0) - 1),
-      restaurantCount: Math.max(0, (restaurant?.values.length ?? 0) - 1),
+      totalInvestment, totalExpenses, netBalance,
+      roomRevenue, driverRevenue, restaurantRevenue, totalRevenue,
+      roomCount, driverCount, restaurantCount,
+      totalNights, totalRoomsSold, totalGuests,
+      upiCollected, cashCollected, dueAmount,
+      avgBookingValue, avgRestaurantBill, avgDriverBookingValue,
+      revenuePerNight, expenseRatio, restaurantAttach,
+      roiProgress, burnRate: 0,
     };
   }, [data]);
 
@@ -199,117 +253,75 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
             <KpiCard
               label="Room Bookings Revenue"
               value={fmt(metrics.roomRevenue)}
-              sub={`${metrics.roomCount} bookings`}
+              sub={`${metrics.roomCount} bookings · avg ${fmt(metrics.avgBookingValue)}`}
               icon={<BedDouble size={28} />}
               tone="gold"
             />
             <KpiCard
               label="Driver Room Revenue"
               value={fmt(metrics.driverRevenue)}
-              sub={`${metrics.driverCount} bookings`}
+              sub={`${metrics.driverCount} bookings · avg ${fmt(metrics.avgDriverBookingValue)}`}
               icon={<Car size={28} />}
               tone="gold"
             />
             <KpiCard
               label="Restaurant Revenue"
               value={fmt(metrics.restaurantRevenue)}
-              sub={`${metrics.restaurantCount} bills`}
+              sub={`${metrics.restaurantCount} bills · avg ${fmt(metrics.avgRestaurantBill)}`}
               icon={<Utensils size={28} />}
               tone="gold"
             />
           </div>
 
-          {/* Tab browser */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-serif text-gold flex items-center space-x-2">
-              <Package size={22} />
-              <span>Sheet Tabs</span>
+          {/* Operational metrics */}
+          <div>
+            <h2 className="text-xl font-serif text-gold mb-4 flex items-center space-x-2">
+              <Activity size={20} />
+              <span>Operations</span>
             </h2>
-            {data.tabs.map(tab => {
-              const isOpen = openTab === tab.name;
-              const nonEmptyRows = tab.values.filter(r => r.some(c => (c ?? '').toString().trim() !== ''));
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <KpiCard label="Guests Served" value={metrics.totalGuests.toLocaleString('en-IN')} icon={<Users size={24} />} tone="gold" sub="Total head count" />
+              <KpiCard label="Room-Nights" value={metrics.totalNights.toLocaleString('en-IN')} icon={<Moon size={24} />} tone="gold" sub={`${metrics.totalRoomsSold} rooms sold`} />
+              <KpiCard label="Revenue / Night" value={fmt(metrics.revenuePerNight)} icon={<BedDouble size={24} />} tone="gold" sub="Per room-night" />
+              <KpiCard label="F&B Attach" value={fmt(metrics.restaurantAttach)} icon={<Utensils size={24} />} tone="gold" sub="Restaurant per booking" />
+            </div>
+          </div>
 
-              // Single total per tab: sum of one meaningful "primary" column.
-              // Mapping is explicit per tab to avoid cluttered multi-column sums
-              // (e.g., Notes/Bifurcation columns contain concatenated numbers).
-              const PRIMARY_COL: Record<string, { col: number; label: string; skipHeaderRows?: number; requireCol?: number }> = {
-                'balancesheet':         { col: 2,  label: 'Total Investment', skipHeaderRows: 2, requireCol: 1 },
-                'provision':            { col: 6,  label: 'Total Value' },
-                'room bookings':        { col: 8,  label: 'Total Sales' },
-                'driver room bookings': { col: 4,  label: 'Total Sales' },
-                'restaurant billing':   { col: 5,  label: 'Total Final Amount' },
-                'uh ops expenses':      { col: 1,  label: 'Total Amount' },
-              };
-              const primary = PRIMARY_COL[tab.name.trim().toLowerCase()];
-              let primaryTotal = 0;
-              if (primary) {
-                const skip = primary.skipHeaderRows ?? 1;
-                for (let i = skip; i < tab.values.length; i++) {
-                  const row = tab.values[i] ?? [];
-                  if (primary.requireCol !== undefined) {
-                    const gate = row[primary.requireCol];
-                    if (!gate || !String(gate).trim()) continue;
-                  }
-                  primaryTotal += parseNum(row[primary.col]);
-                }
-              }
+          {/* Payment & collections */}
+          <div>
+            <h2 className="text-xl font-serif text-gold mb-4 flex items-center space-x-2">
+              <Banknote size={20} />
+              <span>Collections</span>
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <KpiCard label="UPI Collected" value={fmt(metrics.upiCollected)} icon={<Smartphone size={24} />} tone="gold" sub="Digital payments" />
+              <KpiCard label="Cash Collected" value={fmt(metrics.cashCollected)} icon={<Banknote size={24} />} tone="gold" sub="Physical cash" />
+              <KpiCard label="Due / Outstanding" value={fmt(metrics.dueAmount)} icon={<Clock size={24} />} tone={metrics.dueAmount > 0 ? 'red' : 'green'} sub="Unsettled balance" />
+              <KpiCard label="Expense Ratio" value={`${metrics.expenseRatio.toFixed(1)}%`} icon={<Percent size={24} />} tone={metrics.expenseRatio > 80 ? 'red' : 'gold'} sub="Of capital + revenue" />
+            </div>
+          </div>
 
-              return (
-                <div key={tab.name} className="glassmorphism-strong rounded-lg overflow-hidden">
-                  <button
-                    onClick={() => setOpenTab(isOpen ? null : tab.name)}
-                    className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      {isOpen ? <ChevronDown className="text-gold" size={18} /> : <ChevronRight className="text-gold" size={18} />}
-                      <span className="font-semibold text-warm-ivory">{tab.name.trim()}</span>
-                      <span className="text-xs text-warm-ivory text-opacity-50">
-                        {Math.max(0, nonEmptyRows.length)} rows
-                      </span>
-                    </div>
-                    {/* Single primary total when collapsed */}
-                    {!isOpen && primary && (
-                      <div className="hidden md:flex flex-col items-end text-right mr-2">
-                        <div className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">{primary.label}</div>
-                        <div className="text-gold font-bold text-sm">{fmt(primaryTotal)}</div>
-                      </div>
-                    )}
-                  </button>
-                  {isOpen && (
-                    <div className="overflow-x-auto border-t border-white/10 max-h-[500px] overflow-y-auto">
-                      <table className="w-full text-xs">
-                        <tbody>
-                          {nonEmptyRows.map((row, ri) => (
-                            <tr key={ri} className={ri === 0 ? 'bg-white/5 sticky top-0' : 'border-t border-white/5'}>
-                              {row.map((cell, ci) => (
-                                <td
-                                  key={ci}
-                                  className={`px-3 py-2 whitespace-nowrap ${
-                                    ri === 0 ? 'font-bold text-gold uppercase tracking-wide' : 'text-warm-ivory text-opacity-80'
-                                  }`}
-                                >
-                                  {cell}
-                                </td>
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
-                        {primary && (
-                          <tfoot className="sticky bottom-0 bg-urbane-darkGreen/95 backdrop-blur-sm">
-                            <tr className="border-t-2 border-gold">
-                              <td colSpan={Math.max(1, primary.col)} className="px-3 py-3 font-bold text-warm-ivory text-opacity-60 text-[11px] uppercase tracking-wider">
-                                {primary.label}
-                              </td>
-                              <td className="px-3 py-3 font-bold text-gold text-sm whitespace-nowrap">{fmt(primaryTotal)}</td>
-                            </tr>
-                          </tfoot>
-                        )}
-                      </table>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+          {/* Recovery / ROI */}
+          <div className="glassmorphism-strong rounded-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <Target size={20} className="text-gold" />
+                <h2 className="text-xl font-serif text-gold">Investment Recovery</h2>
+              </div>
+              <span className="text-sm text-warm-ivory text-opacity-60">
+                {fmt(metrics.totalRevenue)} / {fmt(metrics.totalInvestment)}
+              </span>
+            </div>
+            <div className="w-full bg-white/5 rounded-full h-4 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-urbane-gold via-amber-400 to-green-400 transition-all duration-700"
+                style={{ width: `${Math.min(100, metrics.roiProgress).toFixed(1)}%` }}
+              />
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-warm-ivory text-opacity-60">
+              <span>{metrics.roiProgress.toFixed(1)}% of investment recovered through revenue</span>
+              <span>{metrics.roiProgress >= 100 ? 'Recovered ✓' : `${fmt(Math.max(0, metrics.totalInvestment - metrics.totalRevenue))} to go`}</span>
+            </div>
           </div>
         </>
       )}

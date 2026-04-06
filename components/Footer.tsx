@@ -34,8 +34,8 @@ const Footer: React.FC = () => {
             <h3 className="font-serif text-lg font-semibold text-urbane-gold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-gray-300">
               <li><Link to="/" className="hover:text-white">Home</Link></li>
-              <li><Link to="/rooms" className="hover:text-white">Accommodation</Link></li>
-              <li><Link to="/book" className="hover:text-white">Book Now</Link></li>
+              <li><a href="https://urbanehaauz.runhotel.site/en/" target="_blank" rel="noopener noreferrer" className="hover:text-white">Accommodation</a></li>
+              <li><a href="https://urbanehaauz.runhotel.site/en/" target="_blank" rel="noopener noreferrer" className="hover:text-white">Book Now</a></li>
               <li><Link to="/experiences" className="hover:text-white">Local Experiences</Link></li>
             </ul>
           </div>

@@ -483,26 +483,30 @@ const AdminDashboard: React.FC = () => {
                   <LayoutDashboard size={20} className={currentView === 'overview' ? 'text-urbane-gold' : 'text-gray-400'} /> 
                   <span className={`font-medium ${currentView === 'overview' ? 'text-white' : 'text-gray-300'}`}>Overview</span>
               </button>
+              {/* Rooms, Bookings, Staff, Financial Tracker — hidden per request (code preserved)
               <button onClick={() => setCurrentView('rooms')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'rooms' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
-                  <BedDouble size={20} className={currentView === 'rooms' ? 'text-urbane-gold' : 'text-gray-400'} /> 
+                  <BedDouble size={20} className={currentView === 'rooms' ? 'text-urbane-gold' : 'text-gray-400'} />
                   <span className={`font-medium ${currentView === 'rooms' ? 'text-white' : 'text-gray-300'}`}>Rooms & Pricing</span>
               </button>
               <button onClick={() => setCurrentView('bookings')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'bookings' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
-                  <Calendar size={20} className={currentView === 'bookings' ? 'text-urbane-gold' : 'text-gray-400'} /> 
+                  <Calendar size={20} className={currentView === 'bookings' ? 'text-urbane-gold' : 'text-gray-400'} />
                   <span className={`font-medium ${currentView === 'bookings' ? 'text-white' : 'text-gray-300'}`}>Bookings</span>
               </button>
               <button onClick={() => setCurrentView('staff')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'staff' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
-                  <UserCheck size={20} className={currentView === 'staff' ? 'text-urbane-gold' : 'text-gray-400'} /> 
+                  <UserCheck size={20} className={currentView === 'staff' ? 'text-urbane-gold' : 'text-gray-400'} />
                   <span className={`font-medium ${currentView === 'staff' ? 'text-white' : 'text-gray-300'}`}>Staff & Tasks</span>
               </button>
+              */}
               <button onClick={() => setCurrentView('finance')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'finance' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
-                  <CreditCard size={20} className={currentView === 'finance' ? 'text-urbane-gold' : 'text-gray-400'} /> 
+                  <CreditCard size={20} className={currentView === 'finance' ? 'text-urbane-gold' : 'text-gray-400'} />
                   <span className={`font-medium ${currentView === 'finance' ? 'text-white' : 'text-gray-300'}`}>Financials</span>
               </button>
+              {/* Financial Tracker — hidden
               <button onClick={() => setCurrentView('financial-tracker')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'financial-tracker' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
-                  <TrendingUp size={20} className={currentView === 'financial-tracker' ? 'text-urbane-gold' : 'text-gray-400'} /> 
+                  <TrendingUp size={20} className={currentView === 'financial-tracker' ? 'text-urbane-gold' : 'text-gray-400'} />
                   <span className={`font-medium ${currentView === 'financial-tracker' ? 'text-white' : 'text-gray-300'}`}>Financial Tracker</span>
               </button>
+              */}
               <button onClick={() => setCurrentView('settings')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'settings' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
                   <Settings size={20} className={currentView === 'settings' ? 'text-urbane-gold' : 'text-gray-400'} /> 
                   <span className={`font-medium ${currentView === 'settings' ? 'text-white' : 'text-gray-300'}`}>Settings</span>
@@ -522,6 +526,7 @@ const AdminDashboard: React.FC = () => {
             <button onClick={() => setCurrentView('overview')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'overview' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <LayoutDashboard size={16} /> <span>Overview</span>
             </button>
+            {/* Rooms, Bookings, Staff — hidden (code preserved)
             <button onClick={() => setCurrentView('rooms')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'rooms' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <BedDouble size={16} /> <span>Rooms</span>
             </button>
@@ -531,12 +536,15 @@ const AdminDashboard: React.FC = () => {
             <button onClick={() => setCurrentView('staff')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'staff' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <UserCheck size={16} /> <span>Staff</span>
             </button>
+            */}
             <button onClick={() => setCurrentView('finance')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'finance' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <CreditCard size={16} /> <span>Finance</span>
             </button>
+            {/* Financial Tracker — hidden
             <button onClick={() => setCurrentView('financial-tracker')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'financial-tracker' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <TrendingUp size={16} /> <span>Tracker</span>
             </button>
+            */}
             <button onClick={() => setCurrentView('settings')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'settings' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <Settings size={16} /> <span>Settings</span>
             </button>

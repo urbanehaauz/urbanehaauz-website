@@ -45,7 +45,7 @@ const AdminDashboard: React.FC = () => {
   const { isAdmin, signOut, loading: authLoading } = useAuth();
   
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState<'overview' | 'rooms' | 'bookings' | 'staff' | 'finance' | 'financial-tracker' | 'settings'>('finance');
+  const [currentView, setCurrentView] = useState<'overview' | 'rooms' | 'bookings' | 'staff' | 'finance' | 'financial-tracker' | 'settings'>('overview');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
@@ -479,12 +479,10 @@ const AdminDashboard: React.FC = () => {
   const Sidebar = () => (
       <div className="w-64 bg-gradient-to-b from-urbane-darkGreen to-black text-white min-h-screen fixed left-0 top-0 pt-24 px-4 hidden md:flex flex-col z-10 shadow-2xl">
            <div className="space-y-3 flex-grow">
-              {/* Overview — hidden (code preserved)
               <button onClick={() => setCurrentView('overview')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'overview' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
                   <LayoutDashboard size={20} className={currentView === 'overview' ? 'text-urbane-gold' : 'text-gray-400'} />
                   <span className={`font-medium ${currentView === 'overview' ? 'text-white' : 'text-gray-300'}`}>Overview</span>
               </button>
-              */}
               {/* Rooms, Bookings, Staff, Financial Tracker — hidden per request (code preserved)
               <button onClick={() => setCurrentView('rooms')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'rooms' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
                   <BedDouble size={20} className={currentView === 'rooms' ? 'text-urbane-gold' : 'text-gray-400'} />
@@ -525,11 +523,9 @@ const AdminDashboard: React.FC = () => {
   const MobileNav = () => (
     <div className="md:hidden mb-6 overflow-x-auto pb-2 scrollbar-hide">
         <div className="flex space-x-3 min-w-max">
-            {/* Overview — hidden
             <button onClick={() => setCurrentView('overview')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'overview' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <LayoutDashboard size={16} /> <span>Overview</span>
             </button>
-            */}
             {/* Rooms, Bookings, Staff — hidden (code preserved)
             <button onClick={() => setCurrentView('rooms')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'rooms' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <BedDouble size={16} /> <span>Rooms</span>

@@ -228,6 +228,26 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
             {data.tabs.map(tab => {
               const isOpen = openTab === tab.name;
               const nonEmptyRows = tab.values.filter(r => r.some(c => (c ?? '').toString().trim() !== ''));
+
+              // Compute column-wise totals + detect which columns are "numeric".
+              // A column is numeric if at least 3 non-header cells parse as a non-zero number.
+              const maxCols = nonEmptyRows.reduce((m, r) => Math.max(m, r.length), 0);
+              const colTotals: number[] = new Array(maxCols).fill(0);
+              const colNumericCount: number[] = new Array(maxCols).fill(0);
+              for (let ri = 1; ri < nonEmptyRows.length; ri++) {
+                for (let ci = 0; ci < maxCols; ci++) {
+                  const raw = nonEmptyRows[ri]?.[ci];
+                  if (raw === undefined || raw === null || String(raw).trim() === '') continue;
+                  const n = parseNum(raw);
+                  if (n !== 0) {
+                    colTotals[ci] += n;
+                    colNumericCount[ci] += 1;
+                  }
+                }
+              }
+              const isNumericCol = colNumericCount.map(c => c >= 3);
+              const hasAnyNumericCol = isNumericCol.some(Boolean);
+
               return (
                 <div key={tab.name} className="glassmorphism-strong rounded-lg overflow-hidden">
                   <button
@@ -241,6 +261,21 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
                         {Math.max(0, nonEmptyRows.length)} rows
                       </span>
                     </div>
+                    {/* Compact inline totals when collapsed */}
+                    {!isOpen && hasAnyNumericCol && (
+                      <div className="hidden md:flex items-center space-x-4 text-xs">
+                        {isNumericCol.map((isNum, ci) => {
+                          if (!isNum) return null;
+                          const header = String(nonEmptyRows[0]?.[ci] ?? `Col ${ci + 1}`).trim();
+                          return (
+                            <div key={ci} className="text-right">
+                              <div className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider truncate max-w-[120px]">{header}</div>
+                              <div className="text-gold font-bold">{fmt(colTotals[ci])}</div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </button>
                   {isOpen && (
                     <div className="overflow-x-auto border-t border-white/10 max-h-[500px] overflow-y-auto">
@@ -261,6 +296,26 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
                             </tr>
                           ))}
                         </tbody>
+                        {hasAnyNumericCol && (
+                          <tfoot className="sticky bottom-0 bg-urbane-darkGreen/95 backdrop-blur-sm">
+                            <tr className="border-t-2 border-gold">
+                              {Array.from({ length: maxCols }).map((_, ci) => (
+                                <td
+                                  key={ci}
+                                  className={`px-3 py-3 whitespace-nowrap font-bold ${
+                                    isNumericCol[ci] ? 'text-gold text-sm' : 'text-warm-ivory text-opacity-60 text-[10px] uppercase tracking-wider'
+                                  }`}
+                                >
+                                  {isNumericCol[ci]
+                                    ? fmt(colTotals[ci])
+                                    : ci === 0
+                                    ? 'TOTAL'
+                                    : ''}
+                                </td>
+                              ))}
+                            </tr>
+                          </tfoot>
+                        )}
                       </table>
                     </div>
                   )}

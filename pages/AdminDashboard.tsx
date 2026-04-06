@@ -7,7 +7,9 @@ import { supabase } from '../lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend } from 'recharts';
 import { DollarSign, Calendar, Users, TrendingUp, TrendingDown, Plus, X, LogOut, Briefcase, UserCheck, LayoutDashboard, BedDouble, CreditCard, Image as ImageIcon, Check, Lock, RotateCcw, Search, Filter, Settings, Upload, CheckCircle } from 'lucide-react';
 import DatePicker from '../components/DatePicker';
+import SheetFinancials from '../components/SheetFinancials';
 import { BookingStatus, RoomCategory, PaymentStatus, FinancialTrackerDaily, FinancialCalculations } from '../types';
+import { sendBookingCancellation } from '../lib/email/emailService';
 
 // Updated colors to match new theme: Blue, Copper, Gold, Red
 const COLORS = ['#4A90E2', '#8C5E45', '#D4AF37', '#E74C3C'];
@@ -144,6 +146,25 @@ const AdminDashboard: React.FC = () => {
       const updates = editingRows[bookingId];
       if (updates) {
           updateBooking(bookingId, updates);
+
+          // Send cancellation email when admin marks a booking as Cancelled
+          if (updates.status === 'Cancelled') {
+              const booking = bookings.find(b => b.id === bookingId);
+              if (booking?.email) {
+                  sendBookingCancellation({
+                      bookingId: booking.id,
+                      guestName: booking.guestName,
+                      guestEmail: booking.email,
+                      roomName: booking.roomName,
+                      checkIn: booking.checkIn,
+                      checkOut: booking.checkOut,
+                      guests: 1,
+                      totalAmount: booking.totalAmount,
+                      paymentStatus: updates.paymentStatus || booking.paymentStatus,
+                  });
+              }
+          }
+
           const newRows = { ...editingRows };
           delete newRows[bookingId];
           setEditingRows(newRows);
@@ -716,7 +737,10 @@ const AdminDashboard: React.FC = () => {
             </div>
         )}
 
-        {currentView === 'finance' && (
+        {currentView === 'finance' && <SheetFinancials />}
+
+        {/* Legacy finance view — preserved but hidden, superseded by SheetFinancials */}
+        {false && currentView === 'finance' && (
             <div className="animate-fade-in space-y-8">
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -1248,6 +1272,9 @@ const AdminDashboard: React.FC = () => {
                                         <span className="px-2 py-1 rounded border border-gray-200 text-xs font-bold text-gray-500 uppercase bg-white">
                                             {booking.source}
                                         </span>
+                                        {booking.source === 'OTA' && booking.otaPlatform && (
+                                            <div className="text-xs text-gray-400 mt-1">{booking.otaPlatform}</div>
+                                        )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="font-bold text-gray-900">₹{booking.totalAmount.toLocaleString()}</div>

@@ -5,11 +5,14 @@ import { useAuth } from '../context/AuthContext';
 import { Room } from '../types';
 import { CheckCircle, Calendar, CreditCard, ChevronRight, Lock } from 'lucide-react';
 import DatePicker from '../components/DatePicker';
+import PaymentButton from '../components/PaymentButton';
+import { sendBookingConfirmation } from '../lib/email/emailService';
+import { supabase } from '../lib/supabase';
 
 const BookingFlow: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { rooms, addBooking } = useApp();
+  const { rooms, addBooking, updateBooking, supabaseStatus } = useApp();
   const { user } = useAuth();
   const queryParams = new URLSearchParams(location.search);
   const initialRoomId = queryParams.get('room');
@@ -49,6 +52,13 @@ const BookingFlow: React.FC = () => {
     children: 0
   });
 
+  // Payment state
+  const [pendingBookingId, setPendingBookingId] = useState('');
+  const [initiatingBooking, setInitiatingBooking] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
+  const [bookingComplete, setBookingComplete] = useState(false);
+  const [generatedBookingId, setGeneratedBookingId] = useState('');
+
   // Pre-fill guest info if user is logged in
   useEffect(() => {
     if (user && user.email) {
@@ -75,21 +85,14 @@ const BookingFlow: React.FC = () => {
     }
   }, [step, selectedRoom, dates, guests]);
 
-  const [paymentProcessing, setPaymentProcessing] = useState(false);
-  const [bookingComplete, setBookingComplete] = useState(false);
-  const [generatedBookingId, setGeneratedBookingId] = useState('');
-
   // Helpers
   const getNextDay = (dateStr: string) => {
       if (!dateStr) return '';
-      // Parse YYYY-MM-DD string in local timezone to avoid UTC shifts
       const parts = dateStr.split('-');
       if (parts.length === 3) {
         const [y, m, d] = parts.map(Number);
         const date = new Date(y, m - 1, d);
-        // Add 1 day
         date.setDate(date.getDate() + 1);
-        // Return YYYY-MM-DD in local timezone
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
@@ -101,10 +104,7 @@ const BookingFlow: React.FC = () => {
   // Handlers
   const handleDateChange = (name: string, value: string) => {
     if (name === 'checkIn') {
-        // If check-in changes, we must validate check-out
-        // Check-out must be strictly GREATER than check-in
         if (dates.checkOut && dates.checkOut <= value) {
-            // Reset check-out if it is invalid (less than or equal to new check-in)
             setDates(prev => ({ ...prev, checkIn: value, checkOut: '' }));
         } else {
             setDates(prev => ({ ...prev, [name]: value }));
@@ -117,14 +117,12 @@ const BookingFlow: React.FC = () => {
   const handleGuestChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    // Validate total guest count doesn't exceed 6
     if (name === 'adults' || name === 'children') {
       const numValue = parseInt(value);
       const newGuests = { ...guests, [name]: numValue };
       const totalGuests = newGuests.adults + newGuests.children;
 
       if (totalGuests > 6) {
-        // Prevent exceeding maximum capacity of 6 guests
         return;
       }
     }
@@ -144,13 +142,8 @@ const BookingFlow: React.FC = () => {
 
     if (diffDays <= 0) return selectedRoom.price;
 
-    // Calculate base room charges
     let totalAmount = diffDays * selectedRoom.price;
 
-    // Add charges for extra guests
-    // Base price includes 2 adults + 1 child (free)
-    // Extra adults: ₹400 per night
-    // Extra children (beyond 1 free): ₹200 per night
     const extraAdults = Math.max(0, guests.adults - 2);
     const extraChildren = Math.max(0, guests.children - 1);
 
@@ -160,7 +153,6 @@ const BookingFlow: React.FC = () => {
     return totalAmount;
   };
 
-  // Helper to calculate guest charges breakdown
   const calculateGuestCharges = () => {
     if (!dates.checkIn || !dates.checkOut) return { extraAdults: 0, extraChildren: 0, total: 0 };
 
@@ -184,12 +176,18 @@ const BookingFlow: React.FC = () => {
     };
   };
 
-  const handlePayment = () => {
-    setPaymentProcessing(true);
+  /**
+   * Phase 1: Insert booking as Pending before showing payment.
+   * This ensures a bookingId exists for create-razorpay-order Edge Function.
+   */
+  const handleInitiateBooking = async () => {
+    setInitiatingBooking(true);
+    setPaymentError('');
 
-    setTimeout(() => {
-      const bookingId = `BK-${new Date().getFullYear()}-${Math.floor(Math.random() * 10000)}`;
-      const newBooking = {
+    const bookingId = `BK-${new Date().getFullYear()}-${Math.floor(Math.random() * 90000) + 10000}`;
+
+    try {
+      await addBooking({
         id: bookingId,
         guestName: guests.name,
         email: guests.email,
@@ -199,36 +197,112 @@ const BookingFlow: React.FC = () => {
         checkIn: dates.checkIn,
         checkOut: dates.checkOut,
         totalAmount: calculateTotal(),
-        status: 'Confirmed' as const,
-        paymentStatus: 'Paid' as const,
-        source: 'Website' as const,
-        dateCreated: new Date().toISOString().split('T')[0]
-      };
+        status: 'Pending',
+        paymentStatus: 'Pending',
+        source: 'Website',
+        dateCreated: new Date().toISOString().split('T')[0],
+      });
 
-      addBooking(newBooking);
+      setPendingBookingId(bookingId);
       setGeneratedBookingId(bookingId);
-      setPaymentProcessing(false);
-      setBookingComplete(true);
+      nextStep();
+    } catch (err) {
+      console.error('Failed to initiate booking:', err);
+      setPaymentError('Failed to save booking. Please try again.');
+    } finally {
+      setInitiatingBooking(false);
+    }
+  };
 
-      // Clear the persisted booking state after successful booking
+  /**
+   * Phase 2: Called by PaymentButton after Razorpay returns success.
+   * Verifies the payment server-side then shows the confirmation screen.
+   */
+  const handlePaymentSuccess = async (paymentId: string, orderId: string, signature: string) => {
+    setPaymentError('');
+
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-razorpay-payment', {
+        body: {
+          razorpay_order_id: orderId,
+          razorpay_payment_id: paymentId,
+          razorpay_signature: signature,
+          bookingId: pendingBookingId,
+        },
+      });
+
+      if (error || !data?.success) {
+        setPaymentError('Payment verification failed. Please contact us with your booking ID.');
+        return;
+      }
+
+      // Update local state so admin dashboard reflects immediately
+      updateBooking(pendingBookingId, { status: 'Confirmed', paymentStatus: 'Paid' });
+
+      // Send confirmation email (fire-and-forget — don't block on email)
+      sendBookingConfirmation({
+        bookingId: pendingBookingId,
+        guestName: guests.name,
+        guestEmail: guests.email,
+        roomName: selectedRoom?.name || '',
+        checkIn: dates.checkIn,
+        checkOut: dates.checkOut,
+        guests: guests.adults + guests.children,
+        totalAmount: calculateTotal(),
+        paymentStatus: 'Paid',
+      });
+
       try {
         sessionStorage.removeItem('urbane-booking-state');
-      } catch (error) {
-        console.error('Error clearing booking state:', error);
-      }
-    }, 2000);
+      } catch {}
+
+      setBookingComplete(true);
+    } catch (err) {
+      console.error('Payment verification error:', err);
+      setPaymentError('Payment verification failed. Please contact us with your booking ID.');
+    }
+  };
+
+  /**
+   * Called when guest uses the offline payment options (WhatsApp / Pay at Check-in).
+   * Booking is already saved as Pending — send a pending confirmation email.
+   */
+  const handleOfflinePaymentChosen = () => {
+    sendBookingConfirmation({
+      bookingId: pendingBookingId,
+      guestName: guests.name,
+      guestEmail: guests.email,
+      roomName: selectedRoom?.name || '',
+      checkIn: dates.checkIn,
+      checkOut: dates.checkOut,
+      guests: guests.adults + guests.children,
+      totalAmount: calculateTotal(),
+      paymentStatus: 'Pending',
+    });
+
+    try {
+      sessionStorage.removeItem('urbane-booking-state');
+    } catch {}
+
+    setBookingComplete(true);
   };
 
   if (bookingComplete) {
+    const isPaid = !paymentError;
     return (
       <div className="min-h-screen pt-24 flex items-center justify-center bg-urbane-mist px-4 font-sans">
         <div className="bg-white p-10 shadow-2xl text-center max-w-lg w-full border-t-4 border-urbane-gold">
           <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8">
             <CheckCircle className="h-12 w-12 text-urbane-green" />
           </div>
-          <h2 className="font-serif text-4xl font-bold text-urbane-charcoal mb-4">Confirmed!</h2>
+          <h2 className="font-serif text-4xl font-bold text-urbane-charcoal mb-4">
+            {isPaid ? 'Confirmed!' : 'Booking Saved!'}
+          </h2>
           <p className="text-gray-600 mb-8 leading-relaxed">
-            Thank you, {guests.name}. Your mountain getaway is booked. We have sent the confirmation details to <span className="font-semibold text-urbane-green">{guests.email}</span>.
+            Thank you, {guests.name}. {isPaid
+              ? 'Your mountain getaway is booked and payment received.'
+              : 'Your booking is saved. Please complete payment to confirm your stay.'
+            } We have sent the details to <span className="font-semibold text-urbane-green">{guests.email}</span>.
           </p>
           <div className="bg-gray-50 p-6 mb-8 text-left text-sm border border-gray-100">
             <div className="grid grid-cols-2 gap-4">
@@ -245,12 +319,14 @@ const BookingFlow: React.FC = () => {
                      <p className="font-bold text-gray-900">{dates.checkIn}</p>
                 </div>
                  <div>
-                     <p className="text-gray-500 text-xs uppercase tracking-wider">Total Paid</p>
+                     <p className="text-gray-500 text-xs uppercase tracking-wider">
+                       {isPaid ? 'Total Paid' : 'Amount Due'}
+                     </p>
                      <p className="font-bold text-urbane-green">₹{calculateTotal().toLocaleString('en-IN')}</p>
                 </div>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => navigate('/')}
             className="w-full bg-urbane-charcoal text-white py-4 font-bold tracking-widest uppercase hover:bg-urbane-green transition-colors"
           >
@@ -264,6 +340,17 @@ const BookingFlow: React.FC = () => {
   return (
     <div className="pt-24 pb-20 min-h-screen bg-urbane-mist font-sans">
       <div className="max-w-6xl mx-auto px-4">
+
+        {/* Supabase outage fallback banner */}
+        {supabaseStatus === 'error' && (
+          <div className="mb-6 bg-amber-50 border border-amber-300 rounded-lg p-4 text-amber-900 text-sm">
+            <p className="font-bold mb-1">Online booking is temporarily unavailable.</p>
+            <p>
+              Please <a href="https://wa.me/919800000000" className="underline font-medium">WhatsApp us</a> or call us to make a reservation. We apologise for the inconvenience.
+            </p>
+          </div>
+        )}
+
         {/* Stepper */}
         <div className="flex justify-center mb-16">
             <div className="flex items-center w-full max-w-md justify-between relative">
@@ -288,7 +375,7 @@ const BookingFlow: React.FC = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
-            
+
             {/* Sidebar / Summary */}
             <div className="w-full lg:w-1/3 bg-white p-8 shadow-soft sticky top-28 order-2 lg:order-1">
               <h3 className="font-serif text-2xl font-bold text-urbane-charcoal mb-6 pb-4 border-b border-gray-100">Reservation Summary</h3>
@@ -373,7 +460,7 @@ const BookingFlow: React.FC = () => {
 
             {/* Main Content */}
             <div className="w-full lg:w-2/3 bg-white p-8 lg:p-12 shadow-soft order-1 lg:order-2">
-              
+
               {/* STEP 1: Selection */}
               {step === 1 && (
                 <div className="space-y-8 animate-fade-in-up">
@@ -381,16 +468,16 @@ const BookingFlow: React.FC = () => {
                       <h2 className="text-3xl font-serif font-bold text-urbane-charcoal">Dates & Room</h2>
                       <p className="text-gray-500 mt-2">Choose when you'd like to stay with us.</p>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <DatePicker 
+                    <DatePicker
                       label="Check-in Date"
                       name="checkIn"
                       value={dates.checkIn}
                       onChange={handleDateChange}
                       min={new Date().toISOString().split('T')[0]}
                     />
-                    <DatePicker 
+                    <DatePicker
                       label="Check-out Date"
                       name="checkOut"
                       value={dates.checkOut}
@@ -411,7 +498,7 @@ const BookingFlow: React.FC = () => {
                       ) : (
                         <div className="space-y-4 h-[400px] overflow-y-auto pr-2 scrollbar-hide">
                           {rooms.filter(room => room.available).map(room => (
-                            <div 
+                            <div
                               key={room.id}
                               onClick={() => setSelectedRoom(room)}
                               className={`group flex flex-col sm:flex-row border cursor-pointer transition-all duration-300 hover:shadow-md ${selectedRoom?.id === room.id ? 'border-urbane-gold bg-amber-50/30' : 'border-gray-100 hover:border-urbane-gold/50'}`}
@@ -439,7 +526,7 @@ const BookingFlow: React.FC = () => {
                     </div>
                   )}
 
-                  <button 
+                  <button
                     onClick={nextStep}
                     disabled={!selectedRoom || !dates.checkIn || !dates.checkOut}
                     className="w-full mt-4 bg-urbane-charcoal text-white py-4 font-bold uppercase tracking-widest hover:bg-urbane-green transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
@@ -468,12 +555,12 @@ const BookingFlow: React.FC = () => {
                         </p>
                       )}
                   </div>
-                  
+
                   <div className="space-y-6">
                     <div>
                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Full Name</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         name="name"
                         className="w-full p-4 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:border-urbane-gold focus:ring-1 focus:ring-urbane-gold outline-none transition-all"
                         placeholder="e.g. Rahul Verma"
@@ -484,8 +571,8 @@ const BookingFlow: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
-                        <input 
-                          type="email" 
+                        <input
+                          type="email"
                           name="email"
                           className="w-full p-4 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:border-urbane-gold focus:ring-1 focus:ring-urbane-gold outline-none transition-all"
                           placeholder="name@example.com"
@@ -495,8 +582,8 @@ const BookingFlow: React.FC = () => {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Phone Number</label>
-                        <input 
-                          type="tel" 
+                        <input
+                          type="tel"
                           name="phone"
                           className="w-full p-4 bg-white border border-gray-200 text-gray-900 placeholder-gray-400 focus:border-urbane-gold focus:ring-1 focus:ring-urbane-gold outline-none transition-all"
                           placeholder="+91 98765 43210"
@@ -599,6 +686,12 @@ const BookingFlow: React.FC = () => {
                     </div>
                   </div>
 
+                  {paymentError && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                      {paymentError}
+                    </div>
+                  )}
+
                   <div className="flex space-x-4 pt-6">
                     <button
                       onClick={prevStep}
@@ -607,17 +700,25 @@ const BookingFlow: React.FC = () => {
                       Back
                     </button>
                     <button
-                      onClick={nextStep}
+                      onClick={handleInitiateBooking}
                       disabled={
+                        initiatingBooking ||
                         !guests.name ||
                         !guests.email ||
                         !guests.phone ||
                         guests.adults + guests.children > 6 ||
                         guests.adults < 1
                       }
-                      className="w-2/3 bg-urbane-charcoal text-white py-4 font-bold uppercase tracking-widest hover:bg-urbane-green transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-2/3 bg-urbane-charcoal text-white py-4 font-bold uppercase tracking-widest hover:bg-urbane-green transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
                     >
-                      Review & Pay
+                      {initiatingBooking ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                          Saving...
+                        </>
+                      ) : (
+                        'Review & Pay'
+                      )}
                     </button>
                   </div>
                 </div>
@@ -630,44 +731,43 @@ const BookingFlow: React.FC = () => {
                       <h2 className="text-3xl font-serif font-bold text-urbane-charcoal">Secure Payment</h2>
                       <p className="text-gray-500 mt-2 flex items-center"><Lock size={14} className="mr-1" /> TLS Encrypted Transaction</p>
                   </div>
-                  
-                  <div className="bg-blue-50/50 p-6 border-l-4 border-blue-500 text-blue-900 mb-6">
-                    <p className="font-bold mb-1">Demo Mode</p>
-                    <p className="text-sm">No actual payment will be deducted. Clicking the button below will confirm your booking immediately.</p>
-                  </div>
 
-                  <div className="border border-gray-200 p-6 transition-all hover:border-urbane-gold hover:shadow-md cursor-pointer bg-white">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                            <div className="h-5 w-5 rounded-full border-2 border-urbane-gold flex items-center justify-center mr-4">
-                                <div className="h-2.5 w-2.5 rounded-full bg-urbane-gold"></div>
-                            </div>
-                            <div>
-                                <span className="block font-bold text-gray-900">Razorpay Secure</span>
-                                <span className="text-xs text-gray-500">Credit Card, Debit Card, UPI, NetBanking</span>
-                            </div>
-                        </div>
-                        <CreditCard className="text-gray-400" />
+                  {paymentError && (
+                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                      <strong>Payment Error:</strong> {paymentError}
+                      <p className="mt-1 text-xs">Booking ID: <span className="font-mono font-bold">{pendingBookingId}</span> — please quote this when contacting us.</p>
                     </div>
+                  )}
+
+                  <PaymentButton
+                    amount={calculateTotal()}
+                    bookingId={pendingBookingId}
+                    guestName={guests.name}
+                    guestEmail={guests.email}
+                    guestPhone={guests.phone}
+                    roomType={selectedRoom?.name || ''}
+                    checkIn={dates.checkIn}
+                    checkOut={dates.checkOut}
+                    onSuccess={handlePaymentSuccess}
+                    onError={(err) => setPaymentError(err)}
+                  />
+
+                  {/* Offline path completion — shown after offline modal closes */}
+                  <div className="pt-4 border-t border-gray-100 text-center">
+                    <button
+                      onClick={handleOfflinePaymentChosen}
+                      className="text-sm text-gray-400 hover:text-urbane-gold underline transition-colors"
+                    >
+                      I've chosen WhatsApp / Pay at Check-in — mark booking as received
+                    </button>
                   </div>
 
-                  <div className="flex space-x-4 pt-6">
-                     <button 
+                  <div className="flex pt-2">
+                    <button
                       onClick={prevStep}
                       className="w-1/3 border border-gray-300 text-gray-600 py-4 font-bold uppercase tracking-widest hover:bg-gray-50 hover:text-gray-900 transition-colors"
                     >
                       Back
-                    </button>
-                    <button 
-                      onClick={handlePayment}
-                      disabled={paymentProcessing}
-                      className="w-2/3 bg-gradient-to-r from-urbane-gold to-yellow-600 text-white py-4 font-bold uppercase tracking-widest hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex justify-center items-center"
-                    >
-                      {paymentProcessing ? (
-                        <span className="animate-pulse">Processing...</span>
-                      ) : (
-                        `Pay ₹${calculateTotal().toLocaleString('en-IN')}`
-                      )}
                     </button>
                   </div>
                 </div>

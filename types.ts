@@ -41,6 +41,7 @@ export interface Booking {
   paymentStatus: PaymentStatus;
   source: BookingSource;
   dateCreated: string;
+  otaPlatform?: string; // OTA platform name (e.g. MakeMyTrip). Only set when source='OTA'.
 }
 
 export interface Staff {

@@ -26,6 +26,24 @@ const sumCol = (tab: Tab | undefined, colIdx: number, skipHeaderRows = 1): numbe
   return total;
 };
 
+// Sum column `amountCol`, but only for rows where column `requireCol` is non-empty.
+// Used to avoid counting orphan subtotal/summary cells that live further down the sheet.
+const sumColRequiring = (
+  tab: Tab | undefined,
+  amountCol: number,
+  requireCol: number,
+  skipHeaderRows = 1
+): number => {
+  if (!tab) return 0;
+  let total = 0;
+  for (let i = skipHeaderRows; i < tab.values.length; i++) {
+    const gate = tab.values[i]?.[requireCol];
+    if (!gate || !String(gate).trim()) continue;
+    total += parseNum(tab.values[i]?.[amountCol]);
+  }
+  return total;
+};
+
 const findTab = (tabs: Tab[], name: string): Tab | undefined =>
   tabs.find(t => t.name.trim().toLowerCase() === name.trim().toLowerCase());
 
@@ -83,8 +101,10 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
     // BalanceSheet has two header rows (title row + column headers), so skip 2.
     // Columns (0-indexed): A=0 Investment Date, B=1 Name, C=2 Amount,
     //                      I=8 Expense blank, J=9 Description, K=10 Amount
-    const totalInvestment = sumCol(balance, 2, 2);
-    const balanceExpenses = sumCol(balance, 10, 2);
+    // Gate on Name (col B) being set for investments and Description (col J) for expenses,
+    // so orphan subtotal cells further down the sheet don't double-count.
+    const totalInvestment = sumColRequiring(balance, 2, 1, 2);
+    const balanceExpenses = sumColRequiring(balance, 10, 9, 2);
     const opsExpenses = sumCol(ops, 1, 1);
     const totalExpenses = balanceExpenses + opsExpenses;
     const netBalance = totalInvestment - totalExpenses;

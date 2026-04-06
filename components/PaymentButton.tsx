@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CreditCard, Shield, Lock, AlertCircle, CheckCircle } from 'lucide-react';
 import { HOTEL_CONTACT } from './Footer';
+import { supabase } from '../lib/supabase';
 
 interface PaymentButtonProps {
   amount: number; // Amount in INR
@@ -11,7 +12,7 @@ interface PaymentButtonProps {
   roomType: string;
   checkIn: string;
   checkOut: string;
-  onSuccess?: (paymentId: string) => void;
+  onSuccess?: (paymentId: string, orderId: string, signature: string) => void;
   onError?: (error: string) => void;
   disabled?: boolean;
 }
@@ -73,20 +74,32 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         throw new Error('Failed to load payment gateway');
       }
 
-      // In production, this order should be created server-side
-      // For now, we'll show a placeholder
+      // Create order server-side so the secret key never touches the browser
+      const { data: orderData, error: orderError } = await supabase.functions.invoke(
+        'create-razorpay-order',
+        { body: { bookingId, amount } },
+      );
+
+      if (orderError || !orderData?.order_id) {
+        throw new Error('Failed to create payment order. Please try again.');
+      }
+
       const options = {
         key: RAZORPAY_KEY,
         amount: amount * 100, // Razorpay expects amount in paise
         currency: 'INR',
         name: 'Urbane Haauz',
         description: `Room Booking - ${roomType}`,
-        image: '/logo.png', // Add your hotel logo
-        order_id: '', // This should come from server
+        image: '/logo.png',
+        order_id: orderData.order_id,
         handler: function (response: any) {
           console.log('Payment successful:', response);
           if (onSuccess) {
-            onSuccess(response.razorpay_payment_id);
+            onSuccess(
+              response.razorpay_payment_id,
+              response.razorpay_order_id,
+              response.razorpay_signature,
+            );
           }
         },
         prefill: {
@@ -222,7 +235,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
                 <div className="flex items-start space-x-3">
                   <CheckCircle className="text-green-600 flex-shrink-0 mt-0.5" size={20} />
                   <div>
-                    <p className="font-medium text-green-800">Booking Confirmed!</p>
+                    <p className="font-medium text-green-800">Booking Saved!</p>
                     <p className="text-sm text-green-700 mt-1">
                       Your booking has been saved. Complete payment via:
                     </p>

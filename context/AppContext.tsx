@@ -12,6 +12,7 @@ interface AppContextType {
   expenses: Expense[];
   financialTrackerData: FinancialTrackerDaily[];
   loading: boolean;
+  supabaseStatus: 'ok' | 'error';
   updateRoom: (updatedRoom: Room) => void;
   addRoom: (room: Room) => void;
   addBooking: (booking: Booking) => void;
@@ -48,7 +49,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [financialTrackerData, setFinancialTrackerData] = useState<FinancialTrackerDaily[]>([]);
   const [loading, setLoading] = useState(true);
-  
+  const [supabaseStatus, setSupabaseStatus] = useState<'ok' | 'error'>('ok');
+
   const [homeHeroImage, setHomeHeroImage] = useState<string>(() => {
     return localStorage.getItem('homeHeroImage') || DEFAULT_IMAGE;
   });
@@ -106,6 +108,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       } catch (err) {
         console.error('💥 Unexpected error loading rooms:', err);
         setRooms([]);
+        setSupabaseStatus('error');
       } finally {
         setLoading(false);
         console.log('✅ Room loading completed, loading set to false');
@@ -146,6 +149,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           paymentStatus: b.payment_status as Booking['paymentStatus'],
           source: b.source as Booking['source'],
           dateCreated: b.date_created?.split('T')[0] || new Date().toISOString().split('T')[0],
+          otaPlatform: b.ota_platform || undefined,
         })));
       }
       setLoading(false);
@@ -826,6 +830,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       expenses,
       financialTrackerData,
       loading,
+      supabaseStatus,
       updateRoom,
       addRoom,
       addBooking,

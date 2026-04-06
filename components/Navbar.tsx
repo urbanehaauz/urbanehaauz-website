@@ -112,12 +112,14 @@ const Navbar: React.FC = () => {
               )
             )}
             <LanguageSwitcher variant="navbar" />
-            <Link
-              to="/book"
+            <a
+              href="https://urbanehaauz.runhotel.site/en/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-gradient-to-r from-urbane-gold to-urbane-goldLight text-urbane-darkGreen px-6 py-2.5 rounded-none font-bold hover:shadow-gold hover:scale-105 transition-all duration-300 text-sm tracking-wide"
             >
               {t.bookNow.toUpperCase()}
-            </Link>
+            </a>
           </div>
 
           <div className="md:hidden">
@@ -199,13 +201,15 @@ const Navbar: React.FC = () => {
             <div className="pt-2">
               <LanguageSwitcher variant="navbar" />
             </div>
-            <Link
-              to="/book"
+            <a
+              href="https://urbanehaauz.runhotel.site/en/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full max-w-xs bg-urbane-gold text-urbane-green font-bold py-3 rounded-none text-center mt-4"
               onClick={() => setIsOpen(false)}
             >
               {t.bookYourStay.toUpperCase()}
-            </Link>
+            </a>
           </div>
         </div>
       )}

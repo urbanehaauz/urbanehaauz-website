@@ -12,8 +12,7 @@
   "_email_todo": "VERIFY: urbanehaauz@gmail.com vs info@urbanehaauz.com — pick ONE canonical",
   "address": {
     "@type": "PostalAddress",
-    "streetAddress": "Upper Pelling",
-    "_streetAddress_todo": "VERIFY: need nearest landmark line (e.g. 'Near Pelling Helipad', 'Above Pemayangtse Road junction') — 'Upper Pelling' is a locality, not a street",
+    "streetAddress": "Skywalk Road, Upper Pelling",
     "addressLocality": "Pelling",
     "addressRegion": "Sikkim",
     "postalCode": "737113",

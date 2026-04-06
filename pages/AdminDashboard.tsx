@@ -8,6 +8,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { DollarSign, Calendar, Users, TrendingUp, TrendingDown, Plus, X, LogOut, Briefcase, UserCheck, LayoutDashboard, BedDouble, CreditCard, Image as ImageIcon, Check, Lock, RotateCcw, Search, Filter, Settings, Upload, CheckCircle } from 'lucide-react';
 import DatePicker from '../components/DatePicker';
 import SheetFinancials from '../components/SheetFinancials';
+import SheetOverview from '../components/SheetOverview';
 import { BookingStatus, RoomCategory, PaymentStatus, FinancialTrackerDaily, FinancialCalculations } from '../types';
 import { sendBookingCancellation } from '../lib/email/emailService';
 
@@ -600,7 +601,10 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {currentView === 'overview' && (
+        {currentView === 'overview' && <SheetOverview />}
+
+        {/* Legacy overview — preserved but hidden, superseded by SheetOverview */}
+        {false && currentView === 'overview' && (
             <div className="animate-fade-in space-y-10">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <StatCard title="Total Revenue" value={`₹${(totalRevenue/100000).toFixed(1)}L`} icon={DollarSign} trend="+12.5%" trendUp={true} />

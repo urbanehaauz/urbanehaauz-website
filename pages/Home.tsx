@@ -32,12 +32,14 @@ const Home: React.FC = () => {
             - Where luxury meets the clouds.
           </p>
           <div className="flex flex-col items-center">
-            <Link
-              to="/book"
+            <a
+              href="https://urbanehaauz.runhotel.site/en/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="group bg-white text-urbane-green px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg hover:bg-urbane-gold hover:text-white hover:shadow-xl hover:-translate-y-1"
             >
               Check Availability
-            </Link>
+            </a>
             <p className="mt-4 text-white/80 text-xs tracking-[0.15em] uppercase drop-shadow-md">
               Best Rate Guarantee · Instant Confirmation
             </p>
@@ -92,7 +94,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Rooms Preview */}
+      {/* Featured Rooms Preview — hidden; bookings handled externally via runhotel.site */}
+      {false && (
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16">
@@ -135,6 +138,7 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* Testimonials */}
       <section className="py-24 bg-urbane-darkGreen text-white relative overflow-hidden">
@@ -176,12 +180,14 @@ const Home: React.FC = () => {
            <p className="text-gray-500 mb-10 text-lg max-w-2xl mx-auto">
              Escape the chaos. Embrace the clouds. Book directly with us for exclusive welcome perks and guaranteed best rates.
            </p>
-           <Link 
-             to="/book"
+           <a
+             href="https://urbanehaauz.runhotel.site/en/"
+             target="_blank"
+             rel="noopener noreferrer"
              className="inline-block bg-gradient-to-r from-urbane-green to-urbane-darkGreen text-white px-12 py-5 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 font-bold tracking-widest uppercase text-sm"
            >
              Reserve Your Stay
-           </Link>
+           </a>
         </div>
       </section>
     </div>

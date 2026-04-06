@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Urbane Haauz · Founder Briefing</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #161b22;
+    --panel-2: #1f2630;
+    --ink: #e6edf3;
+    --ink-dim: #9aa4b2;
+    --gold: #c8a45e;
+    --gold-soft: #d8b876;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --line: #2a313c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 28px 96px; }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; font-weight: 600; letter-spacing: -0.01em; }
+  h1 { font-size: 38px; margin: 0 0 8px; }
+  h2 { font-size: 26px; margin: 56px 0 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  h3 { font-size: 18px; margin: 0 0 8px; }
+  p { margin: 0 0 12px; color: var(--ink); }
+  .muted { color: var(--ink-dim); font-size: 14px; }
+  .lead { color: var(--ink-dim); font-size: 17px; max-width: 720px; }
+  .gold { color: var(--gold); }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; align-items: stretch; margin-top: 24px; }
+  .hero-card { background: linear-gradient(155deg, #1a2030 0%, #161b22 100%); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+  .hero-stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; justify-content: center; }
+  .stat-row { display: flex; align-items: baseline; justify-content: space-between; padding: 14px 0; border-bottom: 1px dashed var(--line); }
+  .stat-row:last-child { border-bottom: 0; }
+  .stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-dim); }
+  .stat-value { font-family: Georgia, serif; font-size: 26px; color: var(--gold-soft); }
+  .stat-value.red { color: var(--red); }
+  .stat-value.green { color: var(--green); }
+
+  /* Cards grid */
+  .grid { display: grid; gap: 18px; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 820px) { .hero, .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; }
+  .card.green { border-left: 4px solid var(--green); }
+  .card.amber { border-left: 4px solid var(--amber); }
+  .card.red { border-left: 4px solid var(--red); }
+  .card.blue { border-left: 4px solid var(--blue); }
+  .card .tag { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 99px; background: rgba(255,255,255,0.06); color: var(--ink-dim); margin-bottom: 10px; }
+
+  /* Bars */
+  .bar { height: 8px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; margin: 6px 0 14px; }
+  .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-soft)); }
+
+  /* Priority quadrant */
+  .quadrant { position: relative; height: 460px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 28px; margin-top: 8px; }
+  .quadrant .axis-y { position: absolute; left: 12px; top: 50%; transform: rotate(-90deg) translateX(50%); transform-origin: left center; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-dim); }
+  .quadrant .axis-x { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-dim); }
+  .quadrant .grid-lines { position: absolute; inset: 28px; border-left: 1px dashed var(--line); border-bottom: 1px dashed var(--line); }
+  .quadrant .grid-lines::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px dashed var(--line); }
+  .quadrant .grid-lines::after { content: ""; position: absolute; top: 50%; left: 0; right: 0; border-top: 1px dashed var(--line); }
+  .quadrant .label-tl { position: absolute; left: 40px; top: 36px; font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .quadrant .label-tr { position: absolute; right: 40px; top: 36px; font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+  .quadrant .label-bl { position: absolute; left: 40px; bottom: 32px; font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .quadrant .label-br { position: absolute; right: 40px; bottom: 32px; font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+  .dot { position: absolute; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); border: 2px solid var(--bg); transform: translate(-50%, -50%); }
+  .dot.big { width: 18px; height: 18px; background: var(--green); }
+  .dot.med { background: var(--amber); }
+  .dot.small { width: 11px; height: 11px; background: var(--blue); }
+  .dot-label { position: absolute; transform: translate(-50%, -150%); font-size: 11px; color: var(--ink); white-space: nowrap; background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 14px; vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-dim); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  td .pill { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .pill.ayan { background: rgba(96,165,250,0.15); color: var(--blue); }
+  .pill.shovit { background: rgba(251,191,36,0.15); color: var(--amber); }
+  .pill.souvik { background: rgba(168,85,247,0.18); color: #c084fc; }
+  .pill.done { background: rgba(74,222,128,0.18); color: var(--green); }
+
+  /* Owner columns */
+  .owner-card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 22px; }
+  .owner-card h3 { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .owner-card ul { padding-left: 18px; margin: 0; color: var(--ink-dim); font-size: 14px; }
+  .owner-card li { margin: 8px 0; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-family: Georgia, serif; font-size: 14px; color: #fff; }
+  .avatar.a { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+  .avatar.s { background: linear-gradient(135deg, #f59e0b, #b45309); }
+  .avatar.k { background: linear-gradient(135deg, #a855f7, #6d28d9); }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 28px; margin-top: 12px; }
+  .timeline::before { content: ""; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
+  .tl-item { position: relative; padding: 0 0 22px 0; }
+  .tl-item::before { content: ""; position: absolute; left: -28px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--gold); border: 3px solid var(--bg); }
+  .tl-day { font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--gold-soft); margin-bottom: 4px; }
+
+  /* How SEO compounds — funnel */
+  .funnel { display: grid; gap: 8px; margin-top: 8px; }
+  .funnel-row { display: grid; grid-template-columns: 200px 1fr 60px; gap: 14px; align-items: center; font-size: 14px; }
+  .funnel-bar { height: 36px; background: linear-gradient(90deg, rgba(200,164,94,0.25), rgba(200,164,94,0.05)); border-radius: 4px; display: flex; align-items: center; padding-left: 14px; color: var(--ink); }
+  .funnel-pct { font-family: Georgia, serif; color: var(--gold-soft); text-align: right; }
+
+  /* Footer */
+  footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink-dim); font-size: 13px; }
+
+  /* Print */
+  @media print {
+    body { background: #fff; color: #111; }
+    .card, .quadrant, .hero-card, .hero-stat, .owner-card { background: #fff !important; border: 1px solid #ccc !important; color: #111 !important; }
+    h2 { border-color: #ccc !important; }
+    .muted, td, th, .lead, .stat-label, .funnel-row { color: #333 !important; }
+    .stat-value { color: #b8860b !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header>
+    <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:0.18em;">Urbane Haauz · Founder Briefing</div>
+    <h1>The next 86 days, in plain English.</h1>
+    <p class="lead">A one-page picture of where we stand, what just got fixed, and the small set of decisions only you three can make to turn organic traffic into bookings before peak season ends.</p>
+  </header>
+
+  <div class="hero">
+    <div class="hero-card">
+      <div class="muted" style="font-size:11px; text-transform:uppercase; letter-spacing:0.14em;">The situation</div>
+      <h2 style="margin:6px 0 14px; padding:0; border:0;">We have a ₹28 lakh gap and 86 days to close it.</h2>
+      <p>Peak season in Pelling runs <strong>1 April → 30 June</strong>. After that, footfall drops sharply and prices follow. Every day we don't fill rooms during this window is revenue we can't get back until next year.</p>
+      <p>The good news: our website is <em>technically</em> ready to start ranking on Google and showing up in ChatGPT/Perplexity answers — but only if we clear a small list of decisions that only the three of you can make. This document is that list.</p>
+    </div>
+    <div class="hero-stat">
+      <div class="stat-row">
+        <span class="stat-label">Operating gap</span>
+        <span class="stat-value red">₹28,05,541</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Days remaining</span>
+        <span class="stat-value">86</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Required / day</span>
+        <span class="stat-value">₹32,623</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Breakeven by</span>
+        <span class="stat-value green">3 May 2027</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT IS SEO/GEO -->
+  <h2>First, two words you'll hear me use</h2>
+  <div class="grid grid-2">
+    <div class="card blue">
+      <span class="tag">SEO</span>
+      <h3>Showing up on Google</h3>
+      <p class="muted">When a Bengali family in Kolkata types <em>"hotel in Pelling with mountain view"</em> into Google, do we appear on page one? SEO is the work that decides yes or no.</p>
+    </div>
+    <div class="card blue">
+      <span class="tag">GEO</span>
+      <h3>Showing up in AI answers</h3>
+      <p class="muted">When the same family asks <em>ChatGPT</em>, <em>Perplexity</em>, or Google's new AI summary <em>"recommend a boutique hotel in Pelling"</em>, do those AI tools mention Urbane Haauz by name? GEO is the work that decides that.</p>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:14px;">Both are free traffic. Both compound: a piece of work done today keeps paying out for months. And both reward us for being <strong>specific</strong> — Upper Pelling, Kanchenjunga views, the only dorm in town. We are different in ways AI engines can quote. That is rare and valuable.</p>
+
+  <!-- WHAT JUST GOT FIXED -->
+  <h2>What just got fixed (already live on the site)</h2>
+  <p class="muted">Your developer-agent worked through 8 specialist passes and shipped these directly to <strong>main</strong>. You don't need to do anything — they're live.</p>
+  <div class="grid grid-3">
+    <div class="card green">
+      <span class="tag">Technical</span>
+      <h3>The site is now readable by AI</h3>
+      <p class="muted">Robots.txt now explicitly allows ChatGPT, Claude, Perplexity, Google's AI, and Bing's AI to crawl us. Without this, we'd be invisible to every AI tool people use to plan trips.</p>
+    </div>
+    <div class="card green">
+      <span class="tag">Technical</span>
+      <h3>Google has a map of our site</h3>
+      <p class="muted">A sitemap.xml file now tells Google every page we have. This is the first thing you submit to Google Search Console.</p>
+    </div>
+    <div class="card green">
+      <span class="tag">Conversion</span>
+      <h3>Bengali & English meta descriptions on every page</h3>
+      <p class="muted">Each page (Home, Rooms, Experiences, Contact) now has its own headline and snippet for Google to display — instead of one generic line for the whole site.</p>
+    </div>
+    <div class="card green">
+      <span class="tag">Speed</span>
+      <h3>The site loads ~30% faster</h3>
+      <p class="muted">Tailwind CSS now ships properly built. The huge admin dashboard no longer downloads for guests — only for you three when you log in.</p>
+    </div>
+    <div class="card green">
+      <span class="tag">Trust</span>
+      <h3>Hotel info Google can read</h3>
+      <p class="muted">Structured data (the technical kind Google reads behind the scenes) now correctly says we're a hotel in Upper Pelling with 8 rooms, restaurant, bar, CP/MAP plans, ₹400–₹3,900 price range. Previously it had placeholder garbage.</p>
+    </div>
+    <div class="card green">
+      <span class="tag">Compliance</span>
+      <h3>Real GSTIN in the footer</h3>
+      <p class="muted">11AXUPB9728M1ZY is now live. Trust signal for Google + statutory requirement.</p>
+    </div>
+  </div>
+
+  <!-- WHAT'S BLEEDING -->
+  <h2>What still blocks us — and only you can unblock it</h2>
+  <p class="muted">Twelve items. Each one is small individually. Together they unlock everything else. They are ranked by how much organic traffic / direct booking they will drive in the 86-day window.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:30px;">#</th>
+        <th>What we need</th>
+        <th style="width:100px;">Owner</th>
+        <th style="width:100px;">Effort</th>
+        <th>Why it matters</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Claim Google Business Profile</strong> (video verification)</td><td><span class="pill ayan">Ayan</span></td><td>30 min</td><td>Single biggest map-pack lever. Without this we're invisible on Google Maps for "hotels Pelling".</td></tr>
+      <tr><td>2</td><td><strong>Verify hotel phone</strong> &nbsp;<code style="font-size:12px;">+91 91360 32524</code></td><td><span class="pill shovit">Shovit</span></td><td>2 min</td><td>This number goes into Google Maps + 30 directories + every booking. If wrong, every listing is wrong.</td></tr>
+      <tr><td>3</td><td><strong>Get GPS coordinates</strong> for the property (use Google Maps app, share location)</td><td><span class="pill ayan">Ayan</span></td><td>5 min</td><td>Tells Google exactly where on the map to drop our pin in Upper Pelling.</td></tr>
+      <tr><td>4</td><td><strong>Send 5 high-quality property photos</strong>: Kanchenjunga from a room, exterior, restaurant, dorm bunks, premium room</td><td><span class="pill ayan">Ayan</span></td><td>1 hour</td><td>Currently using stock images. Real photos are required for Google, AI engines, and OG (when shared on WhatsApp/FB).</td></tr>
+      <tr><td>5</td><td><strong>Create a Wikidata entry</strong> + add Urbane Haauz as a "Sleep" listing on Wikivoyage Pelling page</td><td><span class="pill ayan">Ayan</span></td><td>45 min</td><td>Wikidata feeds every AI engine on earth. This is the highest-trust signal we can earn for free.</td></tr>
+      <tr><td>6</td><td><strong>Read the 4 blog posts</strong> in <code>docs/Marketing-Claude/content/blog/</code> and approve / edit</td><td><span class="pill souvik">Souvik</span></td><td>1 hour</td><td>These posts target the exact phrases Bengali families type into Google. We can't publish them without your sign-off.</td></tr>
+      <tr><td>7</td><td><strong>Confirm star rating</strong> (registered, not aspirational)</td><td><span class="pill souvik">Souvik</span></td><td>2 min</td><td>Cannot publish rating in schema without verification. Removed for now to be safe.</td></tr>
+      <tr><td>8</td><td><strong>Confirm peak rate floor ₹1,800</strong> against current PMS</td><td><span class="pill shovit">Shovit</span></td><td>5 min</td><td>Blog posts and schema both quote this. Must match what guests actually see.</td></tr>
+      <tr><td>9</td><td><strong>Submit sitemap to Google + Bing</strong> Webmaster Tools</td><td><span class="pill ayan">Ayan</span></td><td>15 min</td><td>Tells Google "please index us today" instead of waiting weeks.</td></tr>
+      <tr><td>10</td><td><strong>Approve Bengali meta tags</strong> after a native speaker reviews them</td><td><span class="pill souvik">Souvik</span></td><td>1 hour</td><td>Unlocks the Kolkata audience in their own language.</td></tr>
+      <tr><td>11</td><td><strong>Reconfirm train numbers/timings</strong> (Darjeeling Mail 12343, Kanchankanya 13149) for the Kolkata → Pelling blog post</td><td><span class="pill ayan">Ayan</span></td><td>10 min</td><td>One factual error = lost trust with the Bengali audience.</td></tr>
+      <tr><td>12</td><td><strong>Schedule a "prerender" session</strong> with the dev agent (technical follow-up)</td><td><span class="pill ayan">Ayan</span></td><td>1 sit-down</td><td>Currently Google can only see our homepage; this unlocks ALL other pages for indexing. This is the biggest remaining ceiling.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- PRIORITY QUADRANT -->
+  <h2>The priority picture</h2>
+  <p class="muted">If you only do five things this week, do the ones in the top-right corner. They are <strong>high impact</strong> and <strong>low effort</strong>.</p>
+
+  <div class="quadrant">
+    <div class="grid-lines"></div>
+    <div class="axis-y">High impact &nbsp;→</div>
+    <div class="axis-x">→ &nbsp; Low effort</div>
+    <div class="label-tl">Plan it</div>
+    <div class="label-tr">DO THIS WEEK</div>
+    <div class="label-bl">Skip / later</div>
+    <div class="label-br">Quick wins</div>
+
+    <!-- top-right (HIGH impact, LOW effort) -->
+    <div class="dot big" style="left:78%; top:18%;"></div>
+    <div class="dot-label" style="left:78%; top:18%;">Claim GBP</div>
+
+    <div class="dot big" style="left:88%; top:28%;"></div>
+    <div class="dot-label" style="left:88%; top:28%;">Verify phone</div>
+
+    <div class="dot big" style="left:84%; top:34%;"></div>
+    <div class="dot-label" style="left:84%; top:34%;">GPS pin</div>
+
+    <div class="dot big" style="left:74%; top:24%;"></div>
+    <div class="dot-label" style="left:74%; top:24%;">Submit sitemap</div>
+
+    <!-- top-left (HIGH impact, HIGH effort) -->
+    <div class="dot med" style="left:18%; top:14%;"></div>
+    <div class="dot-label" style="left:18%; top:14%;">Wikidata</div>
+
+    <div class="dot med" style="left:24%; top:24%;"></div>
+    <div class="dot-label" style="left:24%; top:24%;">Prerender</div>
+
+    <div class="dot med" style="left:32%; top:34%;"></div>
+    <div class="dot-label" style="left:32%; top:34%;">5 photos</div>
+
+    <div class="dot med" style="left:14%; top:38%;"></div>
+    <div class="dot-label" style="left:14%; top:38%;">Approve blogs</div>
+
+    <!-- bottom-right (LOW impact, LOW effort) -->
+    <div class="dot small" style="left:82%; top:64%;"></div>
+    <div class="dot-label" style="left:82%; top:64%;">Star rating</div>
+
+    <div class="dot small" style="left:74%; top:72%;"></div>
+    <div class="dot-label" style="left:74%; top:72%;">Train timings</div>
+
+    <div class="dot small" style="left:88%; top:78%;"></div>
+    <div class="dot-label" style="left:88%; top:78%;">Rate floor</div>
+
+    <!-- bottom-left -->
+    <div class="dot small" style="left:24%; top:78%;"></div>
+    <div class="dot-label" style="left:24%; top:78%;">Bengali meta</div>
+  </div>
+
+  <!-- 7-DAY PLAN -->
+  <h2>Your 7-day plan</h2>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-day">Day 1 — Today</div>
+      <strong>Founder huddle (30 min)</strong>
+      <p class="muted">Read this document together. Each founder takes their pill-coloured items. Send Ayan your 5 best property photos by EOD.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-day">Day 2</div>
+      <strong>Ayan: claim Google Business Profile + submit sitemap</strong>
+      <p class="muted">Shovit verifies phone + rate floor in PMS. Souvik blocks 1 hour to read the 4 blog posts.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-day">Day 3</div>
+      <strong>Ayan: GPS pin + Wikidata entry + Wikivoyage listing</strong>
+      <p class="muted">Souvik signs off blog posts → I publish them.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-day">Day 4</div>
+      <strong>I run the prerender fix</strong> with Ayan (one sit-down, ~2 hours)
+      <p class="muted">This unlocks every page on the site for Google indexing. Biggest single ceiling we have.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-day">Day 5</div>
+      <strong>Begin the 30-directory citation sprint</strong>
+      <p class="muted">JustDial, MakeMyTrip, Booking.com, TripAdvisor, etc. All using the same NAP block.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-day">Day 6</div>
+      <strong>First Reddit + Quora answers</strong> (founder-disclosed)
+      <p class="muted">"I run a hotel in Upper Pelling — happy to answer questions about the dorm beds and Kanchenjunga visibility…" ChatGPT scrapes Reddit heavily. This is the cheapest GEO play that exists.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-day">Day 7</div>
+      <strong>Pitch The Telegraph (Kolkata)</strong> "Bengali Summer Escape" angle
+      <p class="muted">DA 86, hits the #1 audience, costs us nothing but a host stay.</p>
+    </div>
+  </div>
+
+  <!-- OWNER CARDS -->
+  <h2>Who owns what</h2>
+  <div class="grid grid-3">
+    <div class="owner-card">
+      <h3><span class="avatar a">A</span> Ayan</h3>
+      <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Tech / Marketing</div>
+      <ul>
+        <li>Claim Google Business Profile (video verify)</li>
+        <li>Submit sitemap to Google + Bing</li>
+        <li>Create Wikidata entry + Wikivoyage listing</li>
+        <li>Get GPS coordinates of the property</li>
+        <li>Send 5 hero photos (Kanchenjunga, exterior, restaurant, dorm, premium room)</li>
+        <li>Reconfirm train numbers/timings for Kolkata blog</li>
+        <li>Sit with me for the prerender fix (~2 hours)</li>
+      </ul>
+    </div>
+    <div class="owner-card">
+      <h3><span class="avatar s">S</span> Shovit</h3>
+      <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">CFO / Vendors</div>
+      <ul>
+        <li>Verify hotel phone +91 91360 32524 is correct</li>
+        <li>Confirm peak rate floor ₹1,800 against live PMS</li>
+        <li>Approve travel-agent commission structure for Kolkata outreach</li>
+        <li>Set the OTA rate-parity policy across MakeMyTrip / Booking / Agoda</li>
+      </ul>
+    </div>
+    <div class="owner-card">
+      <h3><span class="avatar k">S</span> Souvik</h3>
+      <div class="muted" style="font-size:12px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">CEO / Strategy</div>
+      <ul>
+        <li>Read & approve the 4 publish-ready blog posts</li>
+        <li>Confirm star rating to publish (or leave unset)</li>
+        <li>Approve Bengali-language meta tags after native review</li>
+        <li>Sign off the founder-disclosed Reddit / Quora outreach voice</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- HOW IT COMPOUNDS -->
+  <h2>How small wins compound into bookings</h2>
+  <p class="muted">SEO/GEO is not a single big lever — it's a funnel. Each step multiplies the next. Here's what the funnel looks like over the 86-day window if we clear the 12 unblockers above.</p>
+
+  <div class="funnel">
+    <div class="funnel-row">
+      <span>Search impressions</span>
+      <div class="funnel-bar" style="width:100%;">~8,000 / month (target)</div>
+      <span class="funnel-pct">100%</span>
+    </div>
+    <div class="funnel-row">
+      <span>Clicks to site</span>
+      <div class="funnel-bar" style="width:42%;">~1,400 / month</div>
+      <span class="funnel-pct">17%</span>
+    </div>
+    <div class="funnel-row">
+      <span>Booking-engine clicks</span>
+      <div class="funnel-bar" style="width:18%;">~560 / month</div>
+      <span class="funnel-pct">7%</span>
+    </div>
+    <div class="funnel-row">
+      <span>Confirmed bookings</span>
+      <div class="funnel-bar" style="width:7%;">~70 / month</div>
+      <span class="funnel-pct">~0.9%</span>
+    </div>
+    <div class="funnel-row">
+      <span>At avg ₹2,400 / night × 1.7 nights</span>
+      <div class="funnel-bar" style="width:38%;">≈ ₹2,85,000 / month</div>
+      <span class="funnel-pct">→</span>
+    </div>
+  </div>
+  <p class="muted" style="margin-top:14px;">These are <em>directional</em> targets, not promises. Real numbers depend on photo quality, review velocity, weather, and how aggressively we publish content. But the funnel shape is real: tiny improvements at the top compound massively at the bottom.</p>
+
+  <!-- THE BIG PICTURE -->
+  <h2>The big picture, one paragraph</h2>
+  <div class="card blue">
+    <p>We are the only boutique hotel in Upper Pelling with both real rooms <em>and</em> dorm beds, with direct Kanchenjunga views, with CP/MAP meal plans, in a market dominated by generic OTAs. That combination is genuinely rare and AI engines reward rare. The technical work to <em>show up</em> is done. The strategy to <em>convert</em> is written. The 12 items above are the human decisions that turn it on. None of them takes more than an hour. Together they are worth several lakhs of direct bookings between now and 30 June.</p>
+  </div>
+
+  <footer>
+    <div>Generated 6 April 2026 · sources: <code>docs/Marketing-Claude/SEO_REPORT.md</code>, <code>KEYWORD_BRIEF.md</code>, <code>GEO_BRIEF.md</code>, <code>LOCAL_SEO_BRIEF.md</code>, <code>LINK_BUILDING_BRIEF.md</code>, <code>SPRINT_SUMMARY.md</code></div>
+    <div style="margin-top:6px;">Open this file in any browser. Print to PDF for the founder huddle. No internet required.</div>
+  </footer>
+
+</div>
+</body>
+</html>

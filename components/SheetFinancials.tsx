@@ -101,15 +101,9 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
     // BalanceSheet has two header rows (title row + column headers), so skip 2.
     // Columns (0-indexed): A=0 Investment Date, B=1 Name, C=2 Amount,
     //                      I=8 Expense blank, J=9 Description, K=10 Amount
-    //
-    // Total Investment: the sheet owner maintains a manual subtotal in cell C292
-    // (0-indexed row 291). Prefer that value; fall back to gated row-by-row sum
-    // (rows before 290) if the subtotal cell is empty.
-    const investmentSubtotalCell = parseNum(balance?.values?.[291]?.[2]);
-    const totalInvestment =
-      investmentSubtotalCell > 0
-        ? investmentSubtotalCell
-        : sumColRequiring(balance, 2, 1, 2);
+    // Gate on Name (col B) being set for investments and Description (col J) for
+    // expenses so orphan subtotal cells further down the sheet don't double-count.
+    const totalInvestment = sumColRequiring(balance, 2, 1, 2);
     const balanceExpenses = sumColRequiring(balance, 10, 9, 2);
     const opsExpenses = sumCol(ops, 1, 1);
     const totalExpenses = balanceExpenses + opsExpenses;

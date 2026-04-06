@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { MapPin, Phone, Mail, MessageCircle, Clock, Send, CheckCircle } from 'lucide-react';
 import { HOTEL_CONTACT } from '../components/Footer';
 import { supabase } from '../lib/supabase';
@@ -83,6 +84,15 @@ const Contact: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-urbane-mist">
+      <Helmet>
+        <title>Contact Urbane Haauz | Boutique Hotel in Upper Pelling, Sikkim</title>
+        <meta name="description" content="Contact Urbane Haauz in Upper Pelling: +91 9136032524, urbanehaauz@gmail.com. SH-510, Pelling, West Sikkim 737113." />
+        <link rel="canonical" href="https://urbanehaauz.com/#/contact" />
+        <meta property="og:title" content="Contact Urbane Haauz" />
+        <meta property="og:description" content="Get in touch with Urbane Haauz in Upper Pelling, Sikkim." />
+        <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
+        <meta property="og:url" content="https://urbanehaauz.com/#/contact" />
+      </Helmet>
       {/* Hero Section */}
       <section className="relative h-64 bg-gradient-to-r from-urbane-darkGreen to-urbane-green overflow-hidden">
         <div className="absolute inset-0 bg-black/30" />

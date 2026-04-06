@@ -2,133 +2,196 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=32&h=32&fit=crop&q=80" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Urbane Haauz | Luxury Hotel in Pelling, Sikkim with Kanchenjunga Views</title>
+    <meta name="theme-color" content="#1C1917" />
+    <title>Urbane Haauz | Boutique Hotel in Upper Pelling with Kanchenjunga Views</title>
 
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Experience luxury at Urbane Haauz in Pelling, Sikkim. Wake up to stunning Kanchenjunga views, enjoy authentic Sikkimese cuisine, and modern amenities. Book your mountain retreat today! Starting ₹500/night." />
-    <meta name="keywords" content="Pelling hotel, Sikkim accommodation, Kanchenjunga view hotel, mountain resort Pelling, backpacker hostel Sikkim, luxury hotel West Sikkim, Pelling homestay, Sikkim tourism, budget hotel Pelling" />
+    <!-- SEO Meta Tags (defaults; per-page Helmet overrides these) -->
+    <meta name="description" content="Urbane Haauz — boutique hotel in Upper Pelling, Sikkim. Direct Kanchenjunga views, CP/MAP meal plans, dormitory beds, and direct booking with best-rate guarantee." />
     <meta name="author" content="Urbane Haauz" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://www.urbanehaauz.com/" />
+    <link rel="canonical" href="https://urbanehaauz.com/" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.urbanehaauz.com/" />
-    <meta property="og:title" content="Urbane Haauz | Luxury Hotel in Pelling, Sikkim" />
-    <meta property="og:description" content="Experience luxury at Urbane Haauz in Pelling, Sikkim. Wake up to stunning Kanchenjunga views, enjoy authentic Sikkimese cuisine, and modern amenities." />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=630&fit=crop&q=80" />
+    <meta property="og:url" content="https://urbanehaauz.com/" />
+    <meta property="og:title" content="Urbane Haauz | Boutique Hotel in Upper Pelling" />
+    <meta property="og:description" content="Boutique hotel in Upper Pelling with direct Kanchenjunga views, CP/MAP meal plans and dorm beds. Book direct for best rates." />
+    <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
     <meta property="og:site_name" content="Urbane Haauz" />
     <meta property="og:locale" content="en_IN" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://www.urbanehaauz.com/" />
-    <meta name="twitter:title" content="Urbane Haauz | Luxury Hotel in Pelling, Sikkim" />
-    <meta name="twitter:description" content="Experience luxury at Urbane Haauz in Pelling, Sikkim. Wake up to stunning Kanchenjunga views!" />
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=630&fit=crop&q=80" />
+    <meta name="twitter:url" content="https://urbanehaauz.com/" />
+    <meta name="twitter:title" content="Urbane Haauz | Boutique Hotel in Upper Pelling" />
+    <meta name="twitter:description" content="Boutique hotel in Upper Pelling with direct Kanchenjunga views. Book direct." />
+    <meta name="twitter:image" content="https://urbanehaauz.com/og-image.jpg" />
 
-    <!-- Structured Data - Hotel Schema -->
+    <!--
+      Structured Data — Hotel (primary)
+      TODO (founder verification):
+        - telephone: confirm +91 91360 32524 is canonical WhatsApp + voice line
+        - streetAddress: needs landmark line (e.g. "Near Pelling Helipad")
+        - geo lat/long: pull exact pin from Google Business Profile once claimed
+        - starRating: intentionally omitted — do NOT add until official Sikkim Tourism Dept classification confirmed
+        - sameAs: add FB/Instagram/MMT/Booking/Agoda/TripAdvisor URLs once live
+        - image: replace with real property photos hosted on urbanehaauz.com
+        - per-category room prices: verify min/max with founders
+    -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Hotel",
+      "@id": "https://urbanehaauz.com/#hotel",
       "name": "Urbane Haauz",
-      "description": "Luxury hotel in Pelling, Sikkim with stunning Kanchenjunga views, authentic Sikkimese cuisine, and modern amenities.",
-      "url": "https://www.urbanehaauz.com",
-      "telephone": "+91-98765-43210",
-      "email": "stay@urbanehaauz.com",
+      "alternateName": "Urbane Haauz Boutique Hotel",
+      "description": "Urbane Haauz is a boutique hotel in Upper Pelling, Sikkim with direct Kanchenjunga views, the only property in the area offering both hotel rooms and DORM beds, with CP/MAP meal plans and direct booking at urbanehaauz.com.",
+      "url": "https://urbanehaauz.com",
+      "telephone": "+91-91360-32524",
+      "email": "urbanehaauz@gmail.com",
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "SH-510, Pelling",
-        "addressLocality": "West Sikkim",
+        "streetAddress": "Upper Pelling",
+        "addressLocality": "Pelling",
         "addressRegion": "Sikkim",
         "postalCode": "737113",
         "addressCountry": "IN"
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": "27.3000",
-        "longitude": "88.2333"
+        "latitude": "27.3167",
+        "longitude": "88.2395"
       },
-      "priceRange": "₹500 - ₹8000",
-      "starRating": {
-        "@type": "Rating",
-        "ratingValue": "4"
-      },
+      "hasMap": "https://maps.google.com/?q=Urbane+Haauz+Upper+Pelling+Sikkim",
+      "priceRange": "₹400–₹3,900",
+      "currenciesAccepted": "INR",
+      "paymentAccepted": "Cash, Credit Card, Debit Card, UPI, Net Banking, Razorpay",
+      "numberOfRooms": 8,
+      "checkinTime": "13:00:00+05:30",
+      "checkoutTime": "11:00:00+05:30",
+      "petsAllowed": "Small well-behaved pets on prior request",
       "amenityFeature": [
-        {"@type": "LocationFeatureSpecification", "name": "Free WiFi"},
-        {"@type": "LocationFeatureSpecification", "name": "Mountain View"},
-        {"@type": "LocationFeatureSpecification", "name": "Restaurant"},
-        {"@type": "LocationFeatureSpecification", "name": "24/7 Power Backup"}
+        {"@type": "LocationFeatureSpecification", "name": "Free WiFi", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Kanchenjunga Mountain View", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Restaurant", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Bar", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Free Parking", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Room Service", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "24-hour Hot Water", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Power Backup", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Continental Plan (CP)", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Modified American Plan (MAP)", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Dormitory Beds", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Bengali-speaking Staff", "value": true},
+        {"@type": "LocationFeatureSpecification", "name": "Direct Booking via Razorpay", "value": true}
       ],
-      "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80"
+      "image": [
+        "https://urbanehaauz.com/og-image.jpg",
+        "https://urbanehaauz.com/lib/hero-image.png"
+      ],
+      "founder": [
+        {"@type": "Person", "name": "Ayan"},
+        {"@type": "Person", "name": "Shovit"},
+        {"@type": "Person", "name": "Souvik"}
+      ],
+      "makesOffer": [
+        {"@type": "Offer", "name": "Standard Room", "url": "https://urbanehaauz.com/#/rooms", "priceCurrency": "INR", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 1800, "maxPrice": 2400, "priceCurrency": "INR"}},
+        {"@type": "Offer", "name": "Deluxe Room", "url": "https://urbanehaauz.com/#/rooms", "priceCurrency": "INR", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 2400, "maxPrice": 3200, "priceCurrency": "INR"}},
+        {"@type": "Offer", "name": "Premium Room", "url": "https://urbanehaauz.com/#/rooms", "priceCurrency": "INR", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 3000, "maxPrice": 3900, "priceCurrency": "INR"}},
+        {"@type": "Offer", "name": "Dormitory Bed", "url": "https://urbanehaauz.com/#/rooms", "priceCurrency": "INR", "priceSpecification": {"@type": "PriceSpecification", "minPrice": 400, "maxPrice": 900, "priceCurrency": "INR"}}
+      ]
     }
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              urbane: {
-                green: '#8C5E45',       /* Formerly Green, now Burnished Copper/Terracotta */
-                darkGreen: '#1C1917',   /* Formerly Dark Green, now Deep Espresso/Warm Black */
-                lightGreen: '#BCAAA4',  /* Formerly Light Green, now Warm Sand */
-                mist: '#F9F8F6',        /* Formerly Cool Mist, now Warm Ivory */
-                gold: '#C5A059',        /* Antique Gold */
-                goldLight: '#E5C558',
-                orange: '#E07A5F',      /* Muted Sunset Orange */
-                blue: '#4A90E2',
-                charcoal: '#2C241F'     /* Warm Charcoal */
-              }
-            },
-            fontFamily: {
-              serif: ['"Playfair Display"', 'serif'],
-              sans: ['Inter', 'sans-serif'],
-            },
-            boxShadow: {
-              'soft': '0 10px 40px -10px rgba(28, 25, 23, 0.08)',
-              'gold': '0 4px 20px -5px rgba(197, 160, 89, 0.4)',
-            },
-            backgroundImage: {
-              'hero-gradient': 'linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(28, 25, 23, 0.6))',
-              'gold-gradient': 'linear-gradient(135deg, #C5A059 0%, #B08D55 100%)',
-              'green-gradient': 'linear-gradient(135deg, #8C5E45 0%, #5D4037 100%)', /* Copper Gradient */
-            }
-          }
-        }
-      }
+
+    <!--
+      Structured Data — LodgingBusiness / Organization
+      TODO (founder verification):
+        - legalName: confirm registered entity name
+        - openingHoursSpecification: confirm 24/7 reception (currently assumed)
+        - logo: replace with real square PNG logo once designed
+        - sameAs: add social profile URLs once live
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LodgingBusiness",
+      "@id": "https://urbanehaauz.com/#organization",
+      "name": "Urbane Haauz",
+      "legalName": "Urbane Haauz Boutique Hotel",
+      "description": "Urbane Haauz is a boutique hotel in Upper Pelling, Sikkim with direct Kanchenjunga views, the only property in the area offering both hotel rooms and DORM beds, with CP/MAP meal plans and direct booking at urbanehaauz.com.",
+      "url": "https://urbanehaauz.com",
+      "logo": "https://urbanehaauz.com/favicon.svg",
+      "image": "https://urbanehaauz.com/og-image.jpg",
+      "telephone": "+91-91360-32524",
+      "email": "urbanehaauz@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Upper Pelling",
+        "addressLocality": "Pelling",
+        "addressRegion": "Sikkim",
+        "postalCode": "737113",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "27.3167",
+        "longitude": "88.2395"
+      },
+      "hasMap": "https://maps.google.com/?q=Urbane+Haauz+Upper+Pelling+Sikkim",
+      "priceRange": "₹400–₹3,900",
+      "currenciesAccepted": "INR",
+      "paymentAccepted": "Cash, Credit Card, Debit Card, UPI, Net Banking, Razorpay",
+      "openingHoursSpecification": [
+        {"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], "opens": "00:00", "closes": "23:59"}
+      ],
+      "areaServed": [
+        {"@type": "Place", "name": "Pelling, West Sikkim"},
+        {"@type": "Place", "name": "Upper Pelling"},
+        {"@type": "Place", "name": "West Sikkim"},
+        {"@type": "Place", "name": "Sikkim, India"}
+      ],
+      "knowsAbout": [
+        "Kanchenjunga viewing",
+        "Sikkim tourism",
+        "Pelling sightseeing",
+        "Pemayangtse Monastery",
+        "Rabdentse Ruins",
+        "Khecheopalri Lake",
+        "Sangachoeling Monastery",
+        "Himalayan travel",
+        "Bengali family travel from Kolkata",
+        "Backpacker and dormitory accommodation",
+        "CP and MAP meal plans"
+      ],
+      "founder": [
+        {"@type": "Person", "name": "Ayan"},
+        {"@type": "Person", "name": "Shovit"},
+        {"@type": "Person", "name": "Souvik"}
+      ]
+    }
     </script>
-    <style>
-      body {
-        background-color: #F9F8F6;
-        color: #2C241F;
-      }
-      .glass {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-      }
-      .glass-dark {
-        background: rgba(28, 25, 23, 0.9); /* Warm Black Glass */
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-      }
-      .text-shadow {
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      }
-      input, select, textarea {
-        background-color: #ffffff !important;
-        color: #1f2937 !important;
-      }
-    </style>
-<link rel="stylesheet" href="/index.css">
-</head>
+
+    <!-- Structured Data — BreadcrumbList (Home) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://urbanehaauz.com/"}
+      ]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

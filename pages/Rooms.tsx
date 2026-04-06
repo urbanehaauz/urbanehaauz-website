@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Users, Wifi, Square, Check } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { RoomCategory } from '../types';
@@ -16,6 +17,15 @@ const Rooms: React.FC = () => {
 
   return (
     <div className="pt-24 pb-20 min-h-screen bg-urbane-mist">
+      <Helmet>
+        <title>Rooms & Dorms | Urbane Haauz Pelling — Kanchenjunga View Hotel</title>
+        <meta name="description" content="Standard, Deluxe and Premium rooms plus dormitory beds at Urbane Haauz in Upper Pelling. 8 rooms, Kanchenjunga views, CP/MAP meal plans." />
+        <link rel="canonical" href="https://urbanehaauz.com/#/rooms" />
+        <meta property="og:title" content="Rooms & Dorms | Urbane Haauz Pelling" />
+        <meta property="og:description" content="From backpacker dorms to premium Kanchenjunga-view suites." />
+        <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
+        <meta property="og:url" content="https://urbanehaauz.com/#/rooms" />
+      </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="font-serif text-4xl md:text-5xl text-urbane-green font-bold mb-4">Our Accommodation</h1>

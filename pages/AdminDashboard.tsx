@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend } from 'recharts';
 import { DollarSign, Calendar, Users, TrendingUp, TrendingDown, Plus, X, LogOut, Briefcase, UserCheck, LayoutDashboard, BedDouble, CreditCard, Image as ImageIcon, Check, Lock, RotateCcw, Search, Filter, Settings, Upload, CheckCircle } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import DatePicker from '../components/DatePicker';
 import SheetFinancials from '../components/SheetFinancials';
 import SheetOverview from '../components/SheetOverview';
@@ -558,6 +559,10 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50/50 font-sans relative">
+      <Helmet>
+        <title>Admin Dashboard | Urbane Haauz</title>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       <Sidebar />
       
       <div className="md:ml-64 pt-24 pb-20 px-6 sm:px-8 lg:px-10 transition-all">

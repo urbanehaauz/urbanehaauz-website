@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
+import { Helmet } from 'react-helmet-async';
 import { Lock, Mountain } from 'lucide-react';
 // @ts-ignore
 import heroImage from '../lib/hero-image.png';
@@ -56,6 +57,10 @@ const AdminLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-urbane-darkGreen relative overflow-hidden">
+      <Helmet>
+        <title>Admin Login | Urbane Haauz</title>
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
       {/* Background decorative elements */}
       <div 
         className="absolute top-0 left-0 w-full h-full bg-cover bg-center opacity-30"

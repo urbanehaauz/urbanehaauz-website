@@ -1,0 +1,120 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Hotel",
+  "@id": "https://urbanehaauz.com/#hotel",
+  "name": "Urbane Haauz",
+  "alternateName": "Urbane Haauz Boutique Hotel",
+  "description": "Urbane Haauz is a boutique hotel in Upper Pelling, Sikkim with direct Kanchenjunga views, the only property in the area offering both hotel rooms and DORM beds, with CP/MAP meal plans and direct booking at urbanehaauz.com.",
+  "url": "https://urbanehaauz.com",
+  "telephone": "+91-91360-32524",
+  "_telephone_todo": "VERIFY with founders (Ayan/Shovit/Souvik): is +91 91360 32524 the canonical WhatsApp + voice line? Any secondary reception line?",
+  "email": "urbanehaauz@gmail.com",
+  "_email_todo": "VERIFY: urbanehaauz@gmail.com vs info@urbanehaauz.com — pick ONE canonical",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Upper Pelling",
+    "_streetAddress_todo": "VERIFY: need nearest landmark line (e.g. 'Near Pelling Helipad', 'Above Pemayangtse Road junction') — 'Upper Pelling' is a locality, not a street",
+    "addressLocality": "Pelling",
+    "addressRegion": "Sikkim",
+    "postalCode": "737113",
+    "addressCountry": "IN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "27.3167",
+    "longitude": "88.2395",
+    "_geo_todo": "VERIFY: pull exact lat/long from Google Business Profile pin once claimed. Current values are Pelling town centroid approximation."
+  },
+  "hasMap": "https://maps.google.com/?q=Urbane+Haauz+Upper+Pelling+Sikkim",
+  "_starRating_todo": "DO NOT publish a star rating until founders confirm official classification (Sikkim Tourism Dept registration). No rating invented.",
+  "priceRange": "₹400–₹3,900",
+  "currenciesAccepted": "INR",
+  "paymentAccepted": "Cash, Credit Card, Debit Card, UPI, Net Banking, Razorpay",
+  "numberOfRooms": 8,
+  "checkinTime": "13:00:00+05:30",
+  "checkoutTime": "11:00:00+05:30",
+  "_petsAllowed_todo": "VERIFY: FAQ Q10 says pets accommodated on prior request — confirm as petsAllowed: true with note",
+  "petsAllowed": "Small well-behaved pets on prior request",
+  "amenityFeature": [
+    {"@type": "LocationFeatureSpecification", "name": "Free WiFi", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Kanchenjunga Mountain View", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Restaurant", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Bar", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Free Parking", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Room Service", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "24-hour Hot Water", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Power Backup", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Continental Plan (CP)", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Modified American Plan (MAP)", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Luggage Storage", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Airport Transfer (on request)", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Family Rooms", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Dormitory Beds", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Bengali-speaking Staff", "value": true},
+    {"@type": "LocationFeatureSpecification", "name": "Direct Booking via Razorpay", "value": true}
+  ],
+  "image": [
+    "https://urbanehaauz.com/og-image.jpg",
+    "https://urbanehaauz.com/lib/hero-image.png"
+  ],
+  "_image_todo": "Replace with real photo URLs once uploaded: exterior, Kanchenjunga view from room, Premium room, Deluxe room, Standard room, DORM, restaurant, bar. Host on urbanehaauz.com (not Unsplash).",
+  "sameAs": [],
+  "_sameAs_todo": "Populate with verified profile URLs once live: Facebook, Instagram, MakeMyTrip, Booking.com, Agoda, TripAdvisor, Google Business Profile. Do not invent URLs.",
+  "founder": [
+    {"@type": "Person", "name": "Ayan"},
+    {"@type": "Person", "name": "Shovit"},
+    {"@type": "Person", "name": "Souvik"}
+  ],
+  "_founder_todo": "VERIFY full legal names of founders for public schema; currently using first names only as per GEO_BRIEF.",
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "name": "Standard Room",
+      "url": "https://urbanehaauz.com/#/rooms",
+      "priceCurrency": "INR",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "minPrice": 1800,
+        "maxPrice": 2400,
+        "priceCurrency": "INR"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Deluxe Room",
+      "url": "https://urbanehaauz.com/#/rooms",
+      "priceCurrency": "INR",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "minPrice": 2400,
+        "maxPrice": 3200,
+        "priceCurrency": "INR"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Premium Room",
+      "url": "https://urbanehaauz.com/#/rooms",
+      "priceCurrency": "INR",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "minPrice": 3000,
+        "maxPrice": 3900,
+        "priceCurrency": "INR"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Dormitory Bed",
+      "url": "https://urbanehaauz.com/#/rooms",
+      "priceCurrency": "INR",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "minPrice": 400,
+        "maxPrice": 900,
+        "priceCurrency": "INR"
+      }
+    }
+  ],
+  "_priceSpecification_todo": "VERIFY exact per-category min/max with founders. Overall range ₹400–₹3,900 confirmed; per-category splits are inferred."
+}

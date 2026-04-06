@@ -1,0 +1,60 @@
+{
+  "_note": "One BreadcrumbList per public page. Home page itself typically omits breadcrumbs, but a single-item list is included for completeness. Hash routes use /#/path form because the site runs on HashRouter (see CLAUDE.md).",
+  "home": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://urbanehaauz.com/"}
+    ]
+  },
+  "rooms": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://urbanehaauz.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Rooms & Dorms", "item": "https://urbanehaauz.com/#/rooms"}
+    ]
+  },
+  "experiences": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://urbanehaauz.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Experiences", "item": "https://urbanehaauz.com/#/experiences"}
+    ]
+  },
+  "book": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://urbanehaauz.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Book", "item": "https://urbanehaauz.com/#/book"}
+    ]
+  },
+  "contact": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://urbanehaauz.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Contact", "item": "https://urbanehaauz.com/#/contact"}
+    ]
+  },
+  "faq": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://urbanehaauz.com/"},
+      {"@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://urbanehaauz.com/#/faq"}
+    ]
+  },
+  "blog_post_template": {
+    "_note": "Template — swap {slug} and {title} per blog post when content-writer ships posts.",
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://urbanehaauz.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://urbanehaauz.com/#/blog"},
+      {"@type": "ListItem", "position": 3, "name": "{title}", "item": "https://urbanehaauz.com/#/blog/{slug}"}
+    ]
+  }
+}

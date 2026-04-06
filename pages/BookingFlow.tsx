@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { Room } from '../types';
+import { Helmet } from 'react-helmet-async';
 import { CheckCircle, Calendar, CreditCard, ChevronRight, Lock } from 'lucide-react';
 import DatePicker from '../components/DatePicker';
 import PaymentButton from '../components/PaymentButton';
@@ -339,6 +340,15 @@ const BookingFlow: React.FC = () => {
 
   return (
     <div className="pt-24 pb-20 min-h-screen bg-urbane-mist font-sans">
+      <Helmet>
+        <title>Book Your Stay | Urbane Haauz Pelling — Direct Booking</title>
+        <meta name="description" content="Book directly with Urbane Haauz in Upper Pelling, Sikkim. Secure Razorpay payment, instant confirmation, best-rate guarantee." />
+        <link rel="canonical" href="https://urbanehaauz.com/#/book" />
+        <meta property="og:title" content="Book Your Stay | Urbane Haauz Pelling" />
+        <meta property="og:description" content="Direct booking. Best rate guaranteed. Instant confirmation." />
+        <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
+        <meta property="og:url" content="https://urbanehaauz.com/#/book" />
+      </Helmet>
       <div className="max-w-6xl mx-auto px-4">
 
         {/* Supabase outage fallback banner */}

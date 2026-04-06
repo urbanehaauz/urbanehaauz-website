@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Cloud, Sun, Wifi, Coffee, ChevronRight, Star } from 'lucide-react';
 import { TESTIMONIALS } from '../lib/mockData';
 import { useApp } from '../context/AppContext';
@@ -9,6 +10,15 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full font-sans">
+      <Helmet>
+        <title>Urbane Haauz | Boutique Hotel in Upper Pelling with Kanchenjunga Views</title>
+        <meta name="description" content="Boutique hotel in Upper Pelling, Sikkim with direct Kanchenjunga views. CP/MAP meal plans, dormitory beds, direct Razorpay booking — best rate guaranteed." />
+        <link rel="canonical" href="https://urbanehaauz.com/#/" />
+        <meta property="og:title" content="Urbane Haauz | Boutique Hotel in Upper Pelling" />
+        <meta property="og:description" content="Direct Kanchenjunga views, CP/MAP meal plans, dorm beds. Book direct for best rates." />
+        <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
+        <meta property="og:url" content="https://urbanehaauz.com/" />
+      </Helmet>
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
         <div className="absolute inset-0">
@@ -32,14 +42,12 @@ const Home: React.FC = () => {
             - Where luxury meets the clouds.
           </p>
           <div className="flex flex-col items-center">
-            <a
-              href="https://urbanehaauz.runhotel.site/en/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/book"
               className="group bg-white text-urbane-green px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg hover:bg-urbane-gold hover:text-white hover:shadow-xl hover:-translate-y-1"
             >
               Check Availability
-            </a>
+            </Link>
             <p className="mt-4 text-white/80 text-xs tracking-[0.15em] uppercase drop-shadow-md">
               Best Rate Guarantee · Instant Confirmation
             </p>
@@ -180,14 +188,12 @@ const Home: React.FC = () => {
            <p className="text-gray-500 mb-10 text-lg max-w-2xl mx-auto">
              Escape the chaos. Embrace the clouds. Book directly with us for exclusive welcome perks and guaranteed best rates.
            </p>
-           <a
-             href="https://urbanehaauz.runhotel.site/en/"
-             target="_blank"
-             rel="noopener noreferrer"
+           <Link
+             to="/book"
              className="inline-block bg-gradient-to-r from-urbane-green to-urbane-darkGreen text-white px-12 py-5 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 font-bold tracking-widest uppercase text-sm"
            >
              Reserve Your Stay
-           </a>
+           </Link>
         </div>
       </section>
     </div>

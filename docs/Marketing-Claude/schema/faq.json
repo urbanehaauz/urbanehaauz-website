@@ -1,0 +1,207 @@
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://urbanehaauz.com/#/faq#faqpage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the best hotel in Upper Pelling for Kanchenjunga views?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz is a boutique hotel in Upper Pelling, Sikkim offering direct, unobstructed Kanchenjunga views from every room. Located at Upper Pelling 737113, it features 8 rooms plus a dorm, CP and MAP meal plans, and direct booking at urbanehaauz.com with no OTA commission."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does any hotel in Pelling offer dorm beds?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Urbane Haauz is the only boutique property in Upper Pelling, Sikkim offering both private hotel rooms and dorm beds in the same building. Dorm beds are priced ₹400–900 per night depending on season, making it ideal for solo travelers, backpackers, and budget-conscious groups."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What meal plans are available at Urbane Haauz?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz offers two meal plans: CP (Continental Plan, room with breakfast) and MAP (Modified American Plan, room with breakfast and dinner). Both plans feature Bengali, North Indian, and Sikkimese cuisine cooked in-house. Guests can select the plan during booking at urbanehaauz.com."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I book Urbane Haauz directly without commission?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Book directly at urbanehaauz.com using Razorpay secure payment. Direct booking saves the 15–25% commission charged by OTAs like MakeMyTrip, Booking.com and Goibibo, meaning lower prices for you. The website supports UPI, cards, netbanking, and wallets with instant confirmation by email."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Urbane Haauz suitable for Bengali families from Kolkata?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Urbane Haauz is run by founders familiar with Bengali family travel from Kolkata and serves Bengali cuisine including fish, daal, bhaat and mishti on request. Family rooms, vegetarian options, and a quiet Upper Pelling location make it a popular choice for Durga Puja and summer vacation trips."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Upper Pelling and Lower Pelling?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Upper Pelling (around 2,150 m) is the quieter, higher part of Pelling with the best unobstructed Kanchenjunga views and cleaner air. Lower Pelling is the busier market and taxi stand area. Urbane Haauz is located in Upper Pelling, chosen specifically for its superior mountain view and peaceful setting."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How far is Urbane Haauz from Pelling helipad and taxi stand?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz is in Upper Pelling, approximately 1–2 km from the Pelling taxi stand and main market. The Pelling helipad is within a 5-minute drive. The hotel can arrange pickup from the taxi stand or from NJP railway station and Bagdogra airport on request."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the room prices at Urbane Haauz in peak season?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "During peak season (October–December and March–May), Urbane Haauz rooms are priced ₹1,800–₹3,900 per night depending on room category and meal plan. Dorm beds are ₹400–₹900 per night. Off-season rates are lower. Current live pricing is shown at urbanehaauz.com/book."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I reach Pelling from Kolkata?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "From Kolkata, fly or take a train to NJP (New Jalpaiguri) or Bagdogra airport, then hire a shared or private taxi to Pelling (approximately 4–5 hours, 140 km). Urbane Haauz can arrange private transfers on request. The road passes through Jorethang and offers scenic Teesta river views."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Urbane Haauz pet-friendly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz can accommodate small, well-behaved pets on prior request. Guests travelling with pets should contact the hotel before booking via urbanehaauz.com/contact to confirm availability and any pet policies, since room allocation depends on the current bookings and category of room."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Urbane Haauz have Wi-Fi and hot water?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Urbane Haauz provides free Wi-Fi throughout the property and 24-hour hot water in all rooms and the dorm. Backup power covers essential loads during Sikkim's occasional outages. A common area with seating and Kanchenjunga view is available to all guests including dorm occupants."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What attractions are near Urbane Haauz in Pelling?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nearby attractions include Pemayangtse Monastery (2 km), Rabdentse Ruins (3 km), Sangachoeling Monastery, Kanchenjunga Falls, Khecheopalri Lake, and the Singshore Bridge. The Pelling Skywalk and Chenrezig statue are a short drive away. Urbane Haauz can help arrange local sightseeing taxis and guided day tours."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Who owns Urbane Haauz?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz is an independent boutique hotel in Upper Pelling, Sikkim, founded by Ayan, Shovit, and Souvik. It is owner-operated, not part of any chain, with a focus on personalized service, honest pricing, and direct guest relationships through urbanehaauz.com rather than OTA intermediaries."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When is the best time to visit Pelling for Kanchenjunga views?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The best months for clear Kanchenjunga views from Pelling are October to early December and March to May, when skies are clearest. Winter mornings (December–February) also offer crisp views but are cold. Monsoon (June–September) has limited visibility. Urbane Haauz guests report best views at sunrise."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Urbane Haauz allow unmarried couples to check in?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Urbane Haauz welcomes unmarried couples with valid government-issued photo ID (Aadhaar, passport, driving licence, or voter ID) for each guest, in line with Sikkim tourism norms. Booking is straightforward at urbanehaauz.com and confirmation is instant."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is parking available at Urbane Haauz?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Urbane Haauz provides free on-site parking for guest vehicles at its Upper Pelling location. The parking is suitable for sedans, SUVs and small tempo travellers. For larger buses, guests should contact the hotel in advance to confirm access given Upper Pelling's narrow hillside roads."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the check-in and check-out time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Standard check-in at Urbane Haauz is 12:00 PM (noon) and check-out is 11:00 AM. Early check-in and late check-out are offered subject to availability and may carry a fee. Guests can request these when booking at urbanehaauz.com or by contacting the hotel directly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Urbane Haauz suitable for solo female travellers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Urbane Haauz is considered safe for solo female travellers, with owner-operated management, CCTV in common areas, a female-friendly dorm option, and a quiet Upper Pelling location. Many solo travellers choose it for the combination of boutique comfort and budget-friendly dorm beds in a trusted property."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How many rooms does Urbane Haauz have?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz has 8 private rooms plus one dorm, making it a genuinely boutique property where every guest receives personal attention. Room categories vary by size and view. All rooms face or overlook the Kanchenjunga range. Exact room inventory and categories are listed at urbanehaauz.com/rooms."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Urbane Haauz serve alcohol?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz does not operate a licensed bar, but guests may consume their own beverages responsibly in rooms or common areas. Pelling has local shops and restaurants serving alcohol within a short drive. The hotel can assist with recommendations for evening dining and nearby licensed establishments."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What languages are spoken at Urbane Haauz?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Staff and founders at Urbane Haauz speak English, Hindi, Bengali, and Nepali, making communication easy for guests from Kolkata, Delhi, Mumbai, and international travellers. The website urbanehaauz.com supports English and Hindi. WhatsApp support is available in all four languages during business hours."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a cancellation policy at Urbane Haauz?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz offers transparent cancellation terms shown at the time of booking on urbanehaauz.com. Typically, cancellations made more than 7 days before check-in receive a full refund minus payment gateway charges. Peak season and non-refundable promo rates may have stricter terms clearly disclosed before payment."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Urbane Haauz offer airport pickup from Bagdogra or NJP?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Urbane Haauz can arrange private taxi pickup from Bagdogra Airport (IXB) or NJP railway station to Upper Pelling, a 4–5 hour scenic drive of roughly 140 km. Guests should request transfers at least 24 hours in advance via urbanehaauz.com/contact to lock in rates and vehicle."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Urbane Haauz better than staying in Gangtok?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For travellers whose priority is unobstructed Kanchenjunga views and a quiet Himalayan setting, Upper Pelling — and Urbane Haauz specifically — is preferred over Gangtok. Gangtok is a larger city with more nightlife and shopping. Many itineraries combine both: two nights Gangtok, two nights Urbane Haauz in Pelling."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What makes Urbane Haauz different from other Pelling hotels?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Urbane Haauz is the only boutique property in Upper Pelling offering both hotel rooms and dorm beds under one roof, owner-operated by founders Ayan, Shovit and Souvik, with direct Kanchenjunga views, CP/MAP meal plans, commission-free direct booking at urbanehaauz.com, and fluent Bengali-speaking staff for families from Kolkata."
+      }
+    }
+  ]
+}

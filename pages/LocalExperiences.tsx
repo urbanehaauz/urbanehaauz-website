@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Mountain, Footprints, Landmark, Waves, MapPin, Clock, Star, MessageCircle } from 'lucide-react';
 import { HOTEL_CONTACT } from '../components/Footer';
 
@@ -81,6 +82,15 @@ const LocalExperiences: React.FC = () => {
   return (
     <div className="flex flex-col w-full font-sans">
       {/* Hero Section */}
+      <Helmet>
+        <title>Local Experiences in Pelling | Urbane Haauz</title>
+        <meta name="description" content="Pelling Skywalk, Pemayangtse Monastery, Khecheopalri Lake and more — curated local experiences from Urbane Haauz in Upper Pelling, Sikkim." />
+        <link rel="canonical" href="https://urbanehaauz.com/#/experiences" />
+        <meta property="og:title" content="Local Experiences in Pelling | Urbane Haauz" />
+        <meta property="og:description" content="Monasteries, waterfalls, skywalks and trails around Upper Pelling." />
+        <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
+        <meta property="og:url" content="https://urbanehaauz.com/#/experiences" />
+      </Helmet>
       <section className="relative h-[40vh] w-full overflow-hidden bg-gradient-to-br from-urbane-darkGreen via-urbane-green to-urbane-darkGreen">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{

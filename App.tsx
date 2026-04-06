@@ -1,14 +1,12 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import Rooms from './pages/Rooms';
 import BookingFlow from './pages/BookingFlow';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminLogin from './pages/AdminLogin';
-import AuthCallback from './pages/AuthCallback';
 import LocalExperiences from './pages/LocalExperiences';
 import Contact from './pages/Contact';
 import MyBookings from './pages/MyBookings';
@@ -16,6 +14,11 @@ import { AppProvider } from './context/AppContext';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
+
+// Admin bundle is code-split and lazy-loaded so public visitors never download it.
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
+const AdminLogin = React.lazy(() => import('./pages/AdminLogin'));
+const AuthCallback = React.lazy(() => import('./pages/AuthCallback'));
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -27,7 +30,6 @@ const ScrollToTop = () => {
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  // Hide footer and WhatsApp button on admin pages
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
@@ -43,30 +45,40 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
+const AdminFallback = () => (
+  <div className="min-h-screen flex items-center justify-center text-urbane-charcoal">
+    Loading…
+  </div>
+);
+
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <LanguageProvider>
-        <AppProvider>
-          <HashRouter>
-            <ScrollToTop />
-            <MainLayout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/rooms" element={<Rooms />} />
-                <Route path="/experiences" element={<LocalExperiences />} />
-                <Route path="/book" element={<BookingFlow />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/my-bookings" element={<MyBookings />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-              </Routes>
-            </MainLayout>
-          </HashRouter>
-        </AppProvider>
-      </LanguageProvider>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <AppProvider>
+            <HashRouter>
+              <ScrollToTop />
+              <MainLayout>
+                <Suspense fallback={<AdminFallback />}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/rooms" element={<Rooms />} />
+                    <Route path="/experiences" element={<LocalExperiences />} />
+                    <Route path="/book" element={<BookingFlow />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/my-bookings" element={<MyBookings />} />
+                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
+                  </Routes>
+                </Suspense>
+              </MainLayout>
+            </HashRouter>
+          </AppProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </HelmetProvider>
   );
 };
 

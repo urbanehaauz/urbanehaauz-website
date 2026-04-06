@@ -1,0 +1,182 @@
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "HotelRoom",
+    "@id": "https://urbanehaauz.com/#room-standard",
+    "name": "Standard Room",
+    "description": "Comfortable standard room at Urbane Haauz, Upper Pelling, with garden or courtyard view and access to Kanchenjunga-facing common areas. Features attached bathroom with 24-hour hot water, free WiFi, and daily housekeeping.",
+    "occupancy": {
+      "@type": "QuantitativeValue",
+      "minValue": 1,
+      "maxValue": 2
+    },
+    "bed": {
+      "@type": "BedDetails",
+      "numberOfBeds": 1,
+      "typeOfBed": "Double bed"
+    },
+    "amenityFeature": [
+      {"@type": "LocationFeatureSpecification", "name": "Free WiFi", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Attached Bathroom", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "24-hour Hot Water", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Room Service", "value": true}
+    ],
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Peak Season (Apr–Jun)",
+        "priceCurrency": "INR",
+        "price": "1800",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-04-01",
+        "validThrough": "2026-06-30",
+        "url": "https://urbanehaauz.com/#/book"
+      },
+      {
+        "@type": "Offer",
+        "name": "Off-Season",
+        "priceCurrency": "INR",
+        "price": "1200",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-07-01",
+        "validThrough": "2026-09-30",
+        "url": "https://urbanehaauz.com/#/book"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "HotelRoom",
+    "@id": "https://urbanehaauz.com/#room-deluxe",
+    "name": "Deluxe Room",
+    "description": "Spacious deluxe room at Urbane Haauz with partial Kanchenjunga mountain view, larger windows, and upgraded furnishings. Includes attached bathroom, free WiFi, and seating area.",
+    "occupancy": {
+      "@type": "QuantitativeValue",
+      "minValue": 1,
+      "maxValue": 3
+    },
+    "bed": {
+      "@type": "BedDetails",
+      "numberOfBeds": 1,
+      "typeOfBed": "King bed"
+    },
+    "amenityFeature": [
+      {"@type": "LocationFeatureSpecification", "name": "Kanchenjunga View", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Free WiFi", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Seating Area", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Room Service", "value": true}
+    ],
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Peak Season (Apr–Jun)",
+        "priceCurrency": "INR",
+        "price": "2700",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-04-01",
+        "validThrough": "2026-06-30",
+        "url": "https://urbanehaauz.com/#/book"
+      },
+      {
+        "@type": "Offer",
+        "name": "Off-Season",
+        "priceCurrency": "INR",
+        "price": "1900",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-07-01",
+        "validThrough": "2026-09-30",
+        "url": "https://urbanehaauz.com/#/book"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "HotelRoom",
+    "@id": "https://urbanehaauz.com/#room-premium",
+    "name": "Premium Room",
+    "description": "Premium room at Urbane Haauz with direct, unobstructed Kanchenjunga view from a private balcony. The best rooms in the property for sunrise over the Kanchenjunga range. Includes king bed, seating area, and upgraded bath.",
+    "occupancy": {
+      "@type": "QuantitativeValue",
+      "minValue": 1,
+      "maxValue": 3
+    },
+    "bed": {
+      "@type": "BedDetails",
+      "numberOfBeds": 1,
+      "typeOfBed": "King bed"
+    },
+    "amenityFeature": [
+      {"@type": "LocationFeatureSpecification", "name": "Private Balcony", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Direct Kanchenjunga View", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Free WiFi", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Room Service", "value": true}
+    ],
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Peak Season (Apr–Jun)",
+        "priceCurrency": "INR",
+        "price": "3900",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-04-01",
+        "validThrough": "2026-06-30",
+        "url": "https://urbanehaauz.com/#/book"
+      },
+      {
+        "@type": "Offer",
+        "name": "Off-Season",
+        "priceCurrency": "INR",
+        "price": "3100",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-07-01",
+        "validThrough": "2026-09-30",
+        "url": "https://urbanehaauz.com/#/book"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Accommodation",
+    "@id": "https://urbanehaauz.com/#room-dorm",
+    "name": "Dormitory Bed",
+    "description": "Shared dormitory accommodation at Urbane Haauz, Upper Pelling — the only boutique hotel in Pelling offering dorm beds. Features lockers, shared bathroom, free WiFi, and access to the same Kanchenjunga-view common areas as private rooms. Ideal for solo travellers, backpackers, and budget-conscious groups.",
+    "occupancy": {
+      "@type": "QuantitativeValue",
+      "value": 1
+    },
+    "bed": {
+      "@type": "BedDetails",
+      "numberOfBeds": 1,
+      "typeOfBed": "Dorm bunk bed"
+    },
+    "amenityFeature": [
+      {"@type": "LocationFeatureSpecification", "name": "Lockers", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Shared Bathroom", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Free WiFi", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "24-hour Hot Water", "value": true},
+      {"@type": "LocationFeatureSpecification", "name": "Common Area with Kanchenjunga View", "value": true}
+    ],
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Peak Season Dorm Bed (Apr–Jun)",
+        "priceCurrency": "INR",
+        "price": "900",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-04-01",
+        "validThrough": "2026-06-30",
+        "url": "https://urbanehaauz.com/#/book"
+      },
+      {
+        "@type": "Offer",
+        "name": "Off-Season Dorm Bed",
+        "priceCurrency": "INR",
+        "price": "400",
+        "availability": "https://schema.org/InStock",
+        "validFrom": "2026-07-01",
+        "validThrough": "2026-09-30",
+        "url": "https://urbanehaauz.com/#/book"
+      }
+    ]
+  }
+]

@@ -12,7 +12,7 @@ export const HOTEL_CONTACT = {
   city: 'Sikkim, India 737113',
   instagram: 'https://instagram.com/urbanehaauz',
   facebook: 'https://facebook.com/urbanehaauz',
-  gstin: '11AAAAA0000A1Z5',
+  gstin: '11AXUPB9728M1ZY',
 };
 
 const Footer: React.FC = () => {

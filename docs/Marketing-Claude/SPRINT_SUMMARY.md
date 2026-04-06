@@ -55,7 +55,7 @@ These are the things only Ayan/Shovit/Souvik can answer or supply. Each one unbl
 | 2 | Verify canonical phone `+91 91360 32524` (or correct it) | Shovit | Used in JSON-LD, GBP, every directory |
 | 3 | Verified GPS coordinates for Upper Pelling property | Ayan | Local pack ranking, JSON-LD `geo` |
 | 4 | Star rating (if any registered) | Souvik | Cannot publish in schema without verification |
-| 5 | Real GSTIN (replace `11AAAAA0000A1Z5` placeholder in `Footer.tsx:15`) | Shovit | Compliance + trust |
+| 5 | ~~Real GSTIN~~ — **DONE** (`11AXUPB9728M1ZY` set in `Footer.tsx:15`) | ✅ | Compliance + trust |
 | 6 | Claim Google Business Profile (video verification) | Ayan | Single biggest map-pack lever |
 | 7 | Approve Bengali-language meta variants (need native review) | Souvik | Unlocks Kolkata audience |
 | 8 | Confirm peak rate floor (₹1,800) against live PMS | Shovit | Blog posts cite this |

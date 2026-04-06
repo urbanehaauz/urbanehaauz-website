@@ -229,24 +229,30 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
               const isOpen = openTab === tab.name;
               const nonEmptyRows = tab.values.filter(r => r.some(c => (c ?? '').toString().trim() !== ''));
 
-              // Compute column-wise totals + detect which columns are "numeric".
-              // A column is numeric if at least 3 non-header cells parse as a non-zero number.
-              const maxCols = nonEmptyRows.reduce((m, r) => Math.max(m, r.length), 0);
-              const colTotals: number[] = new Array(maxCols).fill(0);
-              const colNumericCount: number[] = new Array(maxCols).fill(0);
-              for (let ri = 1; ri < nonEmptyRows.length; ri++) {
-                for (let ci = 0; ci < maxCols; ci++) {
-                  const raw = nonEmptyRows[ri]?.[ci];
-                  if (raw === undefined || raw === null || String(raw).trim() === '') continue;
-                  const n = parseNum(raw);
-                  if (n !== 0) {
-                    colTotals[ci] += n;
-                    colNumericCount[ci] += 1;
+              // Single total per tab: sum of one meaningful "primary" column.
+              // Mapping is explicit per tab to avoid cluttered multi-column sums
+              // (e.g., Notes/Bifurcation columns contain concatenated numbers).
+              const PRIMARY_COL: Record<string, { col: number; label: string; skipHeaderRows?: number; requireCol?: number }> = {
+                'balancesheet':         { col: 2,  label: 'Total Investment', skipHeaderRows: 2, requireCol: 1 },
+                'provision':            { col: 6,  label: 'Total Value' },
+                'room bookings':        { col: 8,  label: 'Total Sales' },
+                'driver room bookings': { col: 4,  label: 'Total Sales' },
+                'restaurant billing':   { col: 5,  label: 'Total Final Amount' },
+                'uh ops expenses':      { col: 1,  label: 'Total Amount' },
+              };
+              const primary = PRIMARY_COL[tab.name.trim().toLowerCase()];
+              let primaryTotal = 0;
+              if (primary) {
+                const skip = primary.skipHeaderRows ?? 1;
+                for (let i = skip; i < tab.values.length; i++) {
+                  const row = tab.values[i] ?? [];
+                  if (primary.requireCol !== undefined) {
+                    const gate = row[primary.requireCol];
+                    if (!gate || !String(gate).trim()) continue;
                   }
+                  primaryTotal += parseNum(row[primary.col]);
                 }
               }
-              const isNumericCol = colNumericCount.map(c => c >= 3);
-              const hasAnyNumericCol = isNumericCol.some(Boolean);
 
               return (
                 <div key={tab.name} className="glassmorphism-strong rounded-lg overflow-hidden">
@@ -261,19 +267,11 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
                         {Math.max(0, nonEmptyRows.length)} rows
                       </span>
                     </div>
-                    {/* Compact inline totals when collapsed */}
-                    {!isOpen && hasAnyNumericCol && (
-                      <div className="hidden md:flex items-center space-x-4 text-xs">
-                        {isNumericCol.map((isNum, ci) => {
-                          if (!isNum) return null;
-                          const header = String(nonEmptyRows[0]?.[ci] ?? `Col ${ci + 1}`).trim();
-                          return (
-                            <div key={ci} className="text-right">
-                              <div className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider truncate max-w-[120px]">{header}</div>
-                              <div className="text-gold font-bold">{fmt(colTotals[ci])}</div>
-                            </div>
-                          );
-                        })}
+                    {/* Single primary total when collapsed */}
+                    {!isOpen && primary && (
+                      <div className="hidden md:flex flex-col items-end text-right mr-2">
+                        <div className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">{primary.label}</div>
+                        <div className="text-gold font-bold text-sm">{fmt(primaryTotal)}</div>
                       </div>
                     )}
                   </button>
@@ -296,23 +294,13 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
                             </tr>
                           ))}
                         </tbody>
-                        {hasAnyNumericCol && (
+                        {primary && (
                           <tfoot className="sticky bottom-0 bg-urbane-darkGreen/95 backdrop-blur-sm">
                             <tr className="border-t-2 border-gold">
-                              {Array.from({ length: maxCols }).map((_, ci) => (
-                                <td
-                                  key={ci}
-                                  className={`px-3 py-3 whitespace-nowrap font-bold ${
-                                    isNumericCol[ci] ? 'text-gold text-sm' : 'text-warm-ivory text-opacity-60 text-[10px] uppercase tracking-wider'
-                                  }`}
-                                >
-                                  {isNumericCol[ci]
-                                    ? fmt(colTotals[ci])
-                                    : ci === 0
-                                    ? 'TOTAL'
-                                    : ''}
-                                </td>
-                              ))}
+                              <td colSpan={Math.max(1, primary.col)} className="px-3 py-3 font-bold text-warm-ivory text-opacity-60 text-[11px] uppercase tracking-wider">
+                                {primary.label}
+                              </td>
+                              <td className="px-3 py-3 font-bold text-gold text-sm whitespace-nowrap">{fmt(primaryTotal)}</td>
                             </tr>
                           </tfoot>
                         )}

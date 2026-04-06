@@ -172,7 +172,7 @@ const SheetOverview: React.FC = () => {
         breakevenDate: null as Date | null,
         currentDailyRate: 0,
         onTrack: false,
-        categoryTargets: [] as Array<{ category: string; historicalShare: number; requiredDaily: number }>,
+        categoryTargets: [] as Array<{ category: string; historicalShare: number; requiredDaily: number; currentAvg: number; currentMedian: number; activeDays: number }>,
         monthlyForecast: [] as Array<{ month: string; projected: number; target: number }>,
       },
     };
@@ -226,6 +226,10 @@ const SheetOverview: React.FC = () => {
     let roomsSold = 0;
     let upiTotal = 0;
     let cashTotal = 0;
+    // Per-category unique active date sets — used to compute real per-day averages/medians
+    const roomDateTotals: Record<string, number> = {};
+    const driverDateTotals: Record<string, number> = {};
+    const restaurantDateTotals: Record<string, number> = {};
     const recent: Array<{ date: string; pax: string; nights: string; rooms: string; amount: number; status: string }> = [];
     if (roomBookings) {
       for (let i = 1; i < roomBookings.values.length; i++) {
@@ -248,6 +252,10 @@ const SheetOverview: React.FC = () => {
         if (month !== null) {
           roomByMonth[month] = (roomByMonth[month] ?? 0) + amount;
           if (amount > 0) addDate(month, String(dateStr));
+        }
+        if (amount > 0) {
+          const key = String(dateStr).trim().toLowerCase();
+          roomDateTotals[key] = (roomDateTotals[key] ?? 0) + amount;
         }
         recent.push({
           date: String(dateStr),
@@ -275,6 +283,10 @@ const SheetOverview: React.FC = () => {
           driverByMonth[month] = (driverByMonth[month] ?? 0) + amount;
           if (amount > 0) addDate(month, String(dateStr));
         }
+        if (amount > 0) {
+          const key = String(dateStr).trim().toLowerCase();
+          driverDateTotals[key] = (driverDateTotals[key] ?? 0) + amount;
+        }
       }
     }
 
@@ -292,6 +304,10 @@ const SheetOverview: React.FC = () => {
         if (month !== null) {
           restaurantByMonth[month] = (restaurantByMonth[month] ?? 0) + amount;
           if (amount > 0) addDate(month, String(dateStr));
+        }
+        if (amount > 0) {
+          const key = String(dateStr).trim().toLowerCase();
+          restaurantDateTotals[key] = (restaurantDateTotals[key] ?? 0) + amount;
         }
       }
     }
@@ -433,18 +449,35 @@ const SheetOverview: React.FC = () => {
       breakevenDate = today;
     }
 
+    // Per-category current daily averages & medians (only over days that had revenue).
+    const perDayStats = (map: Record<string, number>) => {
+      const vals = Object.values(map);
+      if (vals.length === 0) return { avg: 0, median: 0, activeDays: 0 };
+      const sum = vals.reduce((a, b) => a + b, 0);
+      const sorted = [...vals].sort((a, b) => a - b);
+      const mid = Math.floor(sorted.length / 2);
+      const median = sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+      return { avg: sum / vals.length, median, activeDays: vals.length };
+    };
+    const roomStats = perDayStats(roomDateTotals);
+    const restaurantStats = perDayStats(restaurantDateTotals);
+    const driverStats = perDayStats(driverDateTotals);
+
     // Category targets: allocate the peak-season required daily rate across room/restaurant/driver
-    // by their historical share.
-    const historicalShares: Array<{ name: string; amount: number }> = [
-      { name: 'Rooms', amount: roomRevenue },
-      { name: 'Restaurant', amount: restaurantRevenue },
-      { name: 'Driver Rooms', amount: driverRevenue },
+    // by their historical share. Include current avg/median for comparison.
+    const historicalShares: Array<{ name: string; amount: number; stats: typeof roomStats }> = [
+      { name: 'Rooms', amount: roomRevenue, stats: roomStats },
+      { name: 'Restaurant', amount: restaurantRevenue, stats: restaurantStats },
+      { name: 'Driver Rooms', amount: driverRevenue, stats: driverStats },
     ];
     const historicalTotal = historicalShares.reduce((s, x) => s + x.amount, 0) || 1;
     const categoryTargets = historicalShares.map(x => ({
       category: x.name,
       historicalShare: x.amount / historicalTotal,
       requiredDaily: peakRequiredDaily * (x.amount / historicalTotal),
+      currentAvg: x.stats.avg,
+      currentMedian: x.stats.median,
+      activeDays: x.stats.activeDays,
     }));
 
     // Monthly forecast for next 6 months (projected revenue vs flat expense-run-rate target).
@@ -695,20 +728,44 @@ const SheetOverview: React.FC = () => {
                 </div>
               </div>
 
-              {/* Category-wise targets during peak */}
+              {/* Category-wise current vs target */}
               {analytics.forecast.peakRequiredDaily > 0 && (
                 <div className="mt-5 pt-5 border-t border-white/10">
-                  <p className="text-warm-ivory text-opacity-60 text-[11px] uppercase tracking-wider mb-3">Daily Target Breakdown</p>
+                  <p className="text-warm-ivory text-opacity-60 text-[11px] uppercase tracking-wider mb-3">Current vs Required Daily Revenue</p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {analytics.forecast.categoryTargets.map((ct, i) => (
-                      <div key={ct.category} className="p-3 rounded-lg bg-white/5 border border-white/5">
-                        <div className="flex items-center justify-between">
-                          <p className="text-warm-ivory text-opacity-70 text-xs">{ct.category}</p>
-                          <span className="text-warm-ivory text-opacity-40 text-[10px]">{(ct.historicalShare * 100).toFixed(0)}%</span>
+                    {analytics.forecast.categoryTargets.map(ct => {
+                      const gap = ct.requiredDaily - ct.currentAvg;
+                      const meetsTarget = ct.currentAvg >= ct.requiredDaily;
+                      const liftPct = ct.currentAvg > 0 ? ((ct.requiredDaily / ct.currentAvg - 1) * 100) : 0;
+                      return (
+                        <div key={ct.category} className="p-4 rounded-lg bg-white/5 border border-white/5">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-warm-ivory text-sm font-semibold">{ct.category}</p>
+                            <span className="text-warm-ivory text-opacity-40 text-[10px]">{(ct.historicalShare * 100).toFixed(0)}% share</span>
+                          </div>
+                          <div className="space-y-1.5">
+                            <div className="flex items-baseline justify-between">
+                              <span className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Current avg</span>
+                              <span className="text-warm-ivory font-semibold text-sm">{fmt(ct.currentAvg)}<span className="text-warm-ivory text-opacity-40 text-[10px] ml-1">/day</span></span>
+                            </div>
+                            <div className="flex items-baseline justify-between">
+                              <span className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Median</span>
+                              <span className="text-warm-ivory text-opacity-80 text-xs">{fmt(ct.currentMedian)}</span>
+                            </div>
+                            <div className="flex items-baseline justify-between pt-1 border-t border-white/5">
+                              <span className="text-urbane-gold text-[10px] uppercase tracking-wider font-bold">Required</span>
+                              <span className="text-urbane-gold font-bold text-base">{fmt(ct.requiredDaily)}<span className="text-urbane-gold/60 text-[10px] ml-1">/day</span></span>
+                            </div>
+                            <div className={`text-[10px] font-semibold mt-1 ${meetsTarget ? 'text-green-300' : 'text-orange-300'}`}>
+                              {meetsTarget
+                                ? `✓ On target (+${fmt(ct.currentAvg - ct.requiredDaily)} surplus)`
+                                : `Gap: ${fmt(gap)} · needs +${liftPct.toFixed(0)}% lift`}
+                            </div>
+                            <p className="text-warm-ivory text-opacity-30 text-[9px]">Based on {ct.activeDays} active days</p>
+                          </div>
                         </div>
-                        <p className="text-urbane-gold font-bold text-lg mt-1">{fmt(ct.requiredDaily)}/day</p>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}

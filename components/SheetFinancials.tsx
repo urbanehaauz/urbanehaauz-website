@@ -6,12 +6,23 @@ type Tab = { name: string; values: string[][] };
 type SheetPayload = { sheetId: string; fetchedAt: string; tabs: Tab[] };
 
 // Parse a currency / number cell like " 50,000.00 " or "₹1,200" into a number.
+// Strict: rejects text, but evaluates plus-separated sums like "4300+1000" = 5300.
+// Also collapses Indian-format digit grouping ("1,04,17,500" → 10417500).
 const parseNum = (raw: unknown): number => {
   if (raw === null || raw === undefined) return 0;
-  const s = String(raw).replace(/[₹,\s]/g, '').replace(/[^0-9.\-]/g, '');
+  let s = String(raw).replace(/[₹\s]/g, '').trim();
   if (!s || s === '-' || s === '.') return 0;
-  const n = Number(s);
-  return Number.isFinite(n) ? n : 0;
+  s = s.replace(/,/g, '');
+  if (s.includes('+')) {
+    const parts = s.split('+').map(p => p.trim()).filter(Boolean);
+    let sum = 0;
+    for (const p of parts) {
+      if (!/^-?\d+(?:\.\d+)?$/.test(p)) return 0;
+      sum += Number(p);
+    }
+    return sum;
+  }
+  return /^-?\d+(?:\.\d+)?$/.test(s) ? Number(s) : 0;
 };
 
 const fmt = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;

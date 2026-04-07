@@ -5,6 +5,7 @@ import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { Helmet } from 'react-helmet-async';
 import { Lock, Mountain } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 // @ts-ignore
 import heroImage from '../lib/hero-image.png';
 
@@ -17,7 +18,7 @@ const AdminLogin: React.FC = () => {
   const { signIn, isAdmin } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already admin
+  // Already-authenticated admin lands here → bounce to dashboard
   useEffect(() => {
     if (isAdmin) {
       navigate('/admin');
@@ -28,25 +29,56 @@ const AdminLogin: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
+
     try {
-      const { error } = await signIn(email.trim(), password);
-      
-      if (error) {
-        setError(error.message || 'Invalid credentials. Please check your email and password.');
+      const { error: signInError } = await signIn(email.trim(), password);
+
+      if (signInError) {
+        setError(signInError.message || 'Invalid credentials. Please check your email and password.');
         setPassword('');
         setLoading(false);
+        return;
+      }
+
+      // signIn succeeded — directly check admin status from Supabase rather than
+      // racing with AuthContext's async state propagation. This avoids the stale
+      // closure bug where a freshly-logged-in admin saw "Access denied".
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (!user) {
+        setError('Login succeeded but the user session could not be retrieved. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      // Primary check: user_profiles.is_admin column
+      let isUserAdmin = false;
+      try {
+        const { data: profile, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single();
+        if (!profileError && profile?.is_admin) {
+          isUserAdmin = true;
+        }
+      } catch {
+        /* table may not exist yet — fall through to metadata check */
+      }
+
+      // Fallback: user.user_metadata.is_admin
+      if (!isUserAdmin && user.user_metadata?.is_admin === true) {
+        isUserAdmin = true;
+      }
+
+      if (isUserAdmin) {
+        navigate('/admin');
       } else {
-        // Wait a moment for auth state to update, then check admin status
-        setTimeout(() => {
-          if (isAdmin) {
-            navigate('/admin');
-          } else {
-            setError('Access denied. This account does not have admin privileges. Please contact your administrator.');
-            setPassword('');
-          }
-          setLoading(false);
-        }, 1000);
+        // Sign out so a non-admin doesn't stay authenticated as a regular user on this tab
+        await supabase.auth.signOut();
+        setError('Access denied. This account does not have admin privileges. Please contact your administrator.');
+        setPassword('');
+        setLoading(false);
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during login.');

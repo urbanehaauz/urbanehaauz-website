@@ -192,6 +192,14 @@ const SheetOverview: React.FC = () => {
         onTrack: false,
         categoryTargets: [] as Array<{ category: string; historicalShare: number; requiredDaily: number; currentAvg: number; currentMedian: number; activeDays: number }>,
         monthlyForecast: [] as Array<{ month: string; projected: number; target: number }>,
+        monthlyPlan: [] as Array<{
+          key: string; label: string; monthIdx: number; year: number; days: number; mult: number;
+          target: number; capacity: number; historical: number; benchmark: number;
+          achievable: boolean; liftNeededPct: number; vsBenchmarkPct: number;
+          roomTarget: number; restaurantTarget: number; driverTarget: number; isPeak: boolean;
+        }>,
+        annualExpenseRunRate: 0,
+        annualRevenueTarget: 0,
       },
     };
     if (!data) return empty;

@@ -120,6 +120,16 @@ const SEASON_MULT: Record<number, number> = {
 };
 const PEAK_MONTHS = new Set([3, 4, 5, 9]); // Apr, May, Jun, Oct
 
+// Benchmark: estimated average ANNUAL revenue for a comparable 8-room boutique hotel
+// in Upper Pelling (rooms + F&B + driver rooms). Derived from:
+//   • Sikkim Tourism 2024 report: ~15.4L annual domestic visitors, ~80% concentrated
+//     in Mar–Jun + Sep–Nov + Dec–Jan
+//   • Industry averages: 70–85% peak occupancy, 20–40% monsoon, ADR ₹2,000–3,500 peak
+//   • Comparable Upper Pelling properties: Elgin Mount Pandim, Norbu Ghang, Hotel Garuda
+//   • Travel Trade Journal (2025): "near-full occupancy" reports in peak + winter windows
+// These are ESTIMATES for benchmarking — clearly labeled as such in the UI.
+const PELLING_MARKET_BENCHMARK_ANNUAL = 5000000; // ₹50 lakh / year for an 8-room boutique
+
 const daysInMonth = (y: number, m: number) => new Date(y, m + 1, 0).getDate();
 
 // Dark tooltip for charts
@@ -549,6 +559,19 @@ const SheetOverview: React.FC = () => {
     const restShare = historicalTotal > 0 ? restaurantRevenue / historicalTotal : 0.17;
     const drvShare  = historicalTotal > 0 ? driverRevenue / historicalTotal : 0.48;
 
+    // Pelling-market benchmark — distribute the annual benchmark across 12 months
+    // using the same seasonality shape. Total of all 12 values == PELLING_MARKET_BENCHMARK_ANNUAL.
+    const calendarWeightedDays: number[] = [];
+    for (let mi = 0; mi < 12; mi++) {
+      const y = startRef.getFullYear();
+      calendarWeightedDays.push(daysInMonth(y, mi) * (SEASON_MULT[mi] ?? 1));
+    }
+    const calendarWeightTotal = calendarWeightedDays.reduce((a, b) => a + b, 0) || 1;
+    const benchmarkByMonthIdx: Record<number, number> = {};
+    for (let mi = 0; mi < 12; mi++) {
+      benchmarkByMonthIdx[mi] = PELLING_MARKET_BENCHMARK_ANNUAL * (calendarWeightedDays[mi] / calendarWeightTotal);
+    }
+
     const monthlyPlan: Array<{
       key: string;
       label: string;
@@ -559,8 +582,10 @@ const SheetOverview: React.FC = () => {
       target: number;         // achievable target for this month
       capacity: number;       // what current pace × seasonality would deliver
       historical: number;     // actual recorded revenue for this month (any year)
+      benchmark: number;      // estimated avg for a comparable Pelling boutique
       achievable: boolean;    // capacity ≥ target × 0.90
       liftNeededPct: number;  // % lift from current pace to hit target
+      vsBenchmarkPct: number; // our target as % of market benchmark
       roomTarget: number;
       restaurantTarget: number;
       driverTarget: number;
@@ -577,6 +602,8 @@ const SheetOverview: React.FC = () => {
       const weight = seasonalCapacities[i] / totalSeasonalWeight;
       const target = annualRevenueTarget * weight;
       const liftNeededPct = capacity > 0 ? ((target / capacity - 1) * 100) : 0;
+      const benchmark = benchmarkByMonthIdx[mi] ?? 0;
+      const vsBenchmarkPct = benchmark > 0 ? (target / benchmark) * 100 : 0;
 
       monthlyPlan.push({
         key: `${yr}-${mi}`,
@@ -588,8 +615,10 @@ const SheetOverview: React.FC = () => {
         target: Math.round(target),
         capacity: Math.round(capacity),
         historical: Math.round(historicalByMonthIdx[mi] ?? 0),
+        benchmark: Math.round(benchmark),
         achievable: capacity >= target * 0.9,
         liftNeededPct: Math.round(liftNeededPct),
+        vsBenchmarkPct: Math.round(vsBenchmarkPct),
         roomTarget: Math.round(target * roomShare),
         restaurantTarget: Math.round(target * restShare),
         driverTarget: Math.round(target * drvShare),
@@ -968,12 +997,23 @@ const SheetOverview: React.FC = () => {
                     dot={{ r: 4, fill: COLORS.green, strokeWidth: 0 }}
                     activeDot={{ r: 6 }}
                   />
+                  <Line
+                    type="monotone"
+                    dataKey="benchmark"
+                    name="Pelling Market Avg (est.)"
+                    stroke={COLORS.purple}
+                    strokeWidth={2}
+                    strokeDasharray="6 4"
+                    dot={{ r: 3, fill: COLORS.purple, strokeWidth: 0 }}
+                    activeDot={{ r: 5 }}
+                  />
                 </ComposedChart>
               </ResponsiveContainer>
-              <div className="flex items-center justify-center gap-5 mt-2 text-[10px] text-warm-ivory text-opacity-60">
+              <div className="flex items-center justify-center gap-5 mt-2 text-[10px] text-warm-ivory text-opacity-60 flex-wrap">
                 <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.gold }} /> Peak month target</span>
                 <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: 'rgba(200,160,89,0.55)' }} /> Shoulder target</span>
-                <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.green }} /> Capacity at current pace</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.green }} /> Your capacity</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.purple, borderTop: `2px dashed ${COLORS.purple}` }} /> Pelling market avg (8-room boutique, est.)</span>
               </div>
             </div>
 
@@ -1050,6 +1090,40 @@ const SheetOverview: React.FC = () => {
                     <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Historical same month</p>
                     <p className="text-warm-ivory font-bold text-lg">{selectedMonth.historical > 0 ? fmt(selectedMonth.historical) : '—'}</p>
                     <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">{selectedMonth.historical > 0 ? 'actual recorded' : 'no data yet'}</p>
+                  </div>
+                </div>
+
+                {/* Market benchmark row */}
+                <div className="p-4 rounded-lg bg-gradient-to-r from-purple-500/10 to-purple-500/5 border border-purple-500/20 mb-4">
+                  <div className="flex items-start justify-between flex-wrap gap-3">
+                    <div>
+                      <p className="text-purple-300 text-[10px] uppercase tracking-widest font-bold mb-1">Pelling Market Benchmark (estimated)</p>
+                      <p className="text-warm-ivory text-sm">
+                        A typical 8-room boutique hotel in Upper Pelling does{' '}
+                        <span className="text-purple-300 font-bold font-serif text-base">{fmt(selectedMonth.benchmark)}</span>{' '}
+                        in {MONTH_NAMES[selectedMonth.monthIdx]}
+                        <span className="text-warm-ivory text-opacity-50"> · {fmt(Math.round(selectedMonth.benchmark / selectedMonth.days))}/day</span>
+                      </p>
+                      <p className="text-warm-ivory text-opacity-50 text-[10px] mt-1">
+                        Based on Sikkim Tourism 2024 data + comparable property occupancy/ADR (Elgin Mount Pandim, Norbu Ghang, Hotel Garuda tier). Annual market average ≈ ₹50L for an 8-room boutique.
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Your target vs market</p>
+                      <p className={`font-serif font-bold text-2xl ${
+                        selectedMonth.vsBenchmarkPct <= 100 ? 'text-green-300' :
+                        selectedMonth.vsBenchmarkPct <= 115 ? 'text-urbane-gold' : 'text-orange-300'
+                      }`}>
+                        {selectedMonth.vsBenchmarkPct}%
+                      </p>
+                      <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">
+                        {selectedMonth.vsBenchmarkPct <= 100
+                          ? 'below market — realistic'
+                          : selectedMonth.vsBenchmarkPct <= 115
+                          ? 'at market pace'
+                          : 'above market — stretch'}
+                      </p>
+                    </div>
                   </div>
                 </div>
 

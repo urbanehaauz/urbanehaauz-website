@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ComposedChart, Line,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine,
 } from 'recharts';
 import {
   RefreshCw, TrendingUp, TrendingDown, Wallet, BedDouble, Utensils, Car,
-  Users, CreditCard, Banknote, AlertCircle, Sparkles, Activity,
+  Users, CreditCard, Banknote, AlertCircle, Sparkles, Activity, Target, CalendarRange,
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -93,24 +93,32 @@ const REVENUE_PALETTE = [COLORS.gold, COLORS.orange, COLORS.purple];
 const EXPENSE_COLOR = COLORS.red;
 const INVESTMENT_COLOR = COLORS.green;
 
-// Pelling seasonality multipliers. Peak: Apr–Jun (spring tourism, rhododendrons, clear views).
-// Mild: Oct (autumn shoulder) & Dec (year-end). Low: monsoon Jul–Sep and Jan–Feb winter.
-// Used to normalize historical revenue into an "average-seasonality day" baseline.
+// Pelling seasonality multipliers — indexed so they sum to 12.0 (1.0 = average month).
+// Research-backed from Sikkim Tourism data + travel-trade reports (2024–2026):
+//   • Spring (Mar–Jun) is peak: clear Kanchenjunga views, rhododendron bloom, Bengali school break.
+//     May is Sikkim's single highest tourism month on record (2.13 lakh visitors in May 2025).
+//   • Monsoon (Jul–Aug) sees severe drop — landslides on the NJP→Pelling road route.
+//   • Oct is the hidden second peak: Durga Puja drives enormous Bengali-family footfall to
+//     Upper Pelling specifically (our #1 source market).
+//   • Dec–Jan winter tourism has surged recently — Sikkim reported "record hotel bookings"
+//     in Dec 2025 (travelandtourworld, sikkimexpress).
+// These weights are used to spread the annual revenue target across months *realistically*,
+// instead of squeezing the entire operating gap into the 86-day peak window.
 const SEASON_MULT: Record<number, number> = {
-  0: 0.60,  // Jan
-  1: 0.65,  // Feb
-  2: 0.90,  // Mar
-  3: 1.80,  // Apr ★ peak
-  4: 2.00,  // May ★ peak
-  5: 1.80,  // Jun ★ peak
-  6: 0.80,  // Jul
-  7: 0.65,  // Aug (monsoon low)
-  8: 0.75,  // Sep
-  9: 1.20,  // Oct
-  10: 1.00, // Nov
-  11: 1.30, // Dec
+  0: 0.80,  // Jan — NY tail + winter tourism surge (tapers mid-month)
+  1: 0.70,  // Feb — coldest, lowest domestic demand
+  2: 1.10,  // Mar — spring rush begins, rhododendrons start
+  3: 1.50,  // Apr ★ peak — Bengali school break, clearest mountain views
+  4: 1.70,  // May ★★ peak — Sikkim's single highest tourism month
+  5: 1.10,  // Jun — early month strong, late June monsoon hits
+  6: 0.40,  // Jul — monsoon low, landslide risk on Pelling road
+  7: 0.35,  // Aug — deep monsoon, lowest footfall of the year
+  8: 0.80,  // Sep — post-monsoon recovery, skies clearing
+  9: 1.35,  // Oct ★ peak — Durga Puja (Bengali #1 travel trigger) + clear autumn
+  10: 1.20, // Nov — autumn shoulder peak, clear Kanchenjunga views
+  11: 1.00, // Dec — winter holidays, Christmas/NY, rising YoY
 };
-const PEAK_MONTHS = new Set([3, 4, 5]);
+const PEAK_MONTHS = new Set([3, 4, 5, 9]); // Apr, May, Jun, Oct
 
 const daysInMonth = (y: number, m: number) => new Date(y, m + 1, 0).getDate();
 
@@ -499,6 +507,96 @@ const SheetOverview: React.FC = () => {
       });
     }
 
+    // ---------- 12-month ACHIEVABLE plan ----------
+    // Instead of squeezing the entire operating gap into the 86-day Apr–Jun window
+    // (which demands 3–5× the hotel's realistic daily capacity), spread the annual
+    // expense run-rate + the operating gap across the next 12 months, weighted by
+    // Pelling's real seasonality. The result is a per-month target that's achievable
+    // given how the property actually performs month-over-month.
+    const historicalByMonthIdx: Record<number, number> = {};
+    for (const rec of revenueByMonth) {
+      const mi = MONTH_NAMES.indexOf(rec.month);
+      if (mi >= 0) historicalByMonthIdx[mi] = rec.total;
+    }
+
+    // Annual expense run-rate: extrapolate observed expenses into a 12-month figure.
+    // If we have <12 months of history we extrapolate; if ≥12 we use the actual.
+    const annualExpenseRunRate = monthsOfHistory < 12
+      ? (totalExpenses / monthsOfHistory) * 12
+      : totalExpenses;
+
+    // Amount of the operating gap we want to recover over the next 12 months.
+    // (As opposed to "inside the 86-day peak" which is mathematically possible but
+    // operationally unrealistic.)
+    const gapToRecover = operatingGap;
+
+    // Total revenue we need across the next 12 months = expenses + gap recovery
+    const annualRevenueTarget = annualExpenseRunRate + gapToRecover;
+
+    // Build seasonal weights across the next 12 months (starting from current month).
+    const startRef = new Date(today.getFullYear(), today.getMonth(), 1);
+    const seasonalCapacities: number[] = [];
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(startRef.getFullYear(), startRef.getMonth() + i, 1);
+      const mi = d.getMonth();
+      const dim = daysInMonth(d.getFullYear(), mi);
+      seasonalCapacities.push(dim * (SEASON_MULT[mi] ?? 1));
+    }
+    const totalSeasonalWeight = seasonalCapacities.reduce((a, b) => a + b, 0) || 1;
+
+    // Historical category shares (fallback defaults if we have no data yet)
+    const roomShare = historicalTotal > 0 ? roomRevenue / historicalTotal : 0.35;
+    const restShare = historicalTotal > 0 ? restaurantRevenue / historicalTotal : 0.17;
+    const drvShare  = historicalTotal > 0 ? driverRevenue / historicalTotal : 0.48;
+
+    const monthlyPlan: Array<{
+      key: string;
+      label: string;
+      monthIdx: number;
+      year: number;
+      days: number;
+      mult: number;
+      target: number;         // achievable target for this month
+      capacity: number;       // what current pace × seasonality would deliver
+      historical: number;     // actual recorded revenue for this month (any year)
+      achievable: boolean;    // capacity ≥ target × 0.90
+      liftNeededPct: number;  // % lift from current pace to hit target
+      roomTarget: number;
+      restaurantTarget: number;
+      driverTarget: number;
+      isPeak: boolean;
+    }> = [];
+
+    for (let i = 0; i < 12; i++) {
+      const d = new Date(startRef.getFullYear(), startRef.getMonth() + i, 1);
+      const mi = d.getMonth();
+      const yr = d.getFullYear();
+      const dim = daysInMonth(yr, mi);
+      const mult = SEASON_MULT[mi] ?? 1;
+      const capacity = dailyBaseline * mult * dim;
+      const weight = seasonalCapacities[i] / totalSeasonalWeight;
+      const target = annualRevenueTarget * weight;
+      const liftNeededPct = capacity > 0 ? ((target / capacity - 1) * 100) : 0;
+
+      monthlyPlan.push({
+        key: `${yr}-${mi}`,
+        label: `${MONTH_NAMES[mi]} ${String(yr).slice(2)}`,
+        monthIdx: mi,
+        year: yr,
+        days: dim,
+        mult,
+        target: Math.round(target),
+        capacity: Math.round(capacity),
+        historical: Math.round(historicalByMonthIdx[mi] ?? 0),
+        achievable: capacity >= target * 0.9,
+        liftNeededPct: Math.round(liftNeededPct),
+        roomTarget: Math.round(target * roomShare),
+        restaurantTarget: Math.round(target * restShare),
+        driverTarget: Math.round(target * drvShare),
+        isPeak: PEAK_MONTHS.has(mi),
+      });
+    }
+
     return {
       totalRevenue,
       totalInvestment,
@@ -529,9 +627,19 @@ const SheetOverview: React.FC = () => {
         onTrack,
         categoryTargets,
         monthlyForecast,
+        monthlyPlan,
+        annualExpenseRunRate,
+        annualRevenueTarget,
       },
     };
   }, [data]);
+
+  // Selected month for the interactive 12-month plan drill-down.
+  const [selectedPlanMonth, setSelectedPlanMonth] = useState<string | null>(null);
+  const selectedMonth = useMemo(
+    () => analytics.forecast.monthlyPlan.find(m => m.key === selectedPlanMonth) ?? analytics.forecast.monthlyPlan[0],
+    [selectedPlanMonth, analytics.forecast.monthlyPlan]
+  );
 
   // ---------- Render ----------
 
@@ -791,6 +899,199 @@ const SheetOverview: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* ---------- 12-Month Achievable Plan (interactive) ---------- */}
+      {analytics.forecast.monthlyPlan.length > 0 && (
+        <div className="glassmorphism-strong rounded-2xl p-6 border border-urbane-gold/20 relative overflow-hidden">
+          <div className="absolute -left-20 -bottom-20 w-72 h-72 rounded-full bg-green-500/5 blur-3xl" />
+          <div className="relative z-10">
+            <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
+              <div className="flex items-start space-x-3">
+                <div className="p-2 rounded-lg bg-green-500/15 text-green-300">
+                  <CalendarRange size={22} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-serif text-warm-ivory font-bold">12-Month Achievable Plan</h2>
+                  <p className="text-warm-ivory text-opacity-60 text-xs max-w-2xl mt-1">
+                    Realistic monthly targets that spread the operating gap across a full year using Pelling-specific seasonality
+                    — instead of squeezing breakeven into the 86-day peak window.
+                    <span className="text-urbane-gold/80"> Click any month to see its category breakdown.</span>
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col items-end gap-1 text-right">
+                <span className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-widest">12-Month Revenue Target</span>
+                <span className="text-green-300 font-serif text-2xl font-bold">{fmt(analytics.forecast.annualRevenueTarget)}</span>
+                <span className="text-warm-ivory text-opacity-40 text-[10px]">
+                  = {fmt(analytics.forecast.annualExpenseRunRate)} expenses + {fmt(analytics.forecast.operatingGap)} gap recovery
+                </span>
+              </div>
+            </div>
+
+            {/* The interactive chart */}
+            <div className="rounded-xl bg-black/20 p-4 border border-white/5">
+              <ResponsiveContainer width="100%" height={280}>
+                <ComposedChart
+                  data={analytics.forecast.monthlyPlan}
+                  margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+                  onClick={(state: any) => {
+                    const lbl = state?.activePayload?.[0]?.payload?.key;
+                    if (lbl) setSelectedPlanMonth(lbl);
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                  <XAxis dataKey="label" stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} />
+                  <YAxis stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} tickFormatter={fmtShort} />
+                  <Tooltip
+                    contentStyle={tooltipStyle}
+                    formatter={(v: number, name: string) => [fmt(v), name]}
+                    cursor={{ fill: 'rgba(200,160,89,0.08)' }}
+                  />
+                  <Legend wrapperStyle={{ color: '#F9F8F6', fontSize: 11 }} />
+                  <Bar dataKey="target" name="Achievable Target" radius={[6, 6, 0, 0]}>
+                    {analytics.forecast.monthlyPlan.map((m) => (
+                      <Cell
+                        key={m.key}
+                        fill={m.key === selectedMonth?.key ? COLORS.goldLight : m.isPeak ? COLORS.gold : 'rgba(200,160,89,0.55)'}
+                        stroke={m.key === selectedMonth?.key ? '#fff' : 'none'}
+                        strokeWidth={m.key === selectedMonth?.key ? 2 : 0}
+                        cursor="pointer"
+                      />
+                    ))}
+                  </Bar>
+                  <Line
+                    type="monotone"
+                    dataKey="capacity"
+                    name="Current Pace × Seasonality"
+                    stroke={COLORS.green}
+                    strokeWidth={3}
+                    dot={{ r: 4, fill: COLORS.green, strokeWidth: 0 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+              <div className="flex items-center justify-center gap-5 mt-2 text-[10px] text-warm-ivory text-opacity-60">
+                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.gold }} /> Peak month target</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: 'rgba(200,160,89,0.55)' }} /> Shoulder target</span>
+                <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.green }} /> Capacity at current pace</span>
+              </div>
+            </div>
+
+            {/* Month tile strip (tap/click to select) */}
+            <div className="mt-5 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
+              {analytics.forecast.monthlyPlan.map((m) => {
+                const isSel = m.key === selectedMonth?.key;
+                const tone = m.achievable ? 'border-green-500/40 text-green-300' : 'border-orange-500/40 text-orange-300';
+                return (
+                  <button
+                    key={m.key}
+                    onClick={() => setSelectedPlanMonth(m.key)}
+                    className={`p-2 rounded-lg border text-center transition-all ${
+                      isSel ? 'bg-urbane-gold/20 border-urbane-gold scale-105 shadow-lg' : `bg-white/5 ${tone} hover:bg-white/10`
+                    }`}
+                  >
+                    <p className="text-[10px] uppercase tracking-widest font-bold">{m.label}</p>
+                    <p className="text-sm font-serif text-warm-ivory mt-0.5">{fmtShort(m.target)}</p>
+                    <p className="text-[9px] text-warm-ivory text-opacity-50 mt-0.5">
+                      {m.isPeak ? '★ peak' : `${m.mult.toFixed(2)}×`}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Selected month drill-down */}
+            {selectedMonth && (
+              <div className="mt-6 p-5 rounded-xl bg-gradient-to-br from-urbane-gold/10 to-green-500/5 border border-urbane-gold/20">
+                <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+                  <div>
+                    <p className="text-urbane-gold text-[10px] uppercase tracking-widest font-bold">Selected Month</p>
+                    <p className="text-warm-ivory font-serif text-2xl">{selectedMonth.label}</p>
+                    <p className="text-warm-ivory text-opacity-60 text-xs mt-1">
+                      {selectedMonth.days} days · seasonality index {selectedMonth.mult.toFixed(2)}×
+                      {selectedMonth.isPeak && <span className="text-urbane-gold ml-1">· peak month</span>}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                      selectedMonth.achievable
+                        ? 'bg-green-500/15 text-green-300 border-green-500/40'
+                        : 'bg-orange-500/15 text-orange-300 border-orange-500/40'
+                    }`}>
+                      <Target size={11} className="inline mr-1" />
+                      {selectedMonth.achievable
+                        ? 'Achievable at current pace'
+                        : `Needs +${selectedMonth.liftNeededPct}% lift`}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  <div className="p-3 rounded-lg bg-black/20 border border-white/5">
+                    <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Target</p>
+                    <p className="text-urbane-gold font-bold text-lg">{fmt(selectedMonth.target)}</p>
+                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">{fmt(Math.round(selectedMonth.target / selectedMonth.days))}/day</p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-black/20 border border-white/5">
+                    <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Capacity (current pace)</p>
+                    <p className="text-green-300 font-bold text-lg">{fmt(selectedMonth.capacity)}</p>
+                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">{fmt(Math.round(selectedMonth.capacity / selectedMonth.days))}/day</p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-black/20 border border-white/5">
+                    <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Gap to target</p>
+                    <p className={`font-bold text-lg ${selectedMonth.achievable ? 'text-green-300' : 'text-orange-300'}`}>
+                      {selectedMonth.achievable ? '✓ Covered' : fmt(selectedMonth.target - selectedMonth.capacity)}
+                    </p>
+                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">
+                      {selectedMonth.achievable ? 'surplus capacity' : 'to close'}
+                    </p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-black/20 border border-white/5">
+                    <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Historical same month</p>
+                    <p className="text-warm-ivory font-bold text-lg">{selectedMonth.historical > 0 ? fmt(selectedMonth.historical) : '—'}</p>
+                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">{selectedMonth.historical > 0 ? 'actual recorded' : 'no data yet'}</p>
+                  </div>
+                </div>
+
+                <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider mb-2">Category Targets</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-warm-ivory text-sm font-semibold flex items-center gap-2">
+                        <BedDouble size={14} className="text-urbane-gold" /> Rooms
+                      </span>
+                      <span className="text-urbane-gold font-bold">{fmt(selectedMonth.roomTarget)}</span>
+                    </div>
+                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-1">{fmt(Math.round(selectedMonth.roomTarget / selectedMonth.days))}/day</p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-warm-ivory text-sm font-semibold flex items-center gap-2">
+                        <Utensils size={14} className="text-orange-300" /> Restaurant
+                      </span>
+                      <span className="text-orange-300 font-bold">{fmt(selectedMonth.restaurantTarget)}</span>
+                    </div>
+                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-1">{fmt(Math.round(selectedMonth.restaurantTarget / selectedMonth.days))}/day</p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-warm-ivory text-sm font-semibold flex items-center gap-2">
+                        <Car size={14} className="text-purple-300" /> Driver Rooms
+                      </span>
+                      <span className="text-purple-300 font-bold">{fmt(selectedMonth.driverTarget)}</span>
+                    </div>
+                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-1">{fmt(Math.round(selectedMonth.driverTarget / selectedMonth.days))}/day</p>
+                  </div>
+                </div>
+
+                <p className="text-warm-ivory text-opacity-40 text-[10px] mt-4 italic">
+                  Seasonality weights are research-backed from Sikkim Tourism monthly data (2024–26). May is the single highest tourism month; Oct captures Durga Puja (Bengali #1 travel trigger); Jul–Aug collapse to ~35% due to monsoon landslide risk on the NJP→Pelling road.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Revenue Trend */}
       <ChartCard title="Revenue Trend" subtitle="Monthly split across room, restaurant, and driver rooms" icon={<TrendingUp size={20} />}>

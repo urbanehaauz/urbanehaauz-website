@@ -850,14 +850,26 @@ const SheetOverview: React.FC = () => {
                     <XAxis dataKey="label" stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} />
                     <YAxis stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} tickFormatter={fmtShort} />
                     <Tooltip
-                      contentStyle={tooltipStyle}
-                      formatter={(v: number, name: string) => [fmt(v), name]}
-                      cursor={{ fill: 'rgba(200,160,89,0.06)' }}
+                      contentStyle={{
+                        backgroundColor: '#1C1917',
+                        border: `1px solid ${COLORS.gold}`,
+                        borderRadius: '10px',
+                        padding: '12px 16px',
+                        color: '#F9F8F6',
+                        fontSize: '13px',
+                      }}
+                      labelStyle={{ color: '#F9F8F6', fontWeight: 700, marginBottom: 6 }}
+                      itemStyle={{ color: '#F9F8F6' }}
+                      formatter={(v: number, name: string) => {
+                        const color = name === 'Predicted Revenue' ? COLORS.gold : COLORS.red;
+                        return [<span style={{ color }}>{fmt(v)}</span>, <span style={{ color }}>{name}</span>];
+                      }}
+                      cursor={{ fill: 'rgba(200,160,89,0.08)' }}
                     />
                     <Legend wrapperStyle={{ color: '#F9F8F6', fontSize: 11 }} />
-                    <Bar dataKey="capacity" name="Predicted Revenue" radius={[6, 6, 0, 0]}>
+                    <Bar dataKey="capacity" name="Predicted Revenue" fill={COLORS.gold} radius={[6, 6, 0, 0]}>
                       {plan.map((m) => (
-                        <Cell key={m.key} fill={m.achievable ? COLORS.green : COLORS.orange} />
+                        <Cell key={m.key} fill={m.isPeak ? COLORS.gold : COLORS.copper} />
                       ))}
                     </Bar>
                     <Line
@@ -872,8 +884,8 @@ const SheetOverview: React.FC = () => {
                   </ComposedChart>
                 </ResponsiveContainer>
                 <div className="flex items-center justify-center gap-6 mt-2 text-[10px] text-warm-ivory text-opacity-60">
-                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.green }} /> On track</span>
-                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.orange }} /> Shortfall</span>
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.gold }} /> Peak month revenue</span>
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.copper }} /> Shoulder / off-season</span>
                   <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.red }} /> Monthly target</span>
                 </div>
               </div>

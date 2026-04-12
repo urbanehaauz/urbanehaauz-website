@@ -781,399 +781,169 @@ const SheetOverview: React.FC = () => {
         <MiniStat icon={<Utensils size={20} />} label="Revenue / Booking" value={fmtShort(analytics.totalBookings > 0 ? analytics.totalRevenue / analytics.totalBookings : 0)} />
       </div>
 
-      {/* ---------- Forecast / Path to Breakeven ---------- */}
-      <div className="glassmorphism-strong rounded-2xl p-6 border border-urbane-gold/20 relative overflow-hidden">
-        <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-urbane-gold/5 blur-3xl" />
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-1 flex-wrap gap-3">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 rounded-lg bg-urbane-gold/20 text-urbane-gold">
-                <Sparkles size={22} />
-              </div>
-              <div>
-                <h2 className="text-xl font-serif text-warm-ivory font-bold">Path to Breakeven</h2>
-                <p className="text-warm-ivory text-opacity-50 text-xs">Season-weighted forecast · Pelling peak = Apr/May/Jun</p>
-              </div>
-            </div>
-            <div className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center space-x-2 ${
-              analytics.forecast.operatingGap === 0
-                ? 'bg-green-500/20 text-green-300 border border-green-500/40'
-                : analytics.forecast.onTrack
-                ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'
-                : 'bg-red-500/20 text-red-300 border border-red-500/40'
-            }`}>
-              <Activity size={12} />
-              <span>
-                {analytics.forecast.operatingGap === 0
-                  ? 'Operationally Green'
-                  : analytics.forecast.onTrack
-                  ? 'On Track for Peak'
-                  : 'Peak Season Gap'}
-              </span>
-            </div>
-          </div>
+      {/* ---------- 12-Month Breakeven Roadmap ---------- */}
+      {analytics.forecast.monthlyPlan.length > 0 && (() => {
+        const plan = analytics.forecast.monthlyPlan;
+        const totalPredicted = plan.reduce((s, m) => s + m.capacity, 0);
+        const totalTarget = plan.reduce((s, m) => s + m.target, 0);
+        const totalGap = Math.max(0, totalTarget - totalPredicted);
+        const monthsOnTrack = plan.filter(m => m.achievable).length;
 
-          {/* Forecast KPI row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-            <ForecastStat
-              label="Operating Gap"
-              value={fmt(analytics.forecast.operatingGap)}
-              sub="Revenue to cover expenses"
-              accent={analytics.forecast.operatingGap === 0 ? COLORS.green : COLORS.red}
-            />
-            <ForecastStat
-              label="Next 7 Days"
-              value={fmt(analytics.forecast.next7)}
-              sub="Projected revenue"
-              accent={COLORS.gold}
-            />
-            <ForecastStat
-              label="Next 30 Days"
-              value={fmt(analytics.forecast.next30)}
-              sub="Projected revenue"
-              accent={COLORS.orange}
-            />
-            <ForecastStat
-              label={analytics.forecast.breakevenDate ? 'Breakeven By' : 'Breakeven'}
-              value={
-                analytics.forecast.operatingGap === 0
-                  ? 'Already ✓'
-                  : analytics.forecast.breakevenDate
-                  ? analytics.forecast.breakevenDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' })
-                  : '> 2 yrs'
-              }
-              sub="At current pace + seasonality"
-              accent={analytics.forecast.operatingGap === 0 ? COLORS.green : COLORS.blue}
-            />
-          </div>
-
-          {/* Peak season panel */}
-          {analytics.forecast.peakDaysRemaining > 0 && (
-            <div className="mt-6 p-5 rounded-xl bg-gradient-to-br from-urbane-gold/10 to-orange-500/5 border border-urbane-gold/20">
-              <div className="flex items-start justify-between flex-wrap gap-4">
-                <div>
-                  <p className="text-urbane-gold text-xs uppercase tracking-widest font-bold mb-1">Peak Season Window</p>
-                  <p className="text-warm-ivory font-serif text-lg">
-                    {analytics.forecast.peakStart?.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} — {analytics.forecast.peakEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </p>
-                  <p className="text-warm-ivory text-opacity-60 text-xs mt-1">{analytics.forecast.peakDaysRemaining} days remaining · Apr/May/Jun in Pelling</p>
+        return (
+          <div className="glassmorphism-strong rounded-2xl p-6 border border-urbane-gold/20 relative overflow-hidden">
+            <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-urbane-gold/5 blur-3xl" />
+            <div className="relative z-10">
+              {/* Header */}
+              <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+                <div className="flex items-start space-x-3">
+                  <div className="p-2 rounded-lg bg-urbane-gold/20 text-urbane-gold">
+                    <CalendarRange size={22} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-serif text-warm-ivory font-bold">12-Month Breakeven Roadmap</h2>
+                    <p className="text-warm-ivory text-opacity-50 text-xs mt-1">
+                      Predicted revenue vs monthly target to breakeven + secure next year's contract
+                    </p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-warm-ivory text-opacity-60 text-[10px] uppercase tracking-wider">Projected Peak Revenue</p>
-                  <p className="text-urbane-gold font-serif text-2xl font-bold">{fmt(analytics.forecast.peakProjected)}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-warm-ivory text-opacity-60 text-[10px] uppercase tracking-wider">Required / Day</p>
-                  <p className={`font-serif text-2xl font-bold ${
-                    analytics.forecast.peakRequiredDaily <= (analytics.forecast.dailyBaseline * 2)
-                      ? 'text-green-300' : 'text-red-300'
-                  }`}>
-                    {fmt(analytics.forecast.peakRequiredDaily)}
-                  </p>
+                <div className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center space-x-2 ${
+                  totalGap === 0
+                    ? 'bg-green-500/20 text-green-300 border border-green-500/40'
+                    : monthsOnTrack >= 8
+                    ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'
+                    : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                }`}>
+                  <Activity size={12} />
+                  <span>{monthsOnTrack}/12 months on track</span>
                 </div>
               </div>
 
-              {/* Category-wise current vs target */}
-              {analytics.forecast.peakRequiredDaily > 0 && (
-                <div className="mt-5 pt-5 border-t border-white/10">
-                  <p className="text-warm-ivory text-opacity-60 text-[11px] uppercase tracking-wider mb-3">Current vs Required Daily Revenue</p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {analytics.forecast.categoryTargets.map(ct => {
-                      const gap = ct.requiredDaily - ct.currentAvg;
-                      const meetsTarget = ct.currentAvg >= ct.requiredDaily;
-                      const liftPct = ct.currentAvg > 0 ? ((ct.requiredDaily / ct.currentAvg - 1) * 100) : 0;
+              {/* KPI row */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <ForecastStat
+                  label="12-Month Target"
+                  value={fmt(totalTarget)}
+                  sub="To breakeven + next year"
+                  accent={COLORS.gold}
+                />
+                <ForecastStat
+                  label="Predicted Revenue"
+                  value={fmt(totalPredicted)}
+                  sub="At current pace + seasonality"
+                  accent={COLORS.green}
+                />
+                <ForecastStat
+                  label="Total Shortfall"
+                  value={totalGap > 0 ? fmt(totalGap) : '✓ Covered'}
+                  sub={totalGap > 0 ? 'Revenue gap to close' : 'On track'}
+                  accent={totalGap > 0 ? COLORS.red : COLORS.green}
+                />
+                <ForecastStat
+                  label={analytics.forecast.breakevenDate ? 'Breakeven By' : 'Breakeven'}
+                  value={
+                    analytics.forecast.operatingGap === 0
+                      ? 'Already ✓'
+                      : analytics.forecast.breakevenDate
+                      ? analytics.forecast.breakevenDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' })
+                      : '> 2 yrs'
+                  }
+                  sub="At current pace"
+                  accent={analytics.forecast.operatingGap === 0 ? COLORS.green : COLORS.blue}
+                />
+              </div>
+
+              {/* Chart: predicted vs target with gap highlighted */}
+              <div className="rounded-xl bg-black/20 p-4 border border-white/5">
+                <ResponsiveContainer width="100%" height={300}>
+                  <ComposedChart data={plan} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+                    <XAxis dataKey="label" stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} />
+                    <YAxis stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} tickFormatter={fmtShort} />
+                    <Tooltip
+                      contentStyle={tooltipStyle}
+                      formatter={(v: number, name: string) => [fmt(v), name]}
+                      cursor={{ fill: 'rgba(200,160,89,0.06)' }}
+                    />
+                    <Legend wrapperStyle={{ color: '#F9F8F6', fontSize: 11 }} />
+                    <Bar dataKey="capacity" name="Predicted Revenue" radius={[6, 6, 0, 0]}>
+                      {plan.map((m) => (
+                        <Cell key={m.key} fill={m.achievable ? COLORS.green : COLORS.orange} />
+                      ))}
+                    </Bar>
+                    <Line
+                      type="monotone"
+                      dataKey="target"
+                      name="Monthly Target"
+                      stroke={COLORS.red}
+                      strokeWidth={2.5}
+                      dot={{ r: 4, fill: COLORS.red, strokeWidth: 0 }}
+                      activeDot={{ r: 6 }}
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+                <div className="flex items-center justify-center gap-6 mt-2 text-[10px] text-warm-ivory text-opacity-60">
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.green }} /> On track</span>
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.orange }} /> Shortfall</span>
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.red }} /> Monthly target</span>
+                </div>
+              </div>
+
+              {/* Month-by-month table */}
+              <div className="mt-6 overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-[10px] text-warm-ivory text-opacity-50 uppercase tracking-wider border-b border-white/10">
+                      <th className="text-left py-3 px-2">Month</th>
+                      <th className="text-right py-3 px-2">Target</th>
+                      <th className="text-right py-3 px-2">Predicted</th>
+                      <th className="text-right py-3 px-2">Gap / Surplus</th>
+                      <th className="text-right py-3 px-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {plan.map((m) => {
+                      const gap = m.target - m.capacity;
                       return (
-                        <div key={ct.category} className="p-4 rounded-lg bg-white/5 border border-white/5">
-                          <div className="flex items-center justify-between mb-2">
-                            <p className="text-warm-ivory text-sm font-semibold">{ct.category}</p>
-                            <span className="text-warm-ivory text-opacity-40 text-[10px]">{(ct.historicalShare * 100).toFixed(0)}% share</span>
-                          </div>
-                          <div className="space-y-1.5">
-                            <div className="flex items-baseline justify-between">
-                              <span className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Current avg</span>
-                              <span className="text-warm-ivory font-semibold text-sm">{fmt(ct.currentAvg)}<span className="text-warm-ivory text-opacity-40 text-[10px] ml-1">/day</span></span>
-                            </div>
-                            <div className="flex items-baseline justify-between">
-                              <span className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Median</span>
-                              <span className="text-warm-ivory text-opacity-80 text-xs">{fmt(ct.currentMedian)}</span>
-                            </div>
-                            <div className="flex items-baseline justify-between pt-1 border-t border-white/5">
-                              <span className="text-urbane-gold text-[10px] uppercase tracking-wider font-bold">Required</span>
-                              <span className="text-urbane-gold font-bold text-base">{fmt(ct.requiredDaily)}<span className="text-urbane-gold/60 text-[10px] ml-1">/day</span></span>
-                            </div>
-                            <div className={`text-[10px] font-semibold mt-1 ${meetsTarget ? 'text-green-300' : 'text-orange-300'}`}>
-                              {meetsTarget
-                                ? `✓ On target (+${fmt(ct.currentAvg - ct.requiredDaily)} surplus)`
-                                : `Gap: ${fmt(gap)} · needs +${liftPct.toFixed(0)}% lift`}
-                            </div>
-                            <p className="text-warm-ivory text-opacity-30 text-[9px]">Based on {ct.activeDays} active days</p>
-                          </div>
-                        </div>
+                        <tr key={m.key} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="py-3 px-2">
+                            <span className="text-warm-ivory font-semibold">{m.label}</span>
+                            {m.isPeak && <span className="text-urbane-gold text-[9px] ml-2 uppercase font-bold">peak</span>}
+                          </td>
+                          <td className="text-right py-3 px-2 text-urbane-gold font-semibold">{fmt(m.target)}</td>
+                          <td className="text-right py-3 px-2 text-warm-ivory">{fmt(m.capacity)}</td>
+                          <td className={`text-right py-3 px-2 font-bold ${gap > 0 ? 'text-red-300' : 'text-green-300'}`}>
+                            {gap > 0 ? `-${fmt(gap)}` : `+${fmt(Math.abs(gap))}`}
+                          </td>
+                          <td className="text-right py-3 px-2">
+                            <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${
+                              m.achievable
+                                ? 'bg-green-500/15 text-green-300 border border-green-500/30'
+                                : 'bg-red-500/15 text-red-300 border border-red-500/30'
+                            }`}>
+                              {m.achievable ? 'On Track' : `Need +${m.liftNeededPct}%`}
+                            </span>
+                          </td>
+                        </tr>
                       );
                     })}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* 6-month projection chart */}
-          {analytics.forecast.monthlyForecast.length > 0 && (
-            <div className="mt-6">
-              <p className="text-warm-ivory text-opacity-60 text-[11px] uppercase tracking-wider mb-3">6-Month Forecast vs Expense Target</p>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={analytics.forecast.monthlyForecast} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                  <XAxis dataKey="month" stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} />
-                  <YAxis stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} tickFormatter={fmtShort} />
-                  <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => fmt(v)} cursor={{ fill: 'rgba(255,255,255,0.04)' }} />
-                  <Legend wrapperStyle={{ color: '#F9F8F6', fontSize: 11 }} />
-                  <Bar dataKey="projected" name="Projected Revenue" fill={COLORS.gold} radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="target" name="Monthly Expense Target" fill={COLORS.red} radius={[6, 6, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* ---------- 12-Month Achievable Plan (interactive) ---------- */}
-      {analytics.forecast.monthlyPlan.length > 0 && (
-        <div className="glassmorphism-strong rounded-2xl p-6 border border-urbane-gold/20 relative overflow-hidden">
-          <div className="absolute -left-20 -bottom-20 w-72 h-72 rounded-full bg-green-500/5 blur-3xl" />
-          <div className="relative z-10">
-            <div className="flex items-start justify-between mb-5 flex-wrap gap-3">
-              <div className="flex items-start space-x-3">
-                <div className="p-2 rounded-lg bg-green-500/15 text-green-300">
-                  <CalendarRange size={22} />
-                </div>
-                <div>
-                  <h2 className="text-xl font-serif text-warm-ivory font-bold">12-Month Achievable Plan</h2>
-                  <p className="text-warm-ivory text-opacity-60 text-xs max-w-2xl mt-1">
-                    Realistic monthly targets that spread the operating gap across a full year using Pelling-specific seasonality
-                    — instead of squeezing breakeven into the 86-day peak window.
-                    <span className="text-urbane-gold/80"> Click any month to see its category breakdown.</span>
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-col items-end gap-1 text-right">
-                <span className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-widest">12-Month Revenue Target</span>
-                <span className="text-green-300 font-serif text-2xl font-bold">{fmt(analytics.forecast.annualRevenueTarget)}</span>
-                <span className="text-warm-ivory text-opacity-40 text-[10px]">
-                  = {fmt(analytics.forecast.annualExpenseRunRate)} expenses + {fmt(analytics.forecast.operatingGap)} gap recovery
-                </span>
+                    <tr className="border-t-2 border-urbane-gold/30 font-bold">
+                      <td className="py-3 px-2 text-warm-ivory">12-Month Total</td>
+                      <td className="text-right py-3 px-2 text-urbane-gold">{fmt(totalTarget)}</td>
+                      <td className="text-right py-3 px-2 text-warm-ivory">{fmt(totalPredicted)}</td>
+                      <td className={`text-right py-3 px-2 ${totalGap > 0 ? 'text-red-300' : 'text-green-300'}`}>
+                        {totalGap > 0 ? `-${fmt(totalGap)}` : `+${fmt(Math.abs(totalTarget - totalPredicted))}`}
+                      </td>
+                      <td className="text-right py-3 px-2 text-warm-ivory text-opacity-60 text-[10px]">
+                        {monthsOnTrack}/12 months
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-
-            {/* The interactive chart */}
-            <div className="rounded-xl bg-black/20 p-4 border border-white/5">
-              <ResponsiveContainer width="100%" height={280}>
-                <ComposedChart
-                  data={analytics.forecast.monthlyPlan}
-                  margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
-                  onClick={(state: any) => {
-                    const lbl = state?.activePayload?.[0]?.payload?.key;
-                    if (lbl) setSelectedPlanMonth(lbl);
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-                  <XAxis dataKey="label" stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} />
-                  <YAxis stroke="#F9F8F6" tick={{ fill: '#F9F8F6', fontSize: 11 }} tickFormatter={fmtShort} />
-                  <Tooltip
-                    contentStyle={tooltipStyle}
-                    formatter={(v: number, name: string) => [fmt(v), name]}
-                    cursor={{ fill: 'rgba(200,160,89,0.08)' }}
-                  />
-                  <Legend wrapperStyle={{ color: '#F9F8F6', fontSize: 11 }} />
-                  <Bar dataKey="target" name="Achievable Target" radius={[6, 6, 0, 0]}>
-                    {analytics.forecast.monthlyPlan.map((m) => (
-                      <Cell
-                        key={m.key}
-                        fill={m.key === selectedMonth?.key ? COLORS.goldLight : m.isPeak ? COLORS.gold : 'rgba(200,160,89,0.55)'}
-                        stroke={m.key === selectedMonth?.key ? '#fff' : 'none'}
-                        strokeWidth={m.key === selectedMonth?.key ? 2 : 0}
-                        cursor="pointer"
-                      />
-                    ))}
-                  </Bar>
-                  <Line
-                    type="monotone"
-                    dataKey="capacity"
-                    name="Current Pace × Seasonality"
-                    stroke={COLORS.green}
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: COLORS.green, strokeWidth: 0 }}
-                    activeDot={{ r: 6 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="benchmark"
-                    name="Pelling Market Avg (est.)"
-                    stroke={COLORS.purple}
-                    strokeWidth={2}
-                    strokeDasharray="6 4"
-                    dot={{ r: 3, fill: COLORS.purple, strokeWidth: 0 }}
-                    activeDot={{ r: 5 }}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-              <div className="flex items-center justify-center gap-5 mt-2 text-[10px] text-warm-ivory text-opacity-60 flex-wrap">
-                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.gold }} /> Peak month target</span>
-                <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: 'rgba(200,160,89,0.55)' }} /> Shoulder target</span>
-                <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.green }} /> Your capacity</span>
-                <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.purple, borderTop: `2px dashed ${COLORS.purple}` }} /> Pelling market avg (8-room boutique, est.)</span>
-              </div>
-            </div>
-
-            {/* Month tile strip (tap/click to select) */}
-            <div className="mt-5 grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-2">
-              {analytics.forecast.monthlyPlan.map((m) => {
-                const isSel = m.key === selectedMonth?.key;
-                const tone = m.achievable ? 'border-green-500/40 text-green-300' : 'border-orange-500/40 text-orange-300';
-                return (
-                  <button
-                    key={m.key}
-                    onClick={() => setSelectedPlanMonth(m.key)}
-                    className={`p-2 rounded-lg border text-center transition-all ${
-                      isSel ? 'bg-urbane-gold/20 border-urbane-gold scale-105 shadow-lg' : `bg-white/5 ${tone} hover:bg-white/10`
-                    }`}
-                  >
-                    <p className="text-[10px] uppercase tracking-widest font-bold">{m.label}</p>
-                    <p className="text-sm font-serif text-warm-ivory mt-0.5">{fmtShort(m.target)}</p>
-                    <p className="text-[9px] text-warm-ivory text-opacity-50 mt-0.5">
-                      {m.isPeak ? '★ peak' : `${m.mult.toFixed(2)}×`}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Selected month drill-down */}
-            {selectedMonth && (
-              <div className="mt-6 p-5 rounded-xl bg-gradient-to-br from-urbane-gold/10 to-green-500/5 border border-urbane-gold/20">
-                <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-                  <div>
-                    <p className="text-urbane-gold text-[10px] uppercase tracking-widest font-bold">Selected Month</p>
-                    <p className="text-warm-ivory font-serif text-2xl">{selectedMonth.label}</p>
-                    <p className="text-warm-ivory text-opacity-60 text-xs mt-1">
-                      {selectedMonth.days} days · seasonality index {selectedMonth.mult.toFixed(2)}×
-                      {selectedMonth.isPeak && <span className="text-urbane-gold ml-1">· peak month</span>}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                      selectedMonth.achievable
-                        ? 'bg-green-500/15 text-green-300 border-green-500/40'
-                        : 'bg-orange-500/15 text-orange-300 border-orange-500/40'
-                    }`}>
-                      <Target size={11} className="inline mr-1" />
-                      {selectedMonth.achievable
-                        ? 'Achievable at current pace'
-                        : `Needs +${selectedMonth.liftNeededPct}% lift`}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                  <div className="p-3 rounded-lg bg-black/20 border border-white/5">
-                    <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Target</p>
-                    <p className="text-urbane-gold font-bold text-lg">{fmt(selectedMonth.target)}</p>
-                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">{fmt(Math.round(selectedMonth.target / selectedMonth.days))}/day</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-black/20 border border-white/5">
-                    <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Capacity (current pace)</p>
-                    <p className="text-green-300 font-bold text-lg">{fmt(selectedMonth.capacity)}</p>
-                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">{fmt(Math.round(selectedMonth.capacity / selectedMonth.days))}/day</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-black/20 border border-white/5">
-                    <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Gap to target</p>
-                    <p className={`font-bold text-lg ${selectedMonth.achievable ? 'text-green-300' : 'text-orange-300'}`}>
-                      {selectedMonth.achievable ? '✓ Covered' : fmt(selectedMonth.target - selectedMonth.capacity)}
-                    </p>
-                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">
-                      {selectedMonth.achievable ? 'surplus capacity' : 'to close'}
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-black/20 border border-white/5">
-                    <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Historical same month</p>
-                    <p className="text-warm-ivory font-bold text-lg">{selectedMonth.historical > 0 ? fmt(selectedMonth.historical) : '—'}</p>
-                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">{selectedMonth.historical > 0 ? 'actual recorded' : 'no data yet'}</p>
-                  </div>
-                </div>
-
-                {/* Market benchmark row */}
-                <div className="p-4 rounded-lg bg-gradient-to-r from-purple-500/10 to-purple-500/5 border border-purple-500/20 mb-4">
-                  <div className="flex items-start justify-between flex-wrap gap-3">
-                    <div>
-                      <p className="text-purple-300 text-[10px] uppercase tracking-widest font-bold mb-1">Pelling Market Benchmark (estimated)</p>
-                      <p className="text-warm-ivory text-sm">
-                        A typical 8-room boutique hotel in Upper Pelling does{' '}
-                        <span className="text-purple-300 font-bold font-serif text-base">{fmt(selectedMonth.benchmark)}</span>{' '}
-                        in {MONTH_NAMES[selectedMonth.monthIdx]}
-                        <span className="text-warm-ivory text-opacity-50"> · {fmt(Math.round(selectedMonth.benchmark / selectedMonth.days))}/day</span>
-                      </p>
-                      <p className="text-warm-ivory text-opacity-50 text-[10px] mt-1">
-                        Based on Sikkim Tourism 2024 data + comparable property occupancy/ADR (Elgin Mount Pandim, Norbu Ghang, Hotel Garuda tier). Annual market average ≈ ₹50L for an 8-room boutique.
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider">Your target vs market</p>
-                      <p className={`font-serif font-bold text-2xl ${
-                        selectedMonth.vsBenchmarkPct <= 100 ? 'text-green-300' :
-                        selectedMonth.vsBenchmarkPct <= 115 ? 'text-urbane-gold' : 'text-orange-300'
-                      }`}>
-                        {selectedMonth.vsBenchmarkPct}%
-                      </p>
-                      <p className="text-warm-ivory text-opacity-40 text-[10px] mt-0.5">
-                        {selectedMonth.vsBenchmarkPct <= 100
-                          ? 'below market — realistic'
-                          : selectedMonth.vsBenchmarkPct <= 115
-                          ? 'at market pace'
-                          : 'above market — stretch'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-warm-ivory text-opacity-50 text-[10px] uppercase tracking-wider mb-2">Category Targets</p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-warm-ivory text-sm font-semibold flex items-center gap-2">
-                        <BedDouble size={14} className="text-urbane-gold" /> Rooms
-                      </span>
-                      <span className="text-urbane-gold font-bold">{fmt(selectedMonth.roomTarget)}</span>
-                    </div>
-                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-1">{fmt(Math.round(selectedMonth.roomTarget / selectedMonth.days))}/day</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-warm-ivory text-sm font-semibold flex items-center gap-2">
-                        <Utensils size={14} className="text-orange-300" /> Restaurant
-                      </span>
-                      <span className="text-orange-300 font-bold">{fmt(selectedMonth.restaurantTarget)}</span>
-                    </div>
-                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-1">{fmt(Math.round(selectedMonth.restaurantTarget / selectedMonth.days))}/day</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-white/5 border border-white/5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-warm-ivory text-sm font-semibold flex items-center gap-2">
-                        <Car size={14} className="text-purple-300" /> Driver Rooms
-                      </span>
-                      <span className="text-purple-300 font-bold">{fmt(selectedMonth.driverTarget)}</span>
-                    </div>
-                    <p className="text-warm-ivory text-opacity-40 text-[10px] mt-1">{fmt(Math.round(selectedMonth.driverTarget / selectedMonth.days))}/day</p>
-                  </div>
-                </div>
-
-                <p className="text-warm-ivory text-opacity-40 text-[10px] mt-4 italic">
-                  Seasonality weights are research-backed from Sikkim Tourism monthly data (2024–26). May is the single highest tourism month; Oct captures Durga Puja (Bengali #1 travel trigger); Jul–Aug collapse to ~35% due to monsoon landslide risk on the NJP→Pelling road.
-                </p>
-              </div>
-            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Revenue Trend */}
       <ChartCard title="Revenue Trend" subtitle="Monthly split across room, restaurant, and driver rooms" icon={<TrendingUp size={20} />}>

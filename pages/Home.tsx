@@ -133,11 +133,7 @@ const Home: React.FC = () => {
                         <h3 className="font-serif text-3xl font-bold">{room.name}</h3>
                       </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                      <div className="flex flex-col">
-                          <span className="text-xs opacity-70 uppercase">Starting from</span>
-                          <span className="text-2xl font-serif">₹{room.price.toLocaleString('en-IN')}</span>
-                      </div>
+                  <div className="flex justify-end items-center">
                       <a href="https://urbanehaauz.runhotel.site/en/" target="_blank" rel="noopener noreferrer" className="bg-white text-urbane-charcoal px-6 py-3 font-bold text-xs uppercase tracking-widest hover:bg-urbane-gold hover:text-white transition-colors">
                         Book Now
                       </a>

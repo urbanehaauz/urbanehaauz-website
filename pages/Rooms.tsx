@@ -91,10 +91,7 @@ const Rooms: React.FC = () => {
                     <h3 className="font-serif text-xl font-bold text-gray-900">{room.name}</h3>
                   </div>
                   
-                  <div className="flex items-baseline mb-4">
-                    <span className="text-2xl font-bold text-urbane-green">₹{room.price.toLocaleString('en-IN')}</span>
-                    <span className="text-gray-500 text-sm ml-1">/ night</span>
-                  </div>
+                  <div className="mb-4" />
 
                   <p className="text-gray-600 text-sm mb-6 line-clamp-3">
                     {room.description}

@@ -843,7 +843,7 @@ const SheetOverview: React.FC = () => {
               </div>
 
               {/* Chart: predicted vs target with gap highlighted */}
-              <div className="rounded-xl bg-black/20 p-4 border border-white/5">
+              <div className="rounded-xl p-4">
                 <ResponsiveContainer width="100%" height={300}>
                   <ComposedChart data={plan} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />

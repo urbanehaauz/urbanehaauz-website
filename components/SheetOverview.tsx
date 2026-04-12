@@ -525,31 +525,21 @@ const SheetOverview: React.FC = () => {
       });
     }
 
-    // ---------- 12-month ACHIEVABLE plan ----------
-    // Instead of squeezing the entire operating gap into the 86-day Apr–Jun window
-    // (which demands 3–5× the hotel's realistic daily capacity), spread the annual
-    // expense run-rate + the operating gap across the next 12 months, weighted by
-    // Pelling's real seasonality. The result is a per-month target that's achievable
-    // given how the property actually performs month-over-month.
+    // ---------- 12-month breakeven roadmap ----------
+    // Founder-set target: ₹3.5L/month average (historical ~₹3L/month + ₹50k growth).
+    // Distributed across months by Pelling seasonality so peak months carry more
+    // and monsoon months carry less — balanced and realistic.
+    const MONTHLY_TARGET_BASE = 350000; // ₹3.5 lakh / month average
+    const annualRevenueTarget = MONTHLY_TARGET_BASE * 12; // ₹42 lakh / year
+    const annualExpenseRunRate = monthsOfHistory < 12
+      ? (totalExpenses / monthsOfHistory) * 12
+      : totalExpenses;
+
     const historicalByMonthIdx: Record<number, number> = {};
     for (const rec of revenueByMonth) {
       const mi = MONTH_NAMES.indexOf(rec.month);
       if (mi >= 0) historicalByMonthIdx[mi] = rec.total;
     }
-
-    // Annual expense run-rate: extrapolate observed expenses into a 12-month figure.
-    // If we have <12 months of history we extrapolate; if ≥12 we use the actual.
-    const annualExpenseRunRate = monthsOfHistory < 12
-      ? (totalExpenses / monthsOfHistory) * 12
-      : totalExpenses;
-
-    // Amount of the operating gap we want to recover over the next 12 months.
-    // (As opposed to "inside the 86-day peak" which is mathematically possible but
-    // operationally unrealistic.)
-    const gapToRecover = operatingGap;
-
-    // Total revenue we need across the next 12 months = expenses + gap recovery
-    const annualRevenueTarget = annualExpenseRunRate + gapToRecover;
 
     // Build seasonal weights across the next 12 months (starting from current month).
     const startRef = new Date(today.getFullYear(), today.getMonth(), 1);

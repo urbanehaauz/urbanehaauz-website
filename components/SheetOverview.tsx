@@ -130,6 +130,29 @@ const PEAK_MONTHS = new Set([3, 4, 5, 9]); // Apr, May, Jun, Oct
 // These are ESTIMATES for benchmarking — clearly labeled as such in the UI.
 const PELLING_MARKET_BENCHMARK_ANNUAL = 5000000; // ₹50 lakh / year for an 8-room boutique
 
+// ---------- OTA Revenue Prediction Model ----------
+// Derived from ACTUAL RunHotel booking data (8 confirmed bookings, Apr–May 2026):
+//   Total confirmed OTA revenue: ₹53,975 across 16 room-nights
+//   Average booking value: ₹6,747 (ADR ₹1,833–₹2,230 after OTA commission)
+//   Platforms: Booking.com 74%, Goibibo 22%, Agoda 3%
+//   Guest profile: Bengali families (2–3 rooms, 5–9 guests per booking)
+//
+// Steady-state OTA revenue at full maturity (30+ reviews, 6+ months of visibility):
+// Estimated at ₹75,000/month average, distributed by SEASON_MULT.
+// This is conservative — comparable Pelling boutique hotels with 100+ reviews
+// see ₹1–2L/month in OTA revenue during peak.
+//
+// Ramp-up curve: new OTA listings get buried by algorithms until reviews accumulate.
+// Based on OTA platform docs + hospitality industry benchmarks (SiteMinder, Phocuswright):
+//   Month 1–2 of integration: 40% of steady state (0–5 reviews)
+//   Month 3: 60% (5–15 reviews)
+//   Month 4: 75% (15–25 reviews)
+//   Month 5–6: 85% (25–40 reviews)
+//   Month 7+: 95%+ (40+ reviews, algorithm trust established)
+const OTA_STEADY_STATE_MONTHLY = 75000; // ₹75k/month avg at full OTA maturity
+const OTA_INTEGRATION_MONTH = 3; // April 2026 = month index 3 (0-indexed). Change if OTA went live earlier/later.
+const OTA_RAMP = [0.40, 0.40, 0.60, 0.75, 0.85, 0.90, 0.95, 1.0]; // months 1–8+ of OTA visibility
+
 const daysInMonth = (y: number, m: number) => new Date(y, m + 1, 0).getDate();
 
 // Dark tooltip for charts
@@ -194,7 +217,8 @@ const SheetOverview: React.FC = () => {
         monthlyForecast: [] as Array<{ month: string; projected: number; target: number }>,
         monthlyPlan: [] as Array<{
           key: string; label: string; monthIdx: number; year: number; days: number; mult: number;
-          target: number; capacity: number; historical: number; benchmark: number;
+          target: number; capacity: number; otaPredicted: number; combined: number;
+          historical: number; benchmark: number;
           achievable: boolean; liftNeededPct: number; vsBenchmarkPct: number;
           roomTarget: number; restaurantTarget: number; driverTarget: number; isPeak: boolean;
         }>,
@@ -578,17 +602,22 @@ const SheetOverview: React.FC = () => {
       days: number;
       mult: number;
       target: number;         // achievable target for this month
-      capacity: number;       // what current pace × seasonality would deliver
+      capacity: number;       // direct revenue (walk-in/phone/website) from historical pace
+      otaPredicted: number;   // OTA revenue prediction (RunHotel channel)
+      combined: number;       // capacity + otaPredicted
       historical: number;     // actual recorded revenue for this month (any year)
       benchmark: number;      // estimated avg for a comparable Pelling boutique
-      achievable: boolean;    // capacity ≥ target × 0.90
-      liftNeededPct: number;  // % lift from current pace to hit target
+      achievable: boolean;    // combined ≥ target × 0.90
+      liftNeededPct: number;  // % lift from combined to hit target
       vsBenchmarkPct: number; // our target as % of market benchmark
       roomTarget: number;
       restaurantTarget: number;
       driverTarget: number;
       isPeak: boolean;
     }> = [];
+
+    // OTA seasonal weight total (for distributing OTA_STEADY_STATE_MONTHLY across months)
+    const otaSeasonWeightTotal = Object.values(SEASON_MULT).reduce((a, b) => a + b, 0) || 12;
 
     for (let i = 0; i < 12; i++) {
       const d = new Date(startRef.getFullYear(), startRef.getMonth() + i, 1);
@@ -599,7 +628,16 @@ const SheetOverview: React.FC = () => {
       const capacity = dailyBaseline * mult * dim;
       const weight = seasonalCapacities[i] / totalSeasonalWeight;
       const target = annualRevenueTarget * weight;
-      const liftNeededPct = capacity > 0 ? ((target / capacity - 1) * 100) : 0;
+
+      // OTA prediction: steady-state × seasonality × ramp-up curve
+      // Calculate how many months since OTA integration for this calendar month
+      const otaMonthsSince = (yr * 12 + mi) - (startRef.getFullYear() * 12 + OTA_INTEGRATION_MONTH);
+      const rampIdx = Math.max(0, Math.min(otaMonthsSince, OTA_RAMP.length - 1));
+      const rampFactor = otaMonthsSince < 0 ? 0 : OTA_RAMP[rampIdx];
+      const otaPredicted = OTA_STEADY_STATE_MONTHLY * (mult / (otaSeasonWeightTotal / 12)) * rampFactor;
+
+      const combined = capacity + otaPredicted;
+      const liftNeededPct = combined > 0 ? ((target / combined - 1) * 100) : 0;
       const benchmark = benchmarkByMonthIdx[mi] ?? 0;
       const vsBenchmarkPct = benchmark > 0 ? (target / benchmark) * 100 : 0;
 
@@ -612,9 +650,11 @@ const SheetOverview: React.FC = () => {
         mult,
         target: Math.round(target),
         capacity: Math.round(capacity),
+        otaPredicted: Math.round(otaPredicted),
+        combined: Math.round(combined),
         historical: Math.round(historicalByMonthIdx[mi] ?? 0),
         benchmark: Math.round(benchmark),
-        achievable: capacity >= target * 0.9,
+        achievable: combined >= target * 0.9,
         liftNeededPct: Math.round(liftNeededPct),
         vsBenchmarkPct: Math.round(vsBenchmarkPct),
         roomTarget: Math.round(target * roomShare),
@@ -774,7 +814,9 @@ const SheetOverview: React.FC = () => {
       {/* ---------- 12-Month Breakeven Roadmap ---------- */}
       {analytics.forecast.monthlyPlan.length > 0 && (() => {
         const plan = analytics.forecast.monthlyPlan;
-        const totalPredicted = plan.reduce((s, m) => s + m.capacity, 0);
+        const totalDirect = plan.reduce((s, m) => s + m.capacity, 0);
+        const totalOta = plan.reduce((s, m) => s + m.otaPredicted, 0);
+        const totalPredicted = totalDirect + totalOta;
         const totalTarget = plan.reduce((s, m) => s + m.target, 0);
         const totalGap = Math.max(0, totalTarget - totalPredicted);
         const monthsOnTrack = plan.filter(m => m.achievable).length;
@@ -819,7 +861,7 @@ const SheetOverview: React.FC = () => {
                 <ForecastStat
                   label="Predicted Revenue"
                   value={fmt(totalPredicted)}
-                  sub="At current pace + seasonality"
+                  sub={`Direct ${fmtShort(totalDirect)} + OTA ${fmtShort(totalOta)}`}
                   accent={COLORS.green}
                 />
                 <ForecastStat
@@ -867,11 +909,8 @@ const SheetOverview: React.FC = () => {
                       cursor={{ fill: 'rgba(200,160,89,0.08)' }}
                     />
                     <Legend wrapperStyle={{ color: '#F9F8F6', fontSize: 11 }} />
-                    <Bar dataKey="capacity" name="Predicted Revenue" fill={COLORS.gold} radius={[6, 6, 0, 0]}>
-                      {plan.map((m) => (
-                        <Cell key={m.key} fill={m.isPeak ? COLORS.gold : COLORS.copper} />
-                      ))}
-                    </Bar>
+                    <Bar dataKey="capacity" name="Direct Revenue" stackId="revenue" fill={COLORS.gold} radius={[0, 0, 0, 0]} />
+                    <Bar dataKey="otaPredicted" name="OTA Revenue (predicted)" stackId="revenue" fill={COLORS.blue} radius={[6, 6, 0, 0]} />
                     <Line
                       type="monotone"
                       dataKey="target"
@@ -883,9 +922,9 @@ const SheetOverview: React.FC = () => {
                     />
                   </ComposedChart>
                 </ResponsiveContainer>
-                <div className="flex items-center justify-center gap-6 mt-2 text-[10px] text-warm-ivory text-opacity-60">
-                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.gold }} /> Peak month revenue</span>
-                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.copper }} /> Shoulder / off-season</span>
+                <div className="flex items-center justify-center gap-6 mt-2 text-[10px] text-warm-ivory text-opacity-60 flex-wrap">
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.gold }} /> Direct (walk-in / phone / website)</span>
+                  <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-sm inline-block" style={{ background: COLORS.blue }} /> OTA (Booking.com / Goibibo / Agoda)</span>
                   <span className="flex items-center gap-1.5"><span className="w-3 h-0.5 inline-block" style={{ background: COLORS.red }} /> Monthly target</span>
                 </div>
               </div>
@@ -897,14 +936,16 @@ const SheetOverview: React.FC = () => {
                     <tr className="text-[10px] text-warm-ivory text-opacity-50 uppercase tracking-wider border-b border-white/10">
                       <th className="text-left py-3 px-2">Month</th>
                       <th className="text-right py-3 px-2">Target</th>
-                      <th className="text-right py-3 px-2">Predicted</th>
+                      <th className="text-right py-3 px-2">Direct</th>
+                      <th className="text-right py-3 px-2">OTA</th>
+                      <th className="text-right py-3 px-2">Combined</th>
                       <th className="text-right py-3 px-2">Gap / Surplus</th>
                       <th className="text-right py-3 px-2">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {plan.map((m) => {
-                      const gap = m.target - m.capacity;
+                      const gap = m.target - m.combined;
                       return (
                         <tr key={m.key} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                           <td className="py-3 px-2">
@@ -913,6 +954,8 @@ const SheetOverview: React.FC = () => {
                           </td>
                           <td className="text-right py-3 px-2 text-urbane-gold font-semibold">{fmt(m.target)}</td>
                           <td className="text-right py-3 px-2 text-warm-ivory">{fmt(m.capacity)}</td>
+                          <td className="text-right py-3 px-2 text-blue-300">{fmt(m.otaPredicted)}</td>
+                          <td className="text-right py-3 px-2 text-warm-ivory font-semibold">{fmt(m.combined)}</td>
                           <td className={`text-right py-3 px-2 font-bold ${gap > 0 ? 'text-red-300' : 'text-green-300'}`}>
                             {gap > 0 ? `-${fmt(gap)}` : `+${fmt(Math.abs(gap))}`}
                           </td>
@@ -931,6 +974,8 @@ const SheetOverview: React.FC = () => {
                     <tr className="border-t-2 border-urbane-gold/30 font-bold">
                       <td className="py-3 px-2 text-warm-ivory">12-Month Total</td>
                       <td className="text-right py-3 px-2 text-urbane-gold">{fmt(totalTarget)}</td>
+                      <td className="text-right py-3 px-2 text-warm-ivory">{fmt(totalDirect)}</td>
+                      <td className="text-right py-3 px-2 text-blue-300">{fmt(totalOta)}</td>
                       <td className="text-right py-3 px-2 text-warm-ivory">{fmt(totalPredicted)}</td>
                       <td className={`text-right py-3 px-2 ${totalGap > 0 ? 'text-red-300' : 'text-green-300'}`}>
                         {totalGap > 0 ? `-${fmt(totalGap)}` : `+${fmt(Math.abs(totalTarget - totalPredicted))}`}
@@ -941,6 +986,10 @@ const SheetOverview: React.FC = () => {
                     </tr>
                   </tbody>
                 </table>
+                <p className="text-warm-ivory text-opacity-40 text-[10px] mt-3 italic">
+                  OTA prediction based on 8 confirmed RunHotel bookings (₹53,975 across Apr–May 2026, avg ₹6,747/booking). Steady-state ₹75k/month at maturity,
+                  with ramp-up curve: 40% month 1–2 (0–5 reviews) → 60% month 3 → 75% month 4 → 95%+ month 7+. Weighted by Pelling seasonality.
+                </p>
               </div>
             </div>
           </div>

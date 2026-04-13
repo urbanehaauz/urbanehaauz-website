@@ -617,7 +617,10 @@ const SheetOverview: React.FC = () => {
     }> = [];
 
     // OTA seasonal weight total (for distributing OTA_STEADY_STATE_MONTHLY across months)
-    const otaSeasonWeightTotal = Object.values(SEASON_MULT).reduce((a, b) => a + b, 0) || 12;
+    // OTA annual total = OTA_STEADY_STATE_MONTHLY × 12. Distribute across months
+    // using (days × SEASON_MULT) weights so the annual sum is preserved but peak
+    // months get proportionally more and monsoon months get proportionally less.
+    const otaAnnualTotal = OTA_STEADY_STATE_MONTHLY * 12; // ₹9L at full maturity
 
     for (let i = 0; i < 12; i++) {
       const d = new Date(startRef.getFullYear(), startRef.getMonth() + i, 1);
@@ -634,7 +637,9 @@ const SheetOverview: React.FC = () => {
       const otaMonthsSince = (yr * 12 + mi) - (startRef.getFullYear() * 12 + OTA_INTEGRATION_MONTH);
       const rampIdx = Math.max(0, Math.min(otaMonthsSince, OTA_RAMP.length - 1));
       const rampFactor = otaMonthsSince < 0 ? 0 : OTA_RAMP[rampIdx];
-      const otaPredicted = OTA_STEADY_STATE_MONTHLY * (mult / (otaSeasonWeightTotal / 12)) * rampFactor;
+      // OTA share for this month = (days × seasonality) / total weighted days across 12 months
+      const monthSeasonWeight = dim * mult;
+      const otaPredicted = otaAnnualTotal * (monthSeasonWeight / totalSeasonalWeight) * rampFactor;
 
       const combined = capacity + otaPredicted;
       const liftNeededPct = combined > 0 ? ((target / combined - 1) * 100) : 0;

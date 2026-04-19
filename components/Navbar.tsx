@@ -55,6 +55,14 @@ const Navbar: React.FC = () => {
                 {t.home}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
+            <Link to="/rangbhoomi" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
+                Event
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
+            </Link>
+            <Link to="/pelling-after-dark" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
+                Vision
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
+            </Link>
             {/* Rooms tab hidden — bookings now handled via runhotel.site
             <Link to="/rooms" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
                 {t.rooms}
@@ -140,6 +148,20 @@ const Navbar: React.FC = () => {
               onClick={() => setIsOpen(false)}
             >
               {t.home}
+            </Link>
+            <Link
+              to="/rangbhoomi"
+              className="text-white text-lg font-serif hover:text-urbane-gold"
+              onClick={() => setIsOpen(false)}
+            >
+              Event
+            </Link>
+            <Link
+              to="/pelling-after-dark"
+              className="text-white text-lg font-serif hover:text-urbane-gold"
+              onClick={() => setIsOpen(false)}
+            >
+              Vision
             </Link>
             {/* Rooms tab hidden — bookings now handled via runhotel.site
             <Link

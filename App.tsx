@@ -20,6 +20,10 @@ const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const AdminLogin = React.lazy(() => import('./pages/AdminLogin'));
 const AuthCallback = React.lazy(() => import('./pages/AuthCallback'));
 
+// Standalone campaign/presentation pages — heavy SVGs + recharts, lazy-load so they don't bloat initial bundle.
+const Rangbhoomi = React.lazy(() => import('./pages/Rangbhoomi'));
+const PellingAfterDark = React.lazy(() => import('./pages/PellingAfterDark'));
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   React.useEffect(() => {
@@ -28,19 +32,22 @@ const ScrollToTop = () => {
   return null;
 };
 
+const STANDALONE_ROUTES = ['/rangbhoomi', '/pelling-after-dark'];
+
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isStandaloneRoute = isAdminRoute || STANDALONE_ROUTES.includes(location.pathname);
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-800 bg-urbane-mist">
-      <Navbar />
+      {!isStandaloneRoute && <Navbar />}
       <main className="flex-grow">
         {children}
       </main>
-      {!isAdminRoute && <Footer />}
-      {!isAdminRoute && <WhatsAppButton />}
-      {!isAdminRoute && <LanguageSwitcher variant="floating" />}
+      {!isStandaloneRoute && <Footer />}
+      {!isStandaloneRoute && <WhatsAppButton />}
+      {!isStandaloneRoute && <LanguageSwitcher variant="floating" />}
     </div>
   );
 };
@@ -71,6 +78,8 @@ const App: React.FC = () => {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/auth/callback" element={<AuthCallback />} />
+                    <Route path="/rangbhoomi" element={<Rangbhoomi />} />
+                    <Route path="/pelling-after-dark" element={<PellingAfterDark />} />
                   </Routes>
                 </Suspense>
               </MainLayout>

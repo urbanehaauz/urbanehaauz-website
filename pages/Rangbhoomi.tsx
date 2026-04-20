@@ -536,18 +536,44 @@ const ArtistsSection: React.FC = () => (
       </div>
 
       <Reveal delay={200}>
-        <div className="mt-14 max-w-3xl mx-auto">
-          <div className="rounded-2xl overflow-hidden border border-[#D4A574]/20 shadow-2xl">
-            <img
-              src="/artists/artwork-stupa.jpg"
-              alt="Artwork by visiting artist — Himalayan stupa painted in expressive brush strokes"
-              className="w-full h-64 md:h-96 object-cover"
-            />
-            <div className="bg-[#1C1C1C] px-6 py-4 text-center">
-              <p className="text-[#D4A574] text-xs uppercase tracking-[0.3em]">Artwork by visiting artists</p>
-              <p className="text-[#FAF7F2]/60 text-sm mt-1">A glimpse of the art that will be exhibited at Rangotsav</p>
+        <div className="mt-14 max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <p className="text-[#D4A574] text-xs uppercase tracking-[0.3em]">Artwork by visiting artists</p>
+            <p className="text-[#FAF7F2]/60 text-sm mt-2">A glimpse of the art that will be exhibited at Rangotsav</p>
+          </div>
+          <div className="relative overflow-hidden" style={{ height: '320px' }}>
+            <div
+              className="flex gap-8 absolute"
+              style={{
+                animation: 'artworkScroll 20s linear infinite',
+                width: 'max-content',
+              }}
+            >
+              {[
+                { src: '/artists/artwork-stupa.jpg', alt: 'Himalayan stupa in expressive brush strokes' },
+                { src: '/artists/artwork-sunset.jpg', alt: 'Sunset over water — oil on canvas' },
+                { src: '/artists/artwork-lake.jpg', alt: 'Blue lake landscape — impressionist style' },
+                { src: '/artists/artwork-angel.jpg', alt: 'Angel with orchid — mixed media on canvas' },
+                { src: '/artists/artwork-stupa.jpg', alt: 'Himalayan stupa in expressive brush strokes' },
+                { src: '/artists/artwork-sunset.jpg', alt: 'Sunset over water — oil on canvas' },
+                { src: '/artists/artwork-lake.jpg', alt: 'Blue lake landscape — impressionist style' },
+                { src: '/artists/artwork-angel.jpg', alt: 'Angel with orchid — mixed media on canvas' },
+              ].map((art, i) => (
+                <div
+                  key={i}
+                  className="w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden border-4 border-[#D4A574]/30 shadow-2xl shadow-[#D4A574]/10 flex-shrink-0 hover:scale-105 transition-transform duration-500"
+                >
+                  <img src={art.src} alt={art.alt} className="w-full h-full object-cover" />
+                </div>
+              ))}
             </div>
           </div>
+          <style>{`
+            @keyframes artworkScroll {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+          `}</style>
         </div>
       </Reveal>
 

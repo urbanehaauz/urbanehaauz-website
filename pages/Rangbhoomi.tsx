@@ -528,6 +528,142 @@ const CONGLOMERATE_PILLARS = [
 ];
 
 /* -------------------------------------------------------------------------- */
+/*                             PAINTERS FROM BENGAL                           */
+/* -------------------------------------------------------------------------- */
+
+type Artist = {
+  name: string;
+  image: string;
+  bio: string;
+  feature?: boolean;
+};
+
+const ARTISTS: Artist[] = [
+  {
+    name: 'Sudip Biswas',
+    image: '/artists/sudip-biswas.jpeg',
+    bio: "A professional painter since 2004, trained with an M.V.A. from Kolkata's Government College of Art and Craft. Recipient of the Kala Ratna Award (2025) and a first-prize honour from the Ministry of Culture, Government of India, with exhibitions across India and Bangladesh.",
+    feature: true,
+  },
+  {
+    name: 'Santanu Baidya',
+    image: '/artists/santanu-baidya.jpeg',
+    bio: "A First-Class B.V.A. graduate of Kolkata's Government College of Art and Craft, with two decades of participation in group shows, annual exhibitions, and art fairs across India. He teaches art at Springdale School in Nadia, West Bengal.",
+    feature: true,
+  },
+  {
+    name: 'Kanika Sarkar',
+    image: '/artists/kanika-sarkar.jpg',
+    bio: "A Bengal painter whose canvases weave colour and memory into quiet, evocative compositions. Her visual language draws from the everyday rhythms of life in West Bengal.",
+  },
+  {
+    name: 'Pravat Kr Manna',
+    image: '/artists/pravat-kr-manna.jpeg',
+    bio: "A painter rooted in West Bengal's contemporary art scene, known for textured, layered works that hover between abstraction and figuration. His paintings have featured in group exhibitions across Bengal.",
+  },
+  {
+    name: 'Susanta Das',
+    image: '/artists/susanta-das.jpeg',
+    bio: "A contemporary painter whose canvases explore line, colour, and the layered textures of lived environments. His work has been a regular feature at group shows across West Bengal.",
+  },
+  {
+    name: 'Bappa Maji',
+    image: '/artists/bappa-maji.jpeg',
+    bio: "A Bengal painter threading tradition and the modern moment, moving between figurative and abstract vocabulary. His paintings reflect a deep engagement with Bengal's visual and cultural heritage.",
+  },
+  {
+    name: 'Pijush Das',
+    image: '/artists/pijush-das.jpeg',
+    bio: "A painter from West Bengal working at the intersection of form, colour, and narrative — canvases that invite slow, considered viewing. He has participated in shows across Kolkata and beyond.",
+  },
+  {
+    name: 'Tanmoy Hazra',
+    image: '/artists/tanmoy-hazra.jpeg',
+    bio: "A contemporary painter bringing a quiet, observational lens to colour and composition. His paintings have been shown at group exhibitions across the state.",
+  },
+  {
+    name: 'Kartick Roy',
+    image: '/artists/kartick-roy.png',
+    bio: "A Bengal-based painter exploring figurative and abstract registers with an eye for tonal nuance and atmosphere. His practice is grounded in a close reading of place and light.",
+  },
+  {
+    name: 'Sristha Ganguly',
+    image: '/artists/sristha-ganguly.jpeg',
+    bio: "A young painter from West Bengal whose evolving practice engages contemporary themes through a distinctly personal palette. Her work represents a new generation of Bengal's painters stepping onto the gallery scene.",
+  },
+];
+
+const ArtistCard: React.FC<{ artist: Artist; idx: number }> = ({ artist, idx }) => (
+  <Reveal delay={idx * 60}>
+    <article className="group h-full bg-[#FAF7F2]/[0.04] border border-[#FAF7F2]/10 hover:border-[#D4A574]/60 rounded-2xl overflow-hidden backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#D4A574]/10 flex flex-col">
+      <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#1C1C1C] to-[#2D1B69]">
+        <img
+          src={artist.image}
+          alt={`Portrait of ${artist.name}, painter`}
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+        />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0D0D2B]/90 via-[#0D0D2B]/40 to-transparent" />
+        {artist.feature && (
+          <div className="absolute top-3 left-3 text-[9px] uppercase tracking-[0.25em] bg-[#D4A574] text-[#1C1C1C] px-2.5 py-1 rounded-full font-semibold">
+            Featured
+          </div>
+        )}
+      </div>
+      <div className="p-5 md:p-6 flex-1 flex flex-col">
+        <h3 className="font-serif text-xl md:text-2xl text-[#FAF7F2] leading-tight">
+          {artist.name}
+        </h3>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4A574] mt-1.5">
+          Painter · West Bengal
+        </p>
+        <p className="mt-4 text-sm text-[#FAF7F2]/75 leading-relaxed flex-1">
+          {artist.bio}
+        </p>
+      </div>
+    </article>
+  </Reveal>
+);
+
+const ArtistsSection: React.FC = () => (
+  <section className="py-28 md:py-36 relative overflow-hidden bg-[#1f1248] text-[#FAF7F2]">
+    <NoiseOverlay />
+    <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+      <Reveal>
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <span className="text-xs uppercase tracking-[0.5em] text-[#D4A574]">
+            The Lineup
+          </span>
+          <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
+            Painters from Bengal
+          </h2>
+          <p className="mt-4 text-[#FAF7F2]/70 text-base md:text-lg leading-relaxed">
+            Ten contemporary painters travelling to Pelling — each bringing a distinct
+            vocabulary of colour, form, and quiet observation to the Himalayas.
+          </p>
+        </div>
+      </Reveal>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
+        {ARTISTS.map((a, i) => (
+          <ArtistCard key={a.name} artist={a} idx={i} />
+        ))}
+      </div>
+
+      <Reveal delay={250}>
+        <div className="text-center mt-14 max-w-2xl mx-auto">
+          <div className="h-px w-20 mx-auto bg-[#D4A574]/40 mb-6" />
+          <p className="text-[#FAF7F2]/65 italic text-sm md:text-base">
+            Works from the visiting painters will be exhibited at Urbane Haauz during the
+            festival. Prints and select originals will be available to collectors.
+          </p>
+        </div>
+      </Reveal>
+    </div>
+  </section>
+);
+
+/* -------------------------------------------------------------------------- */
 /*                                FOOD SECTION                                */
 /* -------------------------------------------------------------------------- */
 
@@ -864,6 +1000,7 @@ const Rangbhoomi: React.FC = () => (
       <PhilosophySection />
       <ProgramSection />
       <CulturalConglomerateSection />
+      <ArtistsSection />
       <FoodSection />
       <RegistrationSection />
       <FooterCTA />

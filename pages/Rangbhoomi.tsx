@@ -206,7 +206,7 @@ const HeroSection: React.FC = () => (
       <div className="mt-10 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 animate-fade-in-up">
         <div className="inline-flex items-center gap-2 text-[#FAF7F2] bg-[#1C1C1C]/30 backdrop-blur-sm px-5 py-2.5 rounded-full border border-[#FAF7F2]/20">
           <Calendar className="w-4 h-4 text-[#D4A574]" />
-          <span className="uppercase text-xs tracking-[0.3em]">May 2025</span>
+          <span className="uppercase text-xs tracking-[0.3em]">25 May 2026</span>
         </div>
         <div className="inline-flex items-center gap-2 text-[#FAF7F2] bg-[#1C1C1C]/30 backdrop-blur-sm px-5 py-2.5 rounded-full border border-[#FAF7F2]/20">
           <MapPin className="w-4 h-4 text-[#D4A574]" />
@@ -1001,7 +1001,7 @@ const Rangbhoomi: React.FC = () => (
       <meta property="og:title" content="Rangotsav · The Tale Of Two States" />
       <meta
         property="og:description"
-        content="Art is in the Air; Music is in the Mist and Flavours on your Plate. May 2025, Pelling, Sikkim."
+        content="Art is in the Air; Music is in the Mist and Flavours on your Plate. 25 May 2026, Pelling, Sikkim."
       />
       <meta property="og:type" content="event" />
       <link rel="canonical" href="https://urbanehaauz.com/#/rangotsav" />

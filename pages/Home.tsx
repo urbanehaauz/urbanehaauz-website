@@ -41,16 +41,24 @@ const Home: React.FC = () => {
           <p className="font-serif text-white/90 text-base md:text-xl mb-12 max-w-2xl italic tracking-wide leading-relaxed drop-shadow-md">
             - Where luxury meets the clouds.
           </p>
-          <div className="flex flex-col items-center">
-            <a
-              href="https://urbanehaauz.runhotel.site/en/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white text-urbane-green px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg hover:bg-urbane-gold hover:text-white hover:shadow-xl hover:-translate-y-1"
-            >
-              Check Availability
-            </a>
-            <p className="mt-4 text-white/80 text-xs tracking-[0.15em] uppercase drop-shadow-md">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <a
+                href="https://urbanehaauz.runhotel.site/en/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white text-urbane-green px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg hover:bg-urbane-gold hover:text-white hover:shadow-xl hover:-translate-y-1"
+              >
+                Check Availability
+              </a>
+              <Link
+                to="/rangbhoomi"
+                className="group bg-transparent text-white px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg border-2 border-white/60 hover:bg-urbane-gold hover:border-urbane-gold hover:text-white hover:shadow-xl hover:-translate-y-1"
+              >
+                Rangotsav · 25 May
+              </Link>
+            </div>
+            <p className="text-white/80 text-xs tracking-[0.15em] uppercase drop-shadow-md">
               Best Rate Guarantee · Instant Confirmation
             </p>
           </div>

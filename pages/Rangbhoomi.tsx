@@ -61,88 +61,24 @@ const Reveal: React.FC<{
 /*                               INLINE SVG ART                               */
 /* -------------------------------------------------------------------------- */
 
-const OrchidSVG: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <svg viewBox="0 0 120 120" fill="none" className={className}>
-    <g opacity="0.85">
-      {[0, 72, 144, 216, 288].map((rot) => (
-        <ellipse
-          key={rot}
-          cx="60"
-          cy="28"
-          rx="9"
-          ry="34"
-          fill="url(#orchidGrad)"
-          transform={`rotate(${rot} 60 60)`}
-        />
-      ))}
-      <circle cx="60" cy="60" r="9" fill="#D4A574" />
-      <circle cx="60" cy="60" r="4" fill="#7B2D8E" />
-    </g>
-    <defs>
-      <linearGradient id="orchidGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#F0E0FF" stopOpacity="0.9" />
-        <stop offset="100%" stopColor="#9B59B6" stopOpacity="0.6" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
-const OrchidAltSVG: React.FC<{ className?: string }> = ({ className = '' }) => (
-  <svg viewBox="0 0 120 120" fill="none" className={className}>
-    <g opacity="0.9">
-      {[0, 60, 120, 180, 240, 300].map((rot) => (
-        <ellipse
-          key={rot}
-          cx="60"
-          cy="30"
-          rx="10"
-          ry="28"
-          fill="url(#orchidAltGrad)"
-          stroke="#D4A574"
-          strokeOpacity="0.4"
-          strokeWidth="0.6"
-          transform={`rotate(${rot} 60 60)`}
-        />
-      ))}
-      <circle cx="60" cy="60" r="8" fill="#D4A574" />
-      <circle cx="60" cy="60" r="3" fill="#7B2D8E" />
-    </g>
-    <defs>
-      <radialGradient id="orchidAltGrad">
-        <stop offset="0%" stopColor="#E8D0F0" stopOpacity="0.95" />
-        <stop offset="100%" stopColor="#8E44AD" stopOpacity="0.75" />
-      </radialGradient>
-    </defs>
-  </svg>
-);
 
 const MountainRangeSVG: React.FC<{ className?: string }> = ({ className = '' }) => (
   <svg viewBox="0 0 1600 400" fill="none" className={className} preserveAspectRatio="none">
     <path
       d="M0,400 L0,280 L180,180 L320,240 L500,120 L680,220 L860,140 L1040,230 L1220,160 L1400,240 L1600,200 L1600,400 Z"
-      fill="url(#mtnBack)"
-      opacity="0.5"
+      fill="#0a0a0a"
+      opacity="0.6"
     />
     <path
       d="M0,400 L0,320 L140,240 L300,300 L460,200 L640,290 L820,220 L1000,300 L1180,240 L1360,310 L1600,260 L1600,400 Z"
-      fill="url(#mtnMid)"
-      opacity="0.75"
+      fill="#050505"
+      opacity="0.8"
     />
     <path
       d="M0,400 L0,360 L120,310 L260,340 L420,290 L580,340 L760,300 L940,350 L1120,310 L1320,355 L1600,330 L1600,400 Z"
-      fill="#1C1C1C"
-      opacity="0.9"
+      fill="#000000"
+      opacity="0.95"
     />
-    <defs>
-      <linearGradient id="mtnBack" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#2D1B69" />
-        <stop offset="100%" stopColor="#2C5F7C" />
-      </linearGradient>
-      <linearGradient id="mtnMid" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#2C5F7C" />
-        <stop offset="100%" stopColor="#1C1C1C" />
-      </linearGradient>
-    </defs>
   </svg>
 );
 
@@ -190,7 +126,7 @@ const StandaloneHeader: React.FC = () => (
       to="/"
       className="group flex items-center gap-2 text-[#FAF7F2]/90 hover:text-[#D4A574] transition-colors"
     >
-      <img src="/logo.jpeg" alt="Urbane Haauz logo" className="h-10 md:h-12 w-auto rounded" />
+      <img src="/uh-badge.png" alt="Urbane Haauz logo" className="w-12 h-12 rounded-full" />
       <span className="text-xs uppercase tracking-[0.2em] opacity-70 group-hover:opacity-100">
         Pelling Cultural Initiative
       </span>
@@ -210,16 +146,24 @@ const HeroSection: React.FC = () => (
       className="absolute inset-0"
       style={{
         background:
-          'linear-gradient(180deg, #C84B0F 0%, #D4A574 22%, #8A3E7A 52%, #2D1B69 78%, #2C5F7C 100%)',
+          'linear-gradient(180deg, #1a0533 0%, #2d1b69 15%, #6b3fa0 30%, #c84b0f 50%, #d4a574 65%, #2c5f7c 80%, #1c1c1c 100%)',
+      }}
+    />
+    {/* Paint-texture overlay */}
+    <div
+      className="absolute inset-0 mix-blend-soft-light opacity-[0.12] pointer-events-none"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        backgroundSize: '150px 150px',
       }}
     />
     <NoiseOverlay />
 
-    {/* Floating decorative SVGs */}
-    <OrchidSVG className="absolute top-[18%] left-[6%] w-20 md:w-28 animate-[rb-float_9s_ease-in-out_infinite]" />
-    <OrchidAltSVG className="absolute top-[14%] right-[8%] w-20 md:w-32 animate-[rb-float_11s_ease-in-out_infinite_0.5s]" />
-    <OrchidSVG className="absolute bottom-[30%] right-[14%] w-14 md:w-20 opacity-70 animate-[rb-float_13s_ease-in-out_infinite_1.5s]" />
-    <OrchidAltSVG className="absolute bottom-[34%] left-[12%] w-16 md:w-24 opacity-80 animate-[rb-float_10s_ease-in-out_infinite_2s]" />
+    {/* Floating decorative orchid images */}
+    <img src="/orchid-flower.png" alt="" className="absolute top-[18%] left-[6%] w-28 md:w-36 h-28 md:h-36 opacity-80 rotate-12 animate-[rb-float_9s_ease-in-out_infinite]" />
+    <img src="/orchid-flower.png" alt="" className="absolute top-[14%] right-[8%] w-32 md:w-40 h-32 md:h-40 opacity-80 -rotate-6 animate-[rb-float_11s_ease-in-out_infinite_0.5s]" />
+    <img src="/orchid-flower.png" alt="" className="absolute bottom-[30%] right-[14%] w-24 md:w-28 h-24 md:h-28 opacity-80 rotate-45 animate-[rb-float_13s_ease-in-out_infinite_1.5s]" />
+    <img src="/orchid-flower.png" alt="" className="absolute bottom-[34%] left-[12%] w-24 md:w-32 h-24 md:h-32 opacity-80 -rotate-12 animate-[rb-float_10s_ease-in-out_infinite_2s]" />
     <MountainRangeSVG className="absolute bottom-0 left-0 w-full h-[38%]" />
 
     {/* Ornamental frame */}
@@ -241,7 +185,7 @@ const HeroSection: React.FC = () => (
         className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-[#FAF7F2] animate-fade-in-up"
         style={{ fontWeight: 700, letterSpacing: '-0.02em' }}
       >
-        Ranglaher Utsav
+        Rangotsav
       </h1>
 
       <div className="mt-5 md:mt-6 flex items-center justify-center gap-4 animate-fade-in-up">
@@ -311,7 +255,7 @@ const PhilosophySection: React.FC = () => (
         </blockquote>
         <div className="mt-8 flex items-center gap-4">
           <div className="h-px w-12 bg-[#D4A574]" />
-          <span className="text-xs uppercase tracking-[0.3em] text-[#4A7C59]">Ranglaher Utsav Manifesto</span>
+          <span className="text-xs uppercase tracking-[0.3em] text-[#4A7C59]">Rangotsav Manifesto</span>
         </div>
       </Reveal>
 
@@ -321,7 +265,7 @@ const PhilosophySection: React.FC = () => (
             Pelling sits at a crossroads — where Tibetan Buddhism touches Nepali folk traditions,
             where the Kanchenjunga's shadow falls on villages that still sing songs older than the
             highways. And yet, for too long, Pelling has been a place you pass through on the way
-            to a viewpoint. <span className="text-[#C84B0F] font-semibold">Ranglaher Utsav exists to change that.</span>
+            to a viewpoint. <span className="text-[#C84B0F] font-semibold">Rangotsav exists to change that.</span>
           </p>
           <p>
             This May, a group of exceptionally talented artists from West Bengal — painters whose
@@ -333,7 +277,7 @@ const PhilosophySection: React.FC = () => (
             We believe tourism should mean cultural exchange, not just mountain views. We believe
             the food cooked by a grandmother in Dentam carries as much soul as a fine-dining menu.
             We believe Pelling's children deserve to see their own culture celebrated, and to meet
-            artists who have made a life from tradition. Ranglaher Utsav is our first step.
+            artists who have made a life from tradition. Rangotsav is our first step.
           </p>
         </div>
       </Reveal>
@@ -354,21 +298,21 @@ const PROGRAMS = [
     Icon: Palette,
     title: 'Art & Art Competition',
     kicker: 'Art',
-    body: "Art and Art Competition at Ranglaher Utsav brings together creativity, learning, and cultural exchange on one vibrant platform. Young participants receive first-hand guidance and inspiration from seasoned stalwarts, gaining valuable exposure beyond the classroom. The competition is not just about showcasing talent, but about nurturing it through interaction, observation, and experience. At the same time, artists from Sikkim connect with visiting artists from West Bengal, creating a meaningful exchange of ideas, techniques, and perspectives. This shared space encourages collaboration, celebrates diversity in artistic expression, and builds a bridge between two rich cultural landscapes through the universal language of art.",
+    body: "Art and Art Competition at Rangotsav brings together creativity, learning, and cultural exchange on one vibrant platform. Young participants receive first-hand guidance and inspiration from seasoned stalwarts, gaining valuable exposure beyond the classroom. The competition is not just about showcasing talent, but about nurturing it through interaction, observation, and experience. At the same time, artists from Sikkim connect with visiting artists from West Bengal, creating a meaningful exchange of ideas, techniques, and perspectives. This shared space encourages collaboration, celebrates diversity in artistic expression, and builds a bridge between two rich cultural landscapes through the universal language of art.",
     accent: '#D4A574',
   },
   {
     Icon: Music,
     title: 'Folk Music, Instrumental & Dance',
     kicker: 'Performing Arts',
-    body: "Folk Music, Instrumental Performances, and Dance at Ranglaher Utsav present a vibrant cultural tapestry of Bengal and Sikkim. Folk singers from both regions bring soulful melodies, while instrumentalists add depth and rhythm to the experience. Dancers from Bengal showcase expressive forms like Kathak and contemporary, alongside Sikkim's Limbu, Lepcha, and Bhutia communities performing traditional dances such as the Chyabrung. Reciters add a literary touch by presenting works of iconic poets from their respective cultures. Together, these performances create a powerful cultural confluence, celebrating heritage, storytelling, and artistic diversity in its most authentic and immersive form.",
+    body: "Folk Music, Instrumental Performances, and Dance at Rangotsav present a vibrant cultural tapestry of Bengal and Sikkim. Folk singers from both regions bring soulful melodies, while instrumentalists add depth and rhythm to the experience. Dancers from Bengal showcase expressive forms like Kathak and contemporary, alongside Sikkim's Limbu, Lepcha, and Bhutia communities performing traditional dances such as the Chyabrung. Reciters add a literary touch by presenting works of iconic poets from their respective cultures. Together, these performances create a powerful cultural confluence, celebrating heritage, storytelling, and artistic diversity in its most authentic and immersive form.",
     accent: '#C84B0F',
   },
   {
     Icon: Utensils,
     title: 'Culinary Heritage',
     kicker: 'Food',
-    body: "The Culinary Heritage segment at Ranglaher Utsav celebrates the rich and diverse palates of Bengal and Sikkim, bringing together flavours shaped by tradition, culture, and generations of expertise. It is a platform to proudly showcase timeless recipes and authentic tastes for all to savour and appreciate. From local delicacies to regional classics, this segment highlights the unique culinary identities of both regions. It also empowers small and large food joints of Pelling to present their masterful touch and age-old traditions, creating a vibrant space where food becomes a storyteller of heritage, passion and community.",
+    body: "The Culinary Heritage segment at Rangotsav celebrates the rich and diverse palates of Bengal and Sikkim, bringing together flavours shaped by tradition, culture, and generations of expertise. It is a platform to proudly showcase timeless recipes and authentic tastes for all to savour and appreciate. From local delicacies to regional classics, this segment highlights the unique culinary identities of both regions. It also empowers small and large food joints of Pelling to present their masterful touch and age-old traditions, creating a vibrant space where food becomes a storyteller of heritage, passion and community.",
     accent: '#4A7C59',
   },
 ];
@@ -404,7 +348,7 @@ const ProgramSection: React.FC = () => (
     <div className="max-w-6xl mx-auto">
       <Reveal>
         <div className="text-center mb-16">
-          <span className="text-xs uppercase tracking-[0.5em] text-[#C84B0F]">What's Happening</span>
+          <span className="text-xs uppercase tracking-[0.5em] text-[#C84B0F]">The Programme</span>
           <h2 className="mt-4 font-serif text-4xl md:text-6xl text-[#1C1C1C] leading-tight">
             What's Happening
           </h2>
@@ -434,7 +378,7 @@ const CulturalConglomerateSection: React.FC = () => (
       <Reveal>
         <div className="text-center mb-16 max-w-3xl mx-auto">
           <span className="text-xs uppercase tracking-[0.5em] text-[#D4A574]">
-            Tale of Two States
+            The Conglomerate
           </span>
           <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
             Tale of Two States
@@ -588,8 +532,24 @@ const ArtistsSection: React.FC = () => (
         ))}
       </div>
 
-      <Reveal delay={250}>
-        <div className="text-center mt-14 max-w-2xl mx-auto">
+      <Reveal delay={200}>
+        <div className="mt-14 max-w-3xl mx-auto">
+          <div className="rounded-2xl overflow-hidden border border-[#D4A574]/20 shadow-2xl">
+            <img
+              src="/artists/artwork-stupa.jpg"
+              alt="Artwork by visiting artist — Himalayan stupa painted in expressive brush strokes"
+              className="w-full h-64 md:h-96 object-cover"
+            />
+            <div className="bg-[#1C1C1C] px-6 py-4 text-center">
+              <p className="text-[#D4A574] text-xs uppercase tracking-[0.3em]">Artwork by visiting artists</p>
+              <p className="text-[#FAF7F2]/60 text-sm mt-1">A glimpse of the art that will be exhibited at Rangotsav</p>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+
+      <Reveal delay={300}>
+        <div className="text-center mt-10 max-w-2xl mx-auto">
           <div className="h-px w-20 mx-auto bg-[#D4A574]/40 mb-6" />
           <p className="text-[#FAF7F2]/65 italic text-sm md:text-base">
             Works from the visiting painters will be exhibited at Urbane Haauz during the
@@ -690,8 +650,8 @@ const FoodSection: React.FC = () => (
           <div className="flex-1">
             <h4 className="font-serif text-2xl mb-2">Supporting Local</h4>
             <p className="text-[#FAF7F2]/85 leading-relaxed">
-              All food vendors at Ranglaher Utsav are from Pelling and surrounding communities. Zero
-              platform fees, zero entry cost. A vendor-first model — they keep what they earn.
+              All food vendors at Rangotsav are from Pelling and surrounding communities. Zero
+              platform fees. Celebrating the culinary talent and heritage of the local community.
             </p>
           </div>
           <a
@@ -727,7 +687,7 @@ const TIERS = [
   {
     name: 'Participants',
     sub: 'Artists & Performers',
-    body: 'For artists, musicians, dancers, and culinary experts participating in Ranglaher Utsav.',
+    body: 'For artists, musicians, dancers, and culinary experts participating in Rangotsav.',
     accent: '#C84B0F',
   },
 ];
@@ -739,7 +699,7 @@ const RegistrationSection: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    console.log('[ranglaher-utsav] interest registered:', email);
+    console.log('[rangotsav] interest registered:', email);
     setSubmitted(true);
   };
 
@@ -751,7 +711,7 @@ const RegistrationSection: React.FC = () => {
           <div className="text-center mb-16">
             <span className="text-xs uppercase tracking-[0.5em] text-[#D4A574]">Registration</span>
             <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
-              Be Part of Ranglaher Utsav
+              Be Part of Rangotsav
             </h2>
           </div>
         </Reveal>
@@ -810,7 +770,7 @@ const RegistrationSection: React.FC = () => {
             </div>
             {submitted ? (
               <div className="text-center bg-[#4A7C59]/30 border border-[#4A7C59] rounded-full px-6 py-4 text-[#D4A574]">
-                Thank you. We'll be in touch as Ranglaher Utsav takes shape.
+                Thank you. We'll be in touch as Rangotsav takes shape.
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-3">
@@ -860,7 +820,7 @@ const FooterCTA: React.FC = () => (
       </div>
 
       <h3 className="font-serif text-3xl md:text-5xl leading-tight mb-2">
-        Ranglaher Utsav
+        Rangotsav
       </h3>
       <p className="text-[#D4A574] text-sm md:text-base uppercase tracking-[0.4em] mb-6">
         The Tale Of Two States
@@ -920,18 +880,18 @@ const FooterCTA: React.FC = () => (
 const Rangbhoomi: React.FC = () => (
   <>
     <Helmet>
-      <title>Ranglaher Utsav · The Tale Of Two States | Urbane Haauz</title>
+      <title>Rangotsav · The Tale Of Two States | Urbane Haauz</title>
       <meta
         name="description"
-        content="Ranglaher Utsav — a Bengal-Sikkim cultural celebration bringing artists, music, and cuisine together in Pelling, West Sikkim. Hosted by Urbane Haauz."
+        content="Rangotsav — a Bengal-Sikkim cultural celebration bringing artists, music, and cuisine together in Pelling, West Sikkim. Hosted by Urbane Haauz."
       />
-      <meta property="og:title" content="Ranglaher Utsav · The Tale Of Two States" />
+      <meta property="og:title" content="Rangotsav · The Tale Of Two States" />
       <meta
         property="og:description"
         content="Art is in the Air; Music is in the Mist and Flavours on your Plate. May 2025, Pelling, Sikkim."
       />
       <meta property="og:type" content="event" />
-      <link rel="canonical" href="https://urbanehaauz.com/#/ranglaher-utsav" />
+      <link rel="canonical" href="https://urbanehaauz.com/#/rangotsav" />
     </Helmet>
 
     <div className="bg-[#FAF7F2] text-[#1C1C1C]">

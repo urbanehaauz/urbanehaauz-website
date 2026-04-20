@@ -428,10 +428,33 @@ const ARTISTS: Artist[] = [
     feature: true,
   },
   {
+    name: 'Bappa Maji',
+    image: '/artists/bappa-maji.jpeg',
+    bio: "Art curator, visual artist, and educator with a Ph.D. from IIT Kanpur and MVA & BVA from Govt. College of Art & Craft, Kolkata. Currently Assistant Professor at CSJMU with experience at Amity and LPU. Recipient of the Debi Prasad Roy Chowdhury Award. Solo exhibition at Academy of Fine Arts, Kolkata, and group shows across major Indian cities.",
+    feature: true,
+  },
+  {
+    name: 'Tanmoy Hazra',
+    image: '/artists/tanmoy-hazra.jpeg',
+    bio: "A contemporary painter bringing a quiet, observational lens to colour and composition. His paintings have been shown at group exhibitions across West Bengal.",
+    feature: true,
+  },
+  {
     name: 'Santanu Baidya',
     image: '/artists/santanu-baidya.jpeg',
     bio: "A First-Class B.V.A. graduate of Kolkata's Government College of Art and Craft, with two decades of participation in group shows, annual exhibitions, and art fairs across India. He teaches art at Springdale School in Nadia, West Bengal.",
     feature: true,
+  },
+  {
+    name: 'Pijush Das',
+    image: '/artists/pijush-das.jpeg',
+    bio: "A deeply passionate artist who transforms emotion into visual language, blending traditional techniques with modern creativity. Trained at Chitrangan College of Art with a 7-year Diploma in Painting. Has worked with National Geographic on the Ganga expedition and exhibited with MAC Group in Kolkata and Barrackpore.",
+    feature: true,
+  },
+  {
+    name: 'Kartick Roy',
+    image: '/artists/kartick-roy.png',
+    bio: "A painter with a 7-year Diploma in Painting from SBS & SP, West Bengal. Exhibited at Annual Art Exhibitions at Chitrangan College (1994-96), Academy of Fine Arts Kolkata (2004), Chitrakala Parisad Bengaluru (2019), S.B.C.O.K.N Academy Kolkata (2024), Government Museum Jhansi (2024), and Art Hive All India Exhibition Kolkata (2025). Solo show at Art Plaza, Mumbai (2025).",
   },
   {
     name: 'Kanika Sarkar',
@@ -447,26 +470,6 @@ const ARTISTS: Artist[] = [
     name: 'Susanta Das',
     image: '/artists/susanta-das.jpeg',
     bio: "A contemporary painter whose canvases explore line, colour, and the layered textures of lived environments. His work has been a regular feature at group shows across West Bengal.",
-  },
-  {
-    name: 'Bappa Maji',
-    image: '/artists/bappa-maji.jpeg',
-    bio: "A Bengal painter threading tradition and the modern moment, moving between figurative and abstract vocabulary. His paintings reflect a deep engagement with Bengal's visual and cultural heritage.",
-  },
-  {
-    name: 'Pijush Das',
-    image: '/artists/pijush-das.jpeg',
-    bio: "A painter from West Bengal working at the intersection of form, colour, and narrative — canvases that invite slow, considered viewing. He has participated in shows across Kolkata and beyond.",
-  },
-  {
-    name: 'Tanmoy Hazra',
-    image: '/artists/tanmoy-hazra.jpeg',
-    bio: "A contemporary painter bringing a quiet, observational lens to colour and composition. His paintings have been shown at group exhibitions across the state.",
-  },
-  {
-    name: 'Kartick Roy',
-    image: '/artists/kartick-roy.png',
-    bio: "A Bengal-based painter exploring figurative and abstract registers with an eye for tonal nuance and atmosphere. His practice is grounded in a close reading of place and light.",
   },
   {
     name: 'Sristha Ganguly',

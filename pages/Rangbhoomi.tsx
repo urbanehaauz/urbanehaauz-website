@@ -232,26 +232,30 @@ const HeroSection: React.FC = () => (
 
     <div className="relative z-10 w-full px-6 md:px-12 pt-32 pb-24 text-center">
       <div className="animate-fade-in">
-        <span className="inline-block text-[#D4A574] text-xs md:text-sm uppercase tracking-[0.5em] mb-6 border border-[#D4A574]/40 px-5 py-1.5 rounded-full backdrop-blur-sm">
+        <span className="inline-block text-[#D4A574] text-[10px] md:text-xs uppercase tracking-[0.4em] mb-8 border border-[#D4A574]/30 px-5 py-2 rounded-full backdrop-blur-sm font-medium">
           A Cultural Conglomerate
         </span>
       </div>
 
       <h1
-        className="font-serif text-[14vw] md:text-[10vw] leading-[0.85] text-[#FAF7F2] tracking-tight text-shadow animate-fade-in-up"
-        style={{ fontWeight: 900, letterSpacing: '-0.04em' }}
+        className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-[#FAF7F2] animate-fade-in-up"
+        style={{ fontWeight: 700, letterSpacing: '-0.02em' }}
       >
         Ranglaher Utsav
       </h1>
 
-      <p className="mt-6 md:mt-8 text-lg md:text-2xl text-[#D4A574] uppercase tracking-[0.3em] animate-fade-in-up font-serif">
-        The Tale Of Two States
-      </p>
+      <div className="mt-5 md:mt-6 flex items-center justify-center gap-4 animate-fade-in-up">
+        <span className="h-px w-12 bg-[#D4A574]/50" />
+        <p className="text-sm md:text-base text-[#D4A574] uppercase tracking-[0.35em] font-medium">
+          The Tale Of Two States
+        </p>
+        <span className="h-px w-12 bg-[#D4A574]/50" />
+      </div>
 
-      <p className="mt-10 md:mt-12 text-lg md:text-2xl text-[#FAF7F2] font-serif italic max-w-2xl mx-auto animate-fade-in-up">
+      <p className="mt-8 md:mt-10 text-base md:text-xl text-[#FAF7F2]/90 font-serif italic max-w-2xl mx-auto animate-fade-in-up leading-relaxed">
         Art is in the Air; Music is in the Mist and Flavours on your Plate.
       </p>
-      <p className="mt-4 text-sm md:text-base text-[#FAF7F2]/70 font-serif italic max-w-xl mx-auto animate-fade-in-up">
+      <p className="mt-3 text-xs md:text-sm text-[#FAF7F2]/50 max-w-lg mx-auto animate-fade-in-up tracking-wide leading-relaxed">
         From Bengal's Soul to Sikkim's Spirit. From Bengal's red soil to Sikkim's mountain rocks — A Cultural Confluence.
       </p>
 

@@ -694,14 +694,36 @@ const TIERS = [
 ];
 
 const RegistrationSection: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [notifyEmail, setNotifyEmail] = useState('');
+  const [notifyDone, setNotifyDone] = useState(false);
+  const [vendorName, setVendorName] = useState('');
+  const [vendorEmail, setVendorEmail] = useState('');
+  const [vendorSelling, setVendorSelling] = useState('');
+  const [vendorDone, setVendorDone] = useState(false);
+  const [activeTab, setActiveTab] = useState<'tickets' | 'vendors'>('tickets');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleNotify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    console.log('[rangotsav] interest registered:', email);
-    setSubmitted(true);
+    if (!notifyEmail.trim()) return;
+    try {
+      const { supabase } = await import('../lib/supabase');
+      await supabase.from('rangotsav_notify').insert({ email: notifyEmail.trim() });
+    } catch { /* silent */ }
+    setNotifyDone(true);
+  };
+
+  const handleVendor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!vendorName.trim() || !vendorEmail.trim() || !vendorSelling.trim()) return;
+    try {
+      const { supabase } = await import('../lib/supabase');
+      await supabase.from('rangotsav_vendors').insert({
+        name: vendorName.trim(),
+        email: vendorEmail.trim(),
+        what_selling: vendorSelling.trim(),
+      });
+    } catch { /* silent */ }
+    setVendorDone(true);
   };
 
   return (
@@ -717,80 +739,141 @@ const RegistrationSection: React.FC = () => {
           </div>
         </Reveal>
 
-        <div className="relative">
-          <div className="absolute -top-6 -right-4 md:right-0 z-20 pointer-events-none">
-            <div
-              className="border-4 border-[#C84B0F] text-[#C84B0F] font-serif tracking-[0.2em] text-xs md:text-sm uppercase px-6 py-3 rounded"
-              style={{
-                transform: 'rotate(-8deg)',
-                boxShadow: '0 0 0 2px rgba(200,75,15,0.15), 0 8px 30px -10px rgba(200,75,15,0.6)',
-                background: 'rgba(28,28,28,0.9)',
-              }}
-            >
-              Coming Soon
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {TIERS.map((tier, i) => (
-              <Reveal key={tier.name} delay={i * 100}>
-                <div
-                  className={`h-full rounded-2xl p-8 border transition-all ${
-                    tier.featured
-                      ? 'border-[#D4A574] bg-[#D4A574]/5 scale-[1.02]'
-                      : 'border-[#FAF7F2]/10 bg-[#FAF7F2]/[0.03]'
-                  }`}
-                >
-                  <div
-                    className="h-1 w-12 mb-6 rounded-full"
-                    style={{ background: tier.accent }}
-                  />
-                  <h3 className="font-serif text-2xl mb-1">{tier.name}</h3>
-                  <p className="text-xs uppercase tracking-[0.22em] text-[#D4A574] mb-5">
-                    {tier.sub}
-                  </p>
-                  <p className="text-[#FAF7F2]/70 leading-relaxed text-sm">{tier.body}</p>
-                  <p className={`mt-8 text-xs uppercase tracking-[0.2em] ${(tier as any).free ? 'text-[#4A7C59] font-bold' : 'text-[#FAF7F2]/40'}`}>
-                    {(tier as any).free ? 'Free' : 'Pricing TBD'}
-                  </p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+        {/* Tier cards */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {TIERS.map((tier, i) => (
+            <Reveal key={tier.name} delay={i * 100}>
+              <div
+                className={`h-full rounded-2xl p-8 border transition-all ${
+                  tier.featured
+                    ? 'border-[#D4A574] bg-[#D4A574]/5 scale-[1.02]'
+                    : 'border-[#FAF7F2]/10 bg-[#FAF7F2]/[0.03]'
+                }`}
+              >
+                <div className="h-1 w-12 mb-6 rounded-full" style={{ background: tier.accent }} />
+                <h3 className="font-serif text-2xl mb-1">{tier.name}</h3>
+                <p className="text-xs uppercase tracking-[0.22em] text-[#D4A574] mb-5">{tier.sub}</p>
+                <p className="text-[#FAF7F2]/70 leading-relaxed text-sm">{tier.body}</p>
+                <p className={`mt-8 text-xs uppercase tracking-[0.2em] ${(tier as any).free ? 'text-[#4A7C59] font-bold' : 'text-[#FAF7F2]/40'}`}>
+                  {(tier as any).free ? 'Free' : 'Pricing TBD'}
+                </p>
+              </div>
+            </Reveal>
+          ))}
         </div>
 
+        <p className="text-center text-[#FAF7F2]/40 text-xs mt-6 tracking-wide">
+          No physical tickets. All confirmations via email after registration.
+        </p>
+
+        {/* Tab switcher: Tickets / Vendors */}
         <Reveal delay={200}>
-          <div className="mt-16 max-w-xl mx-auto">
-            <div className="text-center mb-6">
-              <h4 className="font-serif text-2xl mb-2">
-                Be the first to know when tickets open
-              </h4>
-              <p className="text-[#FAF7F2]/60 text-sm">
-                We'll email you the moment registration goes live. No spam.
-              </p>
+          <div className="mt-16 max-w-2xl mx-auto">
+            <div className="flex justify-center gap-2 mb-8">
+              <button
+                onClick={() => setActiveTab('tickets')}
+                className={`px-6 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
+                  activeTab === 'tickets'
+                    ? 'bg-[#D4A574] text-[#1C1C1C]'
+                    : 'border border-[#FAF7F2]/20 text-[#FAF7F2]/60 hover:border-[#D4A574]/40'
+                }`}
+              >
+                Get Notified for Tickets
+              </button>
+              <button
+                onClick={() => setActiveTab('vendors')}
+                className={`px-6 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
+                  activeTab === 'vendors'
+                    ? 'bg-[#4A7C59] text-[#FAF7F2]'
+                    : 'border border-[#FAF7F2]/20 text-[#FAF7F2]/60 hover:border-[#4A7C59]/40'
+                }`}
+              >
+                Join as Food Vendor
+              </button>
             </div>
-            {submitted ? (
-              <div className="text-center bg-[#4A7C59]/30 border border-[#4A7C59] rounded-full px-6 py-4 text-[#D4A574]">
-                Thank you. We'll be in touch as Rangotsav takes shape.
+
+            {/* Notify Me (Tickets) */}
+            {activeTab === 'tickets' && (
+              <div>
+                <div className="text-center mb-6">
+                  <h4 className="font-serif text-2xl mb-2">Be the first to know when tickets open</h4>
+                  <p className="text-[#FAF7F2]/60 text-sm">
+                    We'll email you the moment registration goes live. No spam. No physical tickets — email confirmation only.
+                  </p>
+                </div>
+                {notifyDone ? (
+                  <div className="text-center bg-[#4A7C59]/30 border border-[#4A7C59] rounded-2xl px-6 py-5 text-[#D4A574]">
+                    Thank you! We'll notify you as soon as tickets are available.
+                  </div>
+                ) : (
+                  <form onSubmit={handleNotify} className="flex flex-col md:flex-row gap-3">
+                    <input
+                      type="email"
+                      required
+                      value={notifyEmail}
+                      onChange={(e) => setNotifyEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="flex-1 bg-[#1C1C1C]/60 border border-[#FAF7F2]/20 rounded-full px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-8 py-3.5 rounded-full uppercase tracking-[0.15em] text-sm transition"
+                    >
+                      Notify Me
+                    </button>
+                  </form>
+                )}
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-3">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="flex-1 bg-transparent border border-[#FAF7F2]/20 rounded-full px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none"
-                  style={{ backgroundColor: 'rgba(28,28,28,0.6)', color: '#FAF7F2' }}
-                />
-                <button
-                  type="submit"
-                  className="bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-8 py-3.5 rounded-full uppercase tracking-[0.15em] text-sm transition"
-                >
-                  Notify Me
-                </button>
-              </form>
+            )}
+
+            {/* Vendor Application */}
+            {activeTab === 'vendors' && (
+              <div>
+                <div className="text-center mb-6">
+                  <h4 className="font-serif text-2xl mb-2">Serve your food at Rangotsav</h4>
+                  <p className="text-[#FAF7F2]/60 text-sm">
+                    We're inviting food vendors from Pelling and surrounding areas. Tell us what you'd like to bring to the festival.
+                  </p>
+                </div>
+                {vendorDone ? (
+                  <div className="text-center bg-[#4A7C59]/30 border border-[#4A7C59] rounded-2xl px-6 py-5 text-[#D4A574]">
+                    Application received! We'll reach out to you shortly with next steps.
+                  </div>
+                ) : (
+                  <form onSubmit={handleVendor} className="space-y-4">
+                    <input
+                      type="text"
+                      required
+                      value={vendorName}
+                      onChange={(e) => setVendorName(e.target.value)}
+                      placeholder="Your name or business name"
+                      className="w-full bg-[#1C1C1C]/60 border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
+                    />
+                    <input
+                      type="email"
+                      required
+                      value={vendorEmail}
+                      onChange={(e) => setVendorEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="w-full bg-[#1C1C1C]/60 border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
+                    />
+                    <textarea
+                      required
+                      value={vendorSelling}
+                      onChange={(e) => setVendorSelling(e.target.value)}
+                      placeholder="What will you be selling? (e.g., Momos, Thukpa, Phaley, local snacks...)"
+                      rows={3}
+                      className="w-full bg-[#1C1C1C]/60 border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none resize-none"
+                    />
+                    <button
+                      type="submit"
+                      className="w-full bg-[#4A7C59] hover:bg-[#5a9469] text-[#FAF7F2] font-semibold px-8 py-3.5 rounded-full uppercase tracking-[0.15em] text-sm transition"
+                    >
+                      Submit Application
+                    </button>
+                  </form>
+                )}
+              </div>
             )}
           </div>
         </Reveal>

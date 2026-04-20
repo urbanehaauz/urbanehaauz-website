@@ -676,6 +676,7 @@ const TIERS = [
     sub: 'Be part of the team',
     body: 'Help organise and run the festival. Art competition support, event coordination, and community engagement.',
     accent: '#4A7C59',
+    free: true,
   },
   {
     name: 'Cultural Pass',
@@ -749,8 +750,8 @@ const RegistrationSection: React.FC = () => {
                     {tier.sub}
                   </p>
                   <p className="text-[#FAF7F2]/70 leading-relaxed text-sm">{tier.body}</p>
-                  <p className="mt-8 text-xs uppercase tracking-[0.2em] text-[#FAF7F2]/40">
-                    Pricing TBD
+                  <p className={`mt-8 text-xs uppercase tracking-[0.2em] ${(tier as any).free ? 'text-[#4A7C59] font-bold' : 'text-[#FAF7F2]/40'}`}>
+                    {(tier as any).free ? 'Free' : 'Pricing TBD'}
                   </p>
                 </div>
               </Reveal>

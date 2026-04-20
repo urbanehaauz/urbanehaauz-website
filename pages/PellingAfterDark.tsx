@@ -899,7 +899,7 @@ const FALLBACK_CASES: CaseStudy[] = [
     image: '',
     description:
       'Jaipur and Pushkar host nightly folk performances — Kalbeliya, Ghoomar, puppet shows — anchored in government-supported cultural centers. These evening programs extended average tourist stays from 1.9 to 3.4 nights.',
-    url: 'https://www.tourism.rajasthan.gov.in/',
+    url: 'https://chokhidhani.com/village-fair-restaurant-jaipur/live-entertainment/',
   },
   {
     name: 'Kerala Kathakali Cultural Tourism',
@@ -907,7 +907,7 @@ const FALLBACK_CASES: CaseStudy[] = [
     image: '',
     description:
       'Nightly Kathakali performances have become a mandatory part of the Kerala itinerary. Small cultural centers earn steady income while preserving a 400-year-old art form.',
-    url: 'https://www.keralatourism.org/artforms/kathakali-dance-drama/2',
+    url: 'https://www.keralakathakali.com/',
   },
   {
     name: 'Dubai Al Seef Cultural District',
@@ -915,7 +915,7 @@ const FALLBACK_CASES: CaseStudy[] = [
     image: '',
     description:
       'A reconstructed heritage waterfront with artisan markets, night programming, and public art. A PPP model between Dubai Holding and local artisans — proof that cultural districts work at scale.',
-    url: 'https://www.visitdubai.com/en/places-to-visit/al-seef',
+    url: 'https://en.wikipedia.org/wiki/Al_Seef',
   },
   {
     name: 'Kandy Esala Perahera, Sri Lanka',
@@ -923,7 +923,7 @@ const FALLBACK_CASES: CaseStudy[] = [
     image: '',
     description:
       'A centuries-old ten-night festival of dancers, drummers, and fire-breathers. A single city, transformed into a cultural destination — supported jointly by temple, state, and private operators.',
-    url: 'https://en.wikipedia.org/wiki/Esala_Perahera_of_Kandy',
+    url: 'https://en.wikipedia.org/wiki/Kandy_Esala_Perahera',
   },
 ];
 

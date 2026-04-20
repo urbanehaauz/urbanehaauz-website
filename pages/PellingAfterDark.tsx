@@ -889,6 +889,7 @@ type CaseStudy = {
   stat: string;
   image: string;
   description: string;
+  url?: string;
 };
 
 const FALLBACK_CASES: CaseStudy[] = [
@@ -898,6 +899,7 @@ const FALLBACK_CASES: CaseStudy[] = [
     image: '',
     description:
       'Jaipur and Pushkar host nightly folk performances — Kalbeliya, Ghoomar, puppet shows — anchored in government-supported cultural centers. These evening programs extended average tourist stays from 1.9 to 3.4 nights.',
+    url: 'https://www.tourism.rajasthan.gov.in/',
   },
   {
     name: 'Kerala Kathakali Cultural Tourism',
@@ -905,6 +907,7 @@ const FALLBACK_CASES: CaseStudy[] = [
     image: '',
     description:
       'Nightly Kathakali performances have become a mandatory part of the Kerala itinerary. Small cultural centers earn steady income while preserving a 400-year-old art form.',
+    url: 'https://www.keralatourism.org/artforms/kathakali-dance-drama/2',
   },
   {
     name: 'Dubai Al Seef Cultural District',
@@ -912,6 +915,7 @@ const FALLBACK_CASES: CaseStudy[] = [
     image: '',
     description:
       'A reconstructed heritage waterfront with artisan markets, night programming, and public art. A PPP model between Dubai Holding and local artisans — proof that cultural districts work at scale.',
+    url: 'https://www.visitdubai.com/en/places-to-visit/al-seef',
   },
   {
     name: 'Kandy Esala Perahera, Sri Lanka',
@@ -919,6 +923,7 @@ const FALLBACK_CASES: CaseStudy[] = [
     image: '',
     description:
       'A centuries-old ten-night festival of dancers, drummers, and fire-breathers. A single city, transformed into a cultural destination — supported jointly by temple, state, and private operators.',
+    url: 'https://en.wikipedia.org/wiki/Esala_Perahera_of_Kandy',
   },
 ];
 
@@ -975,12 +980,17 @@ const CaseCard: React.FC<{ c: CaseStudy; idx: number }> = ({ c, idx }) => {
           <p className="text-sm font-semibold text-[#1C1C1C]">{c.stat}</p>
         </div>
         <p className="text-sm text-[#1C1C1C]/70 leading-relaxed flex-1">{c.description}</p>
-        <button
-          className="mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] font-semibold self-start"
-          style={{ color: hue }}
-        >
-          Learn More <ArrowRight className="w-3.5 h-3.5" />
-        </button>
+        {c.url ? (
+          <a
+            href={c.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-[0.22em] font-semibold self-start hover:gap-3 transition-all"
+            style={{ color: hue }}
+          >
+            Learn More <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        ) : null}
       </div>
     </div>
   );

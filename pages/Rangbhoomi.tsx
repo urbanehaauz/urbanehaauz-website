@@ -835,7 +835,7 @@ const RegistrationSection: React.FC = () => {
                       value={notifyEmail}
                       onChange={(e) => setNotifyEmail(e.target.value)}
                       placeholder="your@email.com"
-                      className="flex-1 bg-[#1C1C1C]/60 border border-[#FAF7F2]/20 rounded-full px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none"
+                      className="flex-1 bg-[#2a2a2a] border border-[#FAF7F2]/20 rounded-full px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none"
                     />
                     <button
                       type="submit"
@@ -869,7 +869,7 @@ const RegistrationSection: React.FC = () => {
                       value={vendorName}
                       onChange={(e) => setVendorName(e.target.value)}
                       placeholder="Your name or business name"
-                      className="w-full bg-[#1C1C1C]/60 border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
+                      className="w-full bg-[#2a2a2a] border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
                     />
                     <input
                       type="email"
@@ -877,7 +877,7 @@ const RegistrationSection: React.FC = () => {
                       value={vendorEmail}
                       onChange={(e) => setVendorEmail(e.target.value)}
                       placeholder="your@email.com"
-                      className="w-full bg-[#1C1C1C]/60 border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
+                      className="w-full bg-[#2a2a2a] border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
                     />
                     <textarea
                       required
@@ -885,7 +885,7 @@ const RegistrationSection: React.FC = () => {
                       onChange={(e) => setVendorSelling(e.target.value)}
                       placeholder="What will you be selling? (e.g., Momos, Thukpa, Phaley, local snacks...)"
                       rows={3}
-                      className="w-full bg-[#1C1C1C]/60 border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none resize-none"
+                      className="w-full bg-[#2a2a2a] border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none resize-none"
                     />
                     <button
                       type="submit"

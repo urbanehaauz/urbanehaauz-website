@@ -593,6 +593,7 @@ const SIKKIMESE = [
   { name: 'Gundruk', note: 'Fermented leafy greens, a Sikkimese winter staple' },
   { name: 'Phaley', note: 'Tibetan fried bread — crispy, stuffed, and soul-warming' },
   { name: 'Thai Po', note: 'Traditional Sikkimese snack with a distinctive flavour' },
+  { name: '& many more...', note: 'Full menu coming soon' },
 ];
 
 const BENGALI = [
@@ -600,6 +601,7 @@ const BENGALI = [
   { name: 'Luchi & Alur Dom', note: 'Fried flatbread, slow-cooked spiced potatoes' },
   { name: 'Shorshe Maach', note: 'Fish in mustard paste — the Bengali soul dish' },
   { name: 'Rosogolla', note: 'Cottage cheese syrup-soaked dumplings' },
+  { name: '& many more...', note: 'Full menu coming soon' },
 ];
 
 const FoodSection: React.FC = () => (

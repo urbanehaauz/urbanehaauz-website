@@ -132,7 +132,8 @@ const StandaloneHeader: React.FC = () => (
       </span>
     </Link>
     <a
-      href="#register"
+      href="#"
+      onClick={(e: React.MouseEvent) => { e.preventDefault(); document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' }); }}
       className="hidden md:inline-flex items-center gap-2 border border-[#D4A574]/60 text-[#D4A574] px-4 py-1.5 rounded-full text-xs uppercase tracking-[0.18em] hover:bg-[#D4A574] hover:text-[#1C1C1C] transition"
     >
       Register <ArrowRight className="w-3.5 h-3.5" />
@@ -215,7 +216,8 @@ const HeroSection: React.FC = () => (
       </div>
 
       <a
-        href="#register"
+        href="#"
+      onClick={(e: React.MouseEvent) => { e.preventDefault(); document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' }); }}
         className="group mt-12 inline-flex items-center gap-3 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-9 py-4 rounded-full transition-all shadow-2xl shadow-[#C84B0F]/30 hover:shadow-[#D4A574]/50 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-sm animate-fade-in-up"
       >
         Register Interest
@@ -679,7 +681,8 @@ const FoodSection: React.FC = () => (
             </p>
           </div>
           <a
-            href="#register"
+            href="#"
+      onClick={(e: React.MouseEvent) => { e.preventDefault(); document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' }); }}
             className="shrink-0 inline-flex items-center gap-2 bg-[#FAF7F2] text-[#1C1C1C] hover:bg-[#D4A574] px-5 py-3 rounded-full text-sm font-semibold uppercase tracking-[0.15em] transition"
           >
             Join as Vendor <ArrowRight className="w-4 h-4" />

@@ -536,44 +536,37 @@ const ArtistsSection: React.FC = () => (
       </div>
 
       <Reveal delay={200}>
-        <div className="mt-14 max-w-4xl mx-auto">
-          <div className="text-center mb-8">
+        <div className="mt-14 max-w-6xl mx-auto">
+          <div className="text-center mb-10">
             <p className="text-[#D4A574] text-xs uppercase tracking-[0.3em]">Artwork by visiting artists</p>
             <p className="text-[#FAF7F2]/60 text-sm mt-2">A glimpse of the art that will be exhibited at Rangotsav</p>
           </div>
-          <div className="relative overflow-hidden" style={{ height: '320px' }}>
-            <div
-              className="flex gap-8 absolute"
-              style={{
-                animation: 'artworkScroll 20s linear infinite',
-                width: 'max-content',
-              }}
-            >
-              {[
-                { src: '/artists/artwork-stupa.jpg', alt: 'Himalayan stupa in expressive brush strokes' },
-                { src: '/artists/artwork-sunset.jpg', alt: 'Sunset over water — oil on canvas' },
-                { src: '/artists/artwork-lake.jpg', alt: 'Blue lake landscape — impressionist style' },
-                { src: '/artists/artwork-angel.jpg', alt: 'Angel with orchid — mixed media on canvas' },
-                { src: '/artists/artwork-stupa.jpg', alt: 'Himalayan stupa in expressive brush strokes' },
-                { src: '/artists/artwork-sunset.jpg', alt: 'Sunset over water — oil on canvas' },
-                { src: '/artists/artwork-lake.jpg', alt: 'Blue lake landscape — impressionist style' },
-                { src: '/artists/artwork-angel.jpg', alt: 'Angel with orchid — mixed media on canvas' },
-              ].map((art, i) => (
-                <div
-                  key={i}
-                  className="w-64 h-64 md:w-72 md:h-72 rounded-full overflow-hidden border-4 border-[#D4A574]/30 shadow-2xl shadow-[#D4A574]/10 flex-shrink-0 hover:scale-105 transition-transform duration-500"
-                >
-                  <img src={art.src} alt={art.alt} className="w-full h-full object-cover" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
+            {[
+              { src: '/artists/artwork-angel.jpg', title: 'Orchid Bearer', medium: 'Mixed media on canvas' },
+              { src: '/artists/artwork-stupa.jpg', title: 'Mountain Shrine', medium: 'Oil on canvas' },
+              { src: '/artists/artwork-sunset.jpg', title: 'Himalayan Dusk', medium: 'Oil on canvas' },
+              { src: '/artists/artwork-lake.jpg', title: 'Still Waters', medium: 'Oil on canvas' },
+            ].map((art, i) => (
+              <Reveal key={i} delay={i * 100}>
+                <div className="group relative">
+                  <div className="aspect-square rounded-2xl overflow-hidden border border-[#D4A574]/20 shadow-xl group-hover:shadow-2xl group-hover:shadow-[#D4A574]/20 transition-all duration-500 group-hover:-translate-y-2">
+                    <img
+                      src={art.src}
+                      alt={art.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
+                      <div>
+                        <p className="text-[#FAF7F2] font-serif text-lg leading-tight">{art.title}</p>
+                        <p className="text-[#D4A574] text-[10px] uppercase tracking-[0.25em] mt-1">{art.medium}</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </Reveal>
+            ))}
           </div>
-          <style>{`
-            @keyframes artworkScroll {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-          `}</style>
         </div>
       </Reveal>
 

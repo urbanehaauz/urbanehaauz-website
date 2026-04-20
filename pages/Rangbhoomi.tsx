@@ -840,7 +840,8 @@ const RegistrationSection: React.FC = () => {
                       value={notifyEmail}
                       onChange={(e) => setNotifyEmail(e.target.value)}
                       placeholder="your@email.com"
-                      className="flex-1 bg-[#2a2a2a] border border-[#FAF7F2]/20 rounded-full px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none"
+                      style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
+                      className="flex-1 border border-[#FAF7F2]/20 rounded-full px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none"
                     />
                     <button
                       type="submit"
@@ -867,31 +868,43 @@ const RegistrationSection: React.FC = () => {
                     Application received! We'll reach out to you shortly with next steps.
                   </div>
                 ) : (
-                  <form onSubmit={handleVendor} className="space-y-4">
-                    <input
-                      type="text"
-                      required
-                      value={vendorName}
-                      onChange={(e) => setVendorName(e.target.value)}
-                      placeholder="Your name or business name"
-                      className="w-full bg-[#2a2a2a] border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
-                    />
-                    <input
-                      type="email"
-                      required
-                      value={vendorEmail}
-                      onChange={(e) => setVendorEmail(e.target.value)}
-                      placeholder="your@email.com"
-                      className="w-full bg-[#2a2a2a] border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
-                    />
-                    <textarea
-                      required
-                      value={vendorSelling}
-                      onChange={(e) => setVendorSelling(e.target.value)}
-                      placeholder="What will you be selling? (e.g., Momos, Thukpa, Phaley, local snacks...)"
-                      rows={3}
-                      className="w-full bg-[#2a2a2a] border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 text-[#FAF7F2] placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none resize-none"
-                    />
+                  <form onSubmit={handleVendor} className="space-y-5">
+                    <div>
+                      <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">Your Name / Business Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={vendorName}
+                        onChange={(e) => setVendorName(e.target.value)}
+                        placeholder="e.g., Dawa's Kitchen, Tashi Momo Corner"
+                        style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
+                        className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">Email Address *</label>
+                      <input
+                        type="email"
+                        required
+                        value={vendorEmail}
+                        onChange={(e) => setVendorEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
+                        className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">What will you be selling? *</label>
+                      <textarea
+                        required
+                        value={vendorSelling}
+                        onChange={(e) => setVendorSelling(e.target.value)}
+                        placeholder="e.g., Momos, Thukpa, Phaley, local snacks, beverages..."
+                        rows={3}
+                        style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
+                        className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#4A7C59] focus:outline-none resize-none"
+                      />
+                    </div>
                     <button
                       type="submit"
                       className="w-full bg-[#4A7C59] hover:bg-[#5a9469] text-[#FAF7F2] font-semibold px-8 py-3.5 rounded-full uppercase tracking-[0.15em] text-sm transition"

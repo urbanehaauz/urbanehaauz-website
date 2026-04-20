@@ -397,17 +397,17 @@ const OpeningHero: React.FC = () => (
 
       <Reveal delay={150}>
         <h1 className="font-serif text-5xl md:text-8xl leading-[0.95] tracking-tight mb-10">
-          Pelling goes dark
+          Pelling's evenings,
           <br />
-          <span className="text-[#D4A574]">at 7 PM.</span>
+          <span className="text-[#D4A574]">reimagined.</span>
         </h1>
       </Reveal>
 
       <Reveal delay={300}>
         <p className="text-lg md:text-2xl text-[#FAF7F2]/80 leading-relaxed max-w-3xl mb-12">
-          And with it, a meaningful share of potential tourism revenue disappears every year —
-          unbooked second nights, unspent evenings, and a village that closes just as the mountains
-          begin to glow.
+          A structured vision for nightly cultural programming, tourist-attraction events, and a
+          sustained evening economy — positioning West Sikkim at the heart of India's cultural
+          tourism story.
         </p>
       </Reveal>
 
@@ -435,7 +435,7 @@ const OpeningHero: React.FC = () => (
           href="#gap"
           className="group inline-flex items-center gap-3 text-[#D4A574] hover:text-[#FAF7F2] transition"
         >
-          <span className="text-sm uppercase tracking-[0.3em]">A proposal for change</span>
+          <span className="text-sm uppercase tracking-[0.3em]">The vision, in detail</span>
           <span className="w-10 h-10 rounded-full border border-[#D4A574]/40 group-hover:border-[#D4A574] flex items-center justify-center">
             <ArrowDown className="w-4 h-4 animate-bounce" />
           </span>
@@ -461,13 +461,14 @@ const GapSection: React.FC = () => (
     <div className="max-w-6xl mx-auto">
       <Reveal>
         <div className="text-center mb-16 max-w-2xl mx-auto">
-          <span className="text-xs uppercase tracking-[0.5em] text-[#C84B0F]">The Gap</span>
+          <span className="text-xs uppercase tracking-[0.5em] text-[#C84B0F]">The Opportunity</span>
           <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
-            Two Pellings. Same Village.
+            Two Pellings. One Opportunity.
           </h2>
           <p className="mt-5 text-[#1C1C1C]/65 text-lg">
-            Every evening, Pelling falls silent. But the mountains don't sleep — and neither should
-            the village that hosts them.
+            Today, Pelling winds down at sunset — not by choice, but for lack of a stage.
+            With structured cultural programming, the same village opens a second evening
+            chapter for tourists and residents alike.
           </p>
         </div>
       </Reveal>
@@ -481,14 +482,14 @@ const GapSection: React.FC = () => (
             <SleepingVillageSVG className="w-full aspect-[5/3]" />
             <div className="p-8 bg-[#FAF7F2]">
               <div className="text-xs uppercase tracking-[0.3em] text-[#1C1C1C]/50 mb-2">
-                Tonight · 8 PM
+                Today's evening
               </div>
-              <h3 className="font-serif text-2xl mb-3">Pelling at 8 PM Tonight</h3>
+              <h3 className="font-serif text-2xl mb-3">Understated, after sunset</h3>
               <ul className="text-[#1C1C1C]/70 space-y-1.5 text-sm">
-                <li>— Shops shuttered by 7:30 PM</li>
-                <li>— No cultural programming</li>
-                <li>— Zero evening economy</li>
-                <li>— Tourists eat early, sleep early, leave early</li>
+                <li>— Most shops close by early evening</li>
+                <li>— Cultural programming limited to festival dates</li>
+                <li>— Evening economy remains largely untapped</li>
+                <li>— Many visitors depart after a single morning</li>
               </ul>
             </div>
           </div>
@@ -501,12 +502,12 @@ const GapSection: React.FC = () => (
               <div className="text-xs uppercase tracking-[0.3em] text-[#C84B0F] mb-2">
                 With a Cultural Center
               </div>
-              <h3 className="font-serif text-2xl mb-3">What It Could Be</h3>
+              <h3 className="font-serif text-2xl mb-3">A cultural evening, by design</h3>
               <ul className="text-[#1C1C1C]/80 space-y-1.5 text-sm">
-                <li>— Nightly folk performances</li>
-                <li>— Lantern-lit artisan market</li>
-                <li>— Local food economy after dark</li>
-                <li>— A second-night reason to stay</li>
+                <li>— Nightly folk and classical performances</li>
+                <li>— Lantern-lit artisan and craft market</li>
+                <li>— A living, local evening food economy</li>
+                <li>— A compelling reason to extend the stay</li>
               </ul>
             </div>
           </div>

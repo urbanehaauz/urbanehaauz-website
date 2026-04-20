@@ -18,8 +18,6 @@ import {
   Heart,
 } from 'lucide-react';
 
-const BENGALI_FONT = "'Noto Serif Bengali', 'Playfair Display', serif";
-
 const useInView = (threshold = 0.15) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const [inView, setInView] = useState(false);
@@ -253,11 +251,8 @@ const HeroSection: React.FC = () => (
         Rangbhoomi
       </h1>
 
-      <p
-        className="mt-4 md:mt-6 text-[14vw] md:text-[9vw] leading-none text-[#D4A574] text-shadow animate-fade-in-up"
-        style={{ fontFamily: BENGALI_FONT, fontWeight: 700 }}
-      >
-        রঙভূমি
+      <p className="mt-6 md:mt-8 text-sm md:text-base text-[#D4A574] uppercase tracking-[0.5em] animate-fade-in-up">
+        Stage of Colours
       </p>
 
       <p className="mt-10 md:mt-12 text-lg md:text-2xl text-[#FAF7F2] font-serif italic max-w-2xl mx-auto animate-fade-in-up">
@@ -329,7 +324,7 @@ const PhilosophySection: React.FC = () => (
             to a viewpoint. <span className="text-[#C84B0F] font-semibold">Rangbhoomi exists to change that.</span>
           </p>
           <p>
-            This May, twelve artists from West Bengal — baul singers, classical dancers, poets,
+            This May, a group of artists from West Bengal — baul singers, classical dancers, poets,
             painters, storytellers — will travel to Pelling to meet their Sikkimese counterparts.
             Not as performers on a rented stage, but as guests invited into a living, breathing
             cultural conversation.
@@ -380,7 +375,7 @@ const PROGRAMS = [
     Icon: Sparkles,
     title: 'Stage of Colors',
     kicker: 'Performing Arts',
-    body: 'Twelve artists from Bengal — classical Odissi, contemporary dance, Rabindra sangeet, storytelling — perform across three evenings.',
+    body: 'Visiting artists from Bengal — classical Odissi, contemporary dance, Rabindra sangeet, storytelling — perform across three evenings.',
     accent: '#2D1B69',
   },
   {
@@ -447,18 +442,18 @@ const ProgramSection: React.FC = () => (
 /* -------------------------------------------------------------------------- */
 
 const ARTISTS = [
-  { name: 'Artist 01', form: 'Baul Singer', hue: '#C84B0F' },
-  { name: 'Artist 02', form: 'Classical Dancer', hue: '#D4A574' },
-  { name: 'Artist 03', form: 'Poet', hue: '#4A7C59' },
-  { name: 'Artist 04', form: 'Visual Artist', hue: '#2D1B69' },
-  { name: 'Artist 05', form: 'Folk Musician', hue: '#2C5F7C' },
-  { name: 'Artist 06', form: 'Storyteller', hue: '#8A3E7A' },
-  { name: 'Artist 07', form: 'Tabla Player', hue: '#C84B0F' },
-  { name: 'Artist 08', form: 'Painter', hue: '#D4A574' },
-  { name: 'Artist 09', form: 'Sitarist', hue: '#4A7C59' },
-  { name: 'Artist 10', form: 'Rabindra Singer', hue: '#2D1B69' },
-  { name: 'Artist 11', form: 'Contemporary Dancer', hue: '#2C5F7C' },
-  { name: 'Artist 12', form: 'Puppeteer', hue: '#8A3E7A' },
+  { form: 'Baul Singer', hue: '#C84B0F' },
+  { form: 'Classical Dancer', hue: '#D4A574' },
+  { form: 'Poet', hue: '#4A7C59' },
+  { form: 'Visual Artist', hue: '#2D1B69' },
+  { form: 'Folk Musician', hue: '#2C5F7C' },
+  { form: 'Storyteller', hue: '#8A3E7A' },
+  { form: 'Tabla Player', hue: '#C84B0F' },
+  { form: 'Painter', hue: '#D4A574' },
+  { form: 'Sitarist', hue: '#4A7C59' },
+  { form: 'Rabindra Singer', hue: '#2D1B69' },
+  { form: 'Contemporary Dancer', hue: '#2C5F7C' },
+  { form: 'Puppeteer', hue: '#8A3E7A' },
 ];
 
 const ArtistsSection: React.FC = () => (
@@ -469,13 +464,10 @@ const ArtistsSection: React.FC = () => (
         <div className="text-center mb-12">
           <span className="text-xs uppercase tracking-[0.5em] text-[#D4A574]">The Lineup</span>
           <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
-            12 Voices from Bengal
+            A Dozen Voices from Bengal
           </h2>
-          <p
-            className="mt-3 text-[#D4A574] text-xl md:text-2xl"
-            style={{ fontFamily: BENGALI_FONT }}
-          >
-            বারোটি কণ্ঠ · দ্বাদশ রঙ
+          <p className="mt-3 text-[#D4A574]/80 text-base md:text-lg italic">
+            Classical, folk, and contemporary — all on one stage.
           </p>
         </div>
       </Reveal>
@@ -490,7 +482,7 @@ const ArtistsSection: React.FC = () => (
           <div className="flex gap-6 px-6 md:px-24 pb-4">
             {ARTISTS.map((a, i) => (
               <div
-                key={a.name}
+                key={a.form + i}
                 className="snap-center shrink-0 w-56 md:w-64 bg-[#FAF7F2]/5 border border-[#FAF7F2]/10 hover:border-[#D4A574]/60 rounded-2xl p-6 backdrop-blur-sm transition-all hover:-translate-y-1"
               >
                 <div
@@ -498,14 +490,10 @@ const ArtistsSection: React.FC = () => (
                   style={{
                     background: `radial-gradient(circle at 35% 30%, ${a.hue}cc, ${a.hue}33 60%, #1C1C1C 100%)`,
                   }}
-                >
-                  <div className="absolute inset-0 flex items-center justify-center font-serif text-4xl text-[#FAF7F2]/80">
-                    {String(i + 1).padStart(2, '0')}
-                  </div>
-                </div>
-                <h3 className="text-center font-serif text-xl text-[#FAF7F2]">{a.name}</h3>
-                <p className="text-center text-xs uppercase tracking-[0.22em] text-[#D4A574] mt-1">
-                  {a.form}
+                />
+                <h3 className="text-center font-serif text-xl text-[#FAF7F2]">{a.form}</h3>
+                <p className="text-center text-xs uppercase tracking-[0.22em] text-[#D4A574]/70 mt-1 italic">
+                  To be announced
                 </p>
               </div>
             ))}
@@ -584,11 +572,8 @@ const FoodSection: React.FC = () => (
               Bengal
             </div>
             <h3 className="font-serif text-3xl mb-2">Bengali Kitchen</h3>
-            <p
-              className="text-[#FAF7F2]/70 text-sm mb-8"
-              style={{ fontFamily: BENGALI_FONT }}
-            >
-              রান্নাঘরের গল্প
+            <p className="text-[#FAF7F2]/70 text-sm mb-8">
+              Stories from the home kitchens of Bengal
             </p>
             <ul className="space-y-5">
               {BENGALI.map((f) => (
@@ -787,11 +772,8 @@ const FooterCTA: React.FC = () => (
       <h3 className="font-serif text-3xl md:text-5xl leading-tight mb-2">
         Rangbhoomi
       </h3>
-      <p
-        className="text-[#D4A574] text-2xl mb-6"
-        style={{ fontFamily: BENGALI_FONT }}
-      >
-        রঙভূমি
+      <p className="text-[#D4A574] text-sm md:text-base uppercase tracking-[0.4em] mb-6">
+        Stage of Colours
       </p>
       <p className="text-[#FAF7F2]/70 max-w-xl mx-auto mb-10">
         Produced and hosted by Urbane Haauz — a boutique hotel in Upper Pelling committed to
@@ -851,7 +833,7 @@ const Rangbhoomi: React.FC = () => (
       <title>Rangbhoomi · Where the Himalayas Meet the Ganges | Urbane Haauz</title>
       <meta
         name="description"
-        content="Rangbhoomi (রঙভূমি) is a Bengal-Sikkim cultural conglomerate — 12 artists, two cuisines, one mountain. May 2025, Pelling, West Sikkim. Hosted by Urbane Haauz."
+        content="Rangbhoomi — a Bengal-Sikkim cultural conglomerate bringing artists, music, and cuisine together in Pelling, West Sikkim. Hosted by Urbane Haauz."
       />
       <meta property="og:title" content="Rangbhoomi · A Bengal-Sikkim Cultural Conglomerate" />
       <meta

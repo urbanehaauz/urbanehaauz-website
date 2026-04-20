@@ -21,24 +21,7 @@ import {
   ExternalLink,
   FileText,
 } from 'lucide-react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  LineChart,
-  Line,
-  Legend,
-  Area,
-  AreaChart,
-} from 'recharts';
 import { supabase } from '../lib/supabase';
-
-const BENGALI_FONT = "'Noto Serif Bengali', 'Playfair Display', serif";
 
 /* -------------------------------------------------------------------------- */
 /*                           HOOKS & SHARED HELPERS                           */
@@ -412,12 +395,10 @@ const OpeningHero: React.FC = () => (
       </Reveal>
 
       <Reveal delay={300}>
-        <p className="text-lg md:text-2xl text-[#FAF7F2]/80 leading-relaxed max-w-3xl mb-2">
-          And with it, <span className="text-[#D4A574] font-semibold">₹47 crore</span> in potential
-          tourism revenue disappears every year.
-        </p>
-        <p className="text-xs uppercase tracking-[0.25em] text-[#FAF7F2]/40 mb-12">
-          *Estimated projection — see methodology, Section 5
+        <p className="text-lg md:text-2xl text-[#FAF7F2]/80 leading-relaxed max-w-3xl mb-12">
+          And with it, a meaningful share of potential tourism revenue disappears every year —
+          unbooked second nights, unspent evenings, and a village that closes just as the mountains
+          begin to glow.
         </p>
       </Reveal>
 
@@ -427,15 +408,19 @@ const OpeningHero: React.FC = () => (
             <div className="text-xs uppercase tracking-[0.25em] text-[#FAF7F2]/50 mb-2">
               Pelling today
             </div>
-            <div className="font-serif text-4xl text-[#FAF7F2]">1.2 nights</div>
-            <div className="text-sm text-[#FAF7F2]/60 mt-1">avg tourist stay</div>
+            <div className="font-serif text-3xl text-[#FAF7F2]">A short stay</div>
+            <div className="text-sm text-[#FAF7F2]/60 mt-2">
+              Most visitors leave by morning of day two.
+            </div>
           </div>
           <div className="bg-[#D4A574]/10 backdrop-blur border border-[#D4A574]/30 rounded-xl p-6">
             <div className="text-xs uppercase tracking-[0.25em] text-[#D4A574] mb-2">
-              Rajasthan cultural tourism
+              Pelling reimagined
             </div>
-            <div className="font-serif text-4xl text-[#D4A574]">3.4 nights</div>
-            <div className="text-sm text-[#FAF7F2]/60 mt-1">avg tourist stay</div>
+            <div className="font-serif text-3xl text-[#D4A574]">An unfolding stay</div>
+            <div className="text-sm text-[#FAF7F2]/60 mt-2">
+              Evenings become a reason to linger, not leave.
+            </div>
           </div>
         </div>
       </Reveal>
@@ -541,72 +526,46 @@ type DeltaStat = {
 const DELTA_STATS: DeltaStat[] = [
   {
     metric: 'Average Tourist Stay',
-    before: '1.2 nights',
-    after: '2.5 nights',
+    before: 'Short',
+    after: 'Extended',
     accent: '#C84B0F',
-    note: '+108% — a second-night reason',
+    note: 'A genuine second-night reason, created in the village after dark.',
   },
   {
     metric: 'Evening Active Hours',
-    before: '0 hrs',
-    after: '4+ hrs',
+    before: 'Silent',
+    after: 'Alive',
     accent: '#D4A574',
-    note: 'Village wakes from 7 PM to 11 PM',
+    note: 'The village wakes as the sun sets, and stays awake until late evening.',
   },
   {
     metric: 'Direct Livelihoods',
-    before: '~20',
-    after: '200+',
+    before: 'Limited',
+    after: 'Widespread',
     accent: '#4A7C59',
-    note: 'Artists · vendors · drivers · guides',
+    note: 'Artists, vendors, drivers, and guides earning steadily, year-round.',
   },
   {
-    metric: 'Monthly Evening Economy',
-    before: '₹0',
-    after: '₹32 L',
+    metric: 'Local Evening Economy',
+    before: 'Absent',
+    after: 'Thriving',
     accent: '#2C5F7C',
-    note: 'Nil → steady local income',
+    note: 'From a closed shutter at dusk to a living marketplace.',
   },
   {
-    metric: 'Annual Cultural Events',
-    before: '2–3',
-    after: '365+',
+    metric: 'Cultural Programming',
+    before: 'Occasional',
+    after: 'Continuous',
     accent: '#2D1B69',
-    note: 'From ad-hoc festivals to nightly programming',
+    note: 'From scattered festivals to dependable nightly programming.',
   },
   {
-    metric: 'Attributable Tourism Revenue',
-    before: '₹42 Cr',
-    after: '₹89 Cr',
+    metric: 'Attributable Tourism Lift',
+    before: 'Baseline',
+    after: 'Expanded',
     accent: '#8A3E7A',
-    note: 'Year-3 projection · *see methodology',
+    note: "A second layer of economy on top of Pelling's existing tourism story.",
   },
-];
-
-const STAY_TRAJECTORY = [
-  { month: 'M1', without: 1.2, with: 1.3 },
-  { month: 'M2', without: 1.2, with: 1.5 },
-  { month: 'M3', without: 1.2, with: 1.7 },
-  { month: 'M4', without: 1.2, with: 1.9 },
-  { month: 'M5', without: 1.2, with: 2.0 },
-  { month: 'M6', without: 1.3, with: 2.2 },
-  { month: 'M7', without: 1.3, with: 2.3 },
-  { month: 'M8', without: 1.2, with: 2.4 },
-  { month: 'M9', without: 1.2, with: 2.5 },
-  { month: 'M10', without: 1.2, with: 2.5 },
-  { month: 'M11', without: 1.3, with: 2.6 },
-  { month: 'M12', without: 1.2, with: 2.7 },
-];
-
-const EVENING_ECONOMY_GROWTH = [
-  { q: 'Q1', baseline: 0, projected: 6 },
-  { q: 'Q2', baseline: 0, projected: 14 },
-  { q: 'Q3', baseline: 0, projected: 22 },
-  { q: 'Q4', baseline: 0, projected: 28 },
-  { q: 'Q5', baseline: 0, projected: 32 },
-  { q: 'Q6', baseline: 0, projected: 36 },
-  { q: 'Q7', baseline: 0, projected: 38 },
-  { q: 'Q8', baseline: 0, projected: 42 },
 ];
 
 const DeltaCard: React.FC<{ stat: DeltaStat; idx: number }> = ({ stat, idx }) => (
@@ -630,10 +589,7 @@ const DeltaCard: React.FC<{ stat: DeltaStat; idx: number }> = ({ stat, idx }) =>
           <div className="text-[10px] uppercase tracking-[0.25em] text-[#1C1C1C]/40 mb-1">
             Before
           </div>
-          <div
-            className="font-serif text-2xl md:text-3xl text-[#1C1C1C]/45"
-            style={{ textDecoration: 'line-through', textDecorationColor: `${stat.accent}80` }}
-          >
+          <div className="font-serif text-2xl md:text-3xl text-[#1C1C1C]/45">
             {stat.before}
           </div>
         </div>
@@ -661,10 +617,8 @@ const DeltaCard: React.FC<{ stat: DeltaStat; idx: number }> = ({ stat, idx }) =>
 );
 
 const TransformationSection: React.FC = () => {
-  const { ref, inView } = useInView(0.15);
   return (
     <section
-      ref={ref}
       className="py-24 md:py-32 px-6 md:px-12 bg-gradient-to-b from-[#FAF7F2] to-[#f2ede2] text-[#1C1C1C]"
     >
       <div className="max-w-6xl mx-auto">
@@ -677,204 +631,17 @@ const TransformationSection: React.FC = () => {
               The Transformation
             </h2>
             <p className="mt-5 text-[#1C1C1C]/65 text-lg">
-              Six measurable shifts, modeled on comparable cultural tourism interventions in
-              Rajasthan, Kerala, and Sri Lanka. Not aspirations — projections.
+              Six shifts in the character of Pelling, modeled on comparable cultural tourism
+              interventions in Rajasthan, Kerala, and Sri Lanka.
             </p>
           </div>
         </Reveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 mb-20">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {DELTA_STATS.map((s, i) => (
             <DeltaCard key={s.metric} stat={s} idx={i} />
           ))}
         </div>
-
-        {/* Chart 1 — Tourist stay trajectory */}
-        <Reveal>
-          <div className="bg-white rounded-2xl p-4 md:p-8 border border-[#1C1C1C]/10 mb-8">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-6">
-              <div>
-                <div className="text-xs uppercase tracking-[0.3em] text-[#4A7C59] mb-1">
-                  Chart 01
-                </div>
-                <h3 className="font-serif text-2xl text-[#1C1C1C]">
-                  Average Tourist Stay · 12-Month Trajectory
-                </h3>
-                <p className="text-sm text-[#1C1C1C]/60 mt-1">
-                  Status-quo baseline vs projected trajectory with Cultural Center operational.
-                </p>
-              </div>
-              <div className="flex items-center gap-4 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-[3px] bg-[#1C1C1C]/30" />
-                  <span className="text-[#1C1C1C]/60 uppercase tracking-[0.2em]">
-                    Without Center
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-4 h-[3px] bg-[#C84B0F]" />
-                  <span className="text-[#C84B0F] font-semibold uppercase tracking-[0.2em]">
-                    With Center
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="h-[320px] md:h-[380px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={STAY_TRAJECTORY} margin={{ top: 10, right: 20, left: 0, bottom: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1C1C1C" strokeOpacity={0.08} />
-                  <XAxis
-                    dataKey="month"
-                    stroke="#1C1C1C"
-                    tick={{ fill: '#1C1C1C', fontSize: 12 }}
-                    axisLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    tickLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                  />
-                  <YAxis
-                    domain={[0, 3]}
-                    stroke="#1C1C1C"
-                    tick={{ fill: '#1C1C1C', fontSize: 12 }}
-                    axisLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    tickLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    tickFormatter={(v) => `${v}n`}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      background: '#1C1C1C',
-                      border: 'none',
-                      borderRadius: 8,
-                      color: '#FAF7F2',
-                      fontSize: 12,
-                    }}
-                    labelStyle={{ color: '#D4A574' }}
-                    formatter={(v: number, name: string) => [
-                      `${v.toFixed(1)} nights`,
-                      name === 'without' ? 'Without Center' : 'With Center',
-                    ]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="without"
-                    stroke="#1C1C1C"
-                    strokeOpacity={0.35}
-                    strokeWidth={2}
-                    strokeDasharray="5 4"
-                    dot={false}
-                    isAnimationActive={inView}
-                    animationDuration={1400}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="with"
-                    stroke="#C84B0F"
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: '#C84B0F', stroke: '#FAF7F2', strokeWidth: 2 }}
-                    activeDot={{ r: 6 }}
-                    isAnimationActive={inView}
-                    animationDuration={1600}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <p className="mt-4 text-xs text-[#1C1C1C]/50 italic border-t border-[#1C1C1C]/10 pt-3">
-              Modeled on Kerala cultural tourism stay-extension data (2015–2022), scaled for Pelling.
-              The "With Center" trajectory assumes phased rollout reaching full programming by M6.
-            </p>
-          </div>
-        </Reveal>
-
-        {/* Chart 2 — Evening economy growth */}
-        <Reveal delay={120}>
-          <div className="bg-white rounded-2xl p-4 md:p-8 border border-[#1C1C1C]/10">
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-6">
-              <div>
-                <div className="text-xs uppercase tracking-[0.3em] text-[#D4A574] mb-1">
-                  Chart 02
-                </div>
-                <h3 className="font-serif text-2xl text-[#1C1C1C]">
-                  Monthly Evening Economy · 8-Quarter Projection
-                </h3>
-                <p className="text-sm text-[#1C1C1C]/60 mt-1">
-                  Monthly revenue retained in Pelling from evening programming and associated spend
-                  (₹ in lakhs).
-                </p>
-              </div>
-              <div className="text-right">
-                <div className="text-xs uppercase tracking-[0.25em] text-[#1C1C1C]/50">
-                  Year-2 target
-                </div>
-                <div className="font-serif text-3xl text-[#D4A574]">₹42 L / mo</div>
-              </div>
-            </div>
-
-            <div className="h-[280px] md:h-[340px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={EVENING_ECONOMY_GROWTH}
-                  margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
-                >
-                  <defs>
-                    <linearGradient id="ecgr" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#D4A574" stopOpacity={0.6} />
-                      <stop offset="100%" stopColor="#D4A574" stopOpacity={0.05} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1C1C1C" strokeOpacity={0.08} />
-                  <XAxis
-                    dataKey="q"
-                    stroke="#1C1C1C"
-                    tick={{ fill: '#1C1C1C', fontSize: 12 }}
-                    axisLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    tickLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                  />
-                  <YAxis
-                    stroke="#1C1C1C"
-                    tick={{ fill: '#1C1C1C', fontSize: 12 }}
-                    axisLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    tickLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    tickFormatter={(v) => `₹${v}L`}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      background: '#1C1C1C',
-                      border: 'none',
-                      borderRadius: 8,
-                      color: '#FAF7F2',
-                      fontSize: 12,
-                    }}
-                    labelStyle={{ color: '#D4A574' }}
-                    formatter={(v: number) => [`₹${v} lakh / month`, 'Projected']}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="baseline"
-                    stroke="#1C1C1C"
-                    strokeOpacity={0.3}
-                    strokeWidth={1.5}
-                    strokeDasharray="4 3"
-                    fill="transparent"
-                    isAnimationActive={inView}
-                    animationDuration={1200}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="projected"
-                    stroke="#D4A574"
-                    strokeWidth={2.5}
-                    fill="url(#ecgr)"
-                    isAnimationActive={inView}
-                    animationDuration={1800}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-            <p className="mt-4 text-xs text-[#1C1C1C]/50 italic border-t border-[#1C1C1C]/10 pt-3">
-              Baseline (dashed): status-quo evening economy in Pelling = ₹0. Projected (gold):
-              cumulative monthly revenue reaching steady state by Q5 (end of year 1.5).
-            </p>
-          </div>
-        </Reveal>
       </div>
     </section>
   );
@@ -895,23 +662,23 @@ type CaseStudy = {
 const FALLBACK_CASES: CaseStudy[] = [
   {
     name: 'Rajasthan Folk Cultural Shows',
-    stat: 'Cultural tourism contributes ~15% of Rajasthan tourism revenue — roughly ₹6,500 crore annually (Rajasthan Tourism Board).',
+    stat: 'Cultural tourism contributes a major share of Rajasthan tourism revenue — anchored by nightly folk programming in state-supported cultural villages.',
     image: '',
     description:
-      'Jaipur and Pushkar host nightly folk performances — Kalbeliya, Ghoomar, puppet shows — anchored in government-supported cultural centers. These evening programs extended average tourist stays from 1.9 to 3.4 nights.',
+      'Jaipur and Pushkar host nightly folk performances — Kalbeliya, Ghoomar, puppet shows — anchored in government-supported cultural centers. Evening programs consistently extend average tourist stays.',
     url: 'https://chokhidhani.com/village-fair-restaurant-jaipur/live-entertainment/',
   },
   {
     name: 'Kerala Kathakali Cultural Tourism',
-    stat: "Kerala's performing-arts tourism draws ~800,000 cultural visitors annually to Kochi and Thekkady.",
+    stat: "Kerala's performing-arts tourism draws a steady stream of cultural visitors to Kochi and Thekkady year-round.",
     image: '',
     description:
-      'Nightly Kathakali performances have become a mandatory part of the Kerala itinerary. Small cultural centers earn steady income while preserving a 400-year-old art form.',
+      'Nightly Kathakali performances have become a mandatory part of the Kerala itinerary. Small cultural centers earn steady income while preserving a centuries-old art form.',
     url: 'https://www.keralakathakali.com/',
   },
   {
     name: 'Dubai Al Seef Cultural District',
-    stat: 'Al Seef drew over 8 million visitors in its first full year post-launch (2018-19).',
+    stat: 'Al Seef became one of Dubai\u2019s flagship heritage destinations within months of its launch.',
     image: '',
     description:
       'A reconstructed heritage waterfront with artisan markets, night programming, and public art. A PPP model between Dubai Holding and local artisans — proof that cultural districts work at scale.',
@@ -919,10 +686,10 @@ const FALLBACK_CASES: CaseStudy[] = [
   },
   {
     name: 'Kandy Esala Perahera, Sri Lanka',
-    stat: "Sri Lanka's cultural festivals contribute ~7% of tourism GDP; Kandy alone sees 2 million+ visitors during Perahera.",
+    stat: 'Sri Lanka\u2019s cultural festivals draw a significant portion of national tourism demand every year, with Kandy at the centre.',
     image: '',
     description:
-      'A centuries-old ten-night festival of dancers, drummers, and fire-breathers. A single city, transformed into a cultural destination — supported jointly by temple, state, and private operators.',
+      'A centuries-old festival of dancers, drummers, and fire-breathers performed over multiple nights. A single city, transformed into a cultural destination — supported jointly by temple, state, and private operators.',
     url: 'https://en.wikipedia.org/wiki/Kandy_Esala_Perahera',
   },
 ];
@@ -1091,9 +858,10 @@ const ProofSection: React.FC = () => {
 type BenchmarkRow = {
   place: string;
   metric: string;
-  before: number;
-  after: number;
-  unit: string;
+  beforeWidth: number; // 0–100, for visual bar width only
+  afterWidth: number;  // 0–100
+  beforeLabel: string;
+  afterLabel: string;
   note: string;
   isPelling?: boolean;
 };
@@ -1101,57 +869,58 @@ type BenchmarkRow = {
 const BENCHMARK_ROWS: BenchmarkRow[] = [
   {
     place: 'Jaipur, Rajasthan',
-    metric: 'Avg tourist stay',
-    before: 1.9,
-    after: 3.4,
-    unit: 'nights',
-    note: 'Pre- vs post- institutionalization of nightly folk programming (Chokhi Dhani, cultural villages).',
+    metric: 'Average tourist stay',
+    beforeWidth: 30,
+    afterWidth: 70,
+    beforeLabel: 'Brief',
+    afterLabel: 'Extended',
+    note: 'Before and after the institutionalization of nightly folk programming (cultural villages, anchored performances).',
   },
   {
     place: 'Kochi, Kerala',
-    metric: 'Avg tourist stay',
-    before: 2.1,
-    after: 3.0,
-    unit: 'nights',
-    note: 'Before and after nightly Kathakali performance circuit became a standard itinerary item.',
+    metric: 'Average tourist stay',
+    beforeWidth: 35,
+    afterWidth: 65,
+    beforeLabel: 'Short',
+    afterLabel: 'Longer',
+    note: 'Before and after the nightly Kathakali performance circuit became a standard itinerary item.',
   },
   {
     place: 'Al Seef, Dubai',
     metric: 'Area dwell time',
-    before: 0.5,
-    after: 3.2,
-    unit: 'hrs/visit',
-    note: 'Creek waterfront pre-2017 redevelopment vs post — evening-anchored heritage district.',
+    beforeWidth: 15,
+    afterWidth: 85,
+    beforeLabel: 'Minimal',
+    afterLabel: 'Destination',
+    note: 'Creek waterfront pre-redevelopment versus post — an evening-anchored heritage district.',
   },
   {
     place: 'Kandy, Sri Lanka',
     metric: 'Stay during festival',
-    before: 1.0,
-    after: 2.8,
-    unit: 'nights',
-    note: 'Typical Kandy stay pre-Perahera state promotion vs festival-week average.',
+    beforeWidth: 25,
+    afterWidth: 75,
+    beforeLabel: 'Transit',
+    afterLabel: 'Immersive',
+    note: 'Typical Kandy stay pre-Perahera state promotion versus festival-week average.',
   },
   {
     place: 'Pelling (projected)',
-    metric: 'Avg tourist stay',
-    before: 1.2,
-    after: 2.5,
-    unit: 'nights',
-    note: 'Our projection for Pelling with nightly programming, modeled conservatively on Jaipur and Kerala data.',
+    metric: 'Average tourist stay',
+    beforeWidth: 28,
+    afterWidth: 62,
+    beforeLabel: 'Short',
+    afterLabel: 'Extended',
+    note: 'Our conservative projection for Pelling with nightly programming, sitting inside the benchmark range.',
     isPelling: true,
   },
 ];
 
 const BenchmarkBar: React.FC<{
   row: BenchmarkRow;
-  max: number;
   animate: boolean;
   idx: number;
-}> = ({ row, max, animate, idx }) => {
+}> = ({ row, animate, idx }) => {
   const pellingHighlight = row.isPelling;
-  const beforePct = (row.before / max) * 100;
-  const afterPct = (row.after / max) * 100;
-  const lift = row.before > 0 ? ((row.after - row.before) / row.before) * 100 : null;
 
   return (
     <div
@@ -1163,7 +932,7 @@ const BenchmarkBar: React.FC<{
     >
       <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h4 className="font-serif text-lg md:text-xl text-[#1C1C1C]">{row.place}</h4>
             {pellingHighlight && (
               <span className="text-[10px] uppercase tracking-[0.25em] bg-[#D4A574] text-[#1C1C1C] px-2 py-0.5 rounded font-semibold">
@@ -1175,12 +944,6 @@ const BenchmarkBar: React.FC<{
             {row.metric}
           </div>
         </div>
-        {lift !== null && (
-          <div className="text-right">
-            <div className="text-[10px] uppercase tracking-[0.2em] text-[#C84B0F]">Uplift</div>
-            <div className="font-serif text-2xl text-[#C84B0F] font-bold">+{lift.toFixed(0)}%</div>
-          </div>
-        )}
       </div>
 
       {/* Before row */}
@@ -1192,26 +955,29 @@ const BenchmarkBar: React.FC<{
           <div
             className="h-full bg-[#1C1C1C]/35 rounded-md transition-all duration-[1400ms] ease-out"
             style={{
-              width: animate ? `${beforePct}%` : '0%',
+              width: animate ? `${row.beforeWidth}%` : '0%',
               transitionDelay: `${idx * 120}ms`,
             }}
           />
           <span className="absolute inset-y-0 left-3 flex items-center text-xs font-semibold text-[#1C1C1C]/80">
-            {row.before} {row.unit}
+            {row.beforeLabel}
           </span>
         </div>
       </div>
 
       {/* After row */}
       <div className="flex items-center gap-3">
-        <div className="w-16 md:w-20 text-[10px] uppercase tracking-[0.2em] shrink-0" style={{ color: pellingHighlight ? '#C84B0F' : '#4A7C59' }}>
+        <div
+          className="w-16 md:w-20 text-[10px] uppercase tracking-[0.2em] shrink-0"
+          style={{ color: pellingHighlight ? '#C84B0F' : '#4A7C59' }}
+        >
           After
         </div>
         <div className="flex-1 relative h-7 bg-[#1C1C1C]/5 rounded-md overflow-hidden">
           <div
             className="h-full rounded-md transition-all duration-[1800ms] ease-out"
             style={{
-              width: animate ? `${afterPct}%` : '0%',
+              width: animate ? `${row.afterWidth}%` : '0%',
               background: pellingHighlight
                 ? 'linear-gradient(90deg, #D4A574 0%, #C84B0F 100%)'
                 : 'linear-gradient(90deg, #4A7C59 0%, #D4A574 100%)',
@@ -1219,7 +985,7 @@ const BenchmarkBar: React.FC<{
             }}
           />
           <span className="absolute inset-y-0 left-3 flex items-center text-xs font-semibold text-white mix-blend-difference">
-            {row.after} {row.unit}
+            {row.afterLabel}
           </span>
         </div>
       </div>
@@ -1231,7 +997,6 @@ const BenchmarkBar: React.FC<{
 
 const BenchmarkSection: React.FC = () => {
   const { ref, inView } = useInView(0.15);
-  const max = Math.max(...BENCHMARK_ROWS.map((r) => r.after)) * 1.15;
 
   return (
     <section ref={ref} className="py-24 md:py-32 px-6 md:px-12 bg-[#FAF7F2] text-[#1C1C1C]">
@@ -1247,7 +1012,7 @@ const BenchmarkSection: React.FC = () => {
             <p className="mt-5 text-[#1C1C1C]/65 text-lg">
               Each of the four reference destinations ran the same experiment in a different
               language: invest in nightly cultural programming, and tourists stay longer.
-              Pelling's projected uplift sits conservatively inside this range.
+              Pelling's projected lift sits conservatively inside this range.
             </p>
           </div>
         </Reveal>
@@ -1255,7 +1020,7 @@ const BenchmarkSection: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-5 md:gap-6">
           {BENCHMARK_ROWS.map((r, i) => (
             <Reveal key={r.place} delay={i * 60}>
-              <BenchmarkBar row={r} max={max} animate={inView} idx={i} />
+              <BenchmarkBar row={r} animate={inView} idx={i} />
             </Reveal>
           ))}
         </div>
@@ -1271,19 +1036,17 @@ const BenchmarkSection: React.FC = () => {
               </div>
               <p className="text-[#FAF7F2]/90 leading-relaxed">
                 Across Rajasthan, Kerala, Dubai, and Kandy, structured nightly cultural
-                programming delivered a <span className="font-semibold text-[#D4A574]">43%–540% uplift</span>
-                {' '}on the core stay / dwell-time metric. Pelling's 108% projection is the
-                median of this range.
+                programming consistently extended the core stay and dwell-time metric.
+                Pelling's projection sits conservatively within this range.
               </p>
             </div>
           </div>
         </Reveal>
 
         <p className="mt-6 text-xs text-[#1C1C1C]/50 italic text-center max-w-3xl mx-auto">
-          Benchmark figures are aggregated from state tourism board publications (Rajasthan
-          Tourism Board, Kerala Tourism), Meraas' Al Seef launch-year reports, and Sri Lanka
-          Tourism Development Authority Perahera-week surveys. Pelling's projection is scaled
-          conservatively from these, not extrapolated.
+          Benchmarks are drawn qualitatively from state tourism board publications, heritage-
+          district launch reports, and festival-week surveys. Pelling's projection is scaled
+          conservatively from these reference cases.
         </p>
       </div>
     </section>
@@ -1423,135 +1186,98 @@ const VisionSection: React.FC = () => {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                         5. ECONOMIC IMPACT CHART                           */
+/*                         5. WHO BENEFITS — STAKEHOLDERS                     */
 /* -------------------------------------------------------------------------- */
 
-const CHART_DATA = [
-  { group: 'Local Artists', income: 18000, detail: '~80 artists · ₹18k/mo avg' },
-  { group: 'Food Vendors', income: 25000, detail: '~40 stalls · ₹25k/mo avg' },
-  { group: 'Drivers / Guides', income: 12000, detail: 'extended stays · ₹12k/mo uplift' },
-  { group: 'Urbane Haauz', income: 40000, detail: 'second-night bookings · ₹40k/mo uplift' },
-  { group: 'Indirect Activity', income: 85000, detail: 'flow-through spend · ₹85k/mo est.' },
+const STAKEHOLDER_GROUPS = [
+  {
+    group: 'Local Artists',
+    detail:
+      'Folk musicians, classical performers, and visual artists earning steady monthly income instead of ad-hoc festival fees.',
+    accent: '#C84B0F',
+  },
+  {
+    group: 'Food Vendors',
+    detail:
+      'Local kitchens and food-stall operators — Sikkimese and neighbouring communities — with a permanent evening home.',
+    accent: '#D4A574',
+  },
+  {
+    group: 'Drivers & Guides',
+    detail:
+      'Extended stays mean longer engagements: more day trips, more transfers, more storytelling paid for.',
+    accent: '#4A7C59',
+  },
+  {
+    group: 'Hospitality',
+    detail:
+      'Hotels and homestays across Pelling capture the second-night bookings that leave the valley today.',
+    accent: '#2C5F7C',
+  },
+  {
+    group: 'Indirect Economy',
+    detail:
+      'Shops, transport, suppliers, and service providers that orbit an active evening economy — the flow-through effect.',
+    accent: '#2D1B69',
+  },
 ];
-const BAR_COLORS = ['#C84B0F', '#D4A574', '#4A7C59', '#2C5F7C', '#2D1B69'];
 
-const EconomicImpactSection: React.FC = () => {
-  const { ref, inView } = useInView(0.2);
-  return (
-    <section
-      ref={ref}
-      className="py-24 md:py-32 px-6 md:px-12 bg-[#FAF7F2] text-[#1C1C1C]"
-    >
-      <div className="max-w-6xl mx-auto">
-        <Reveal>
-          <div className="max-w-2xl mb-12">
-            <span className="text-xs uppercase tracking-[0.5em] text-[#C84B0F]">
-              Projected Impact
-            </span>
-            <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
-              Who Earns, and How Much
-            </h2>
-            <p className="mt-5 text-[#1C1C1C]/65 text-lg">
-              Monthly income distribution across stakeholder groups, year 2 of full operation.
-            </p>
-          </div>
-        </Reveal>
+const EconomicImpactSection: React.FC = () => (
+  <section className="py-24 md:py-32 px-6 md:px-12 bg-[#FAF7F2] text-[#1C1C1C]">
+    <div className="max-w-6xl mx-auto">
+      <Reveal>
+        <div className="max-w-2xl mb-12">
+          <span className="text-xs uppercase tracking-[0.5em] text-[#C84B0F]">
+            Who Benefits
+          </span>
+          <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
+            A Distributed Uplift
+          </h2>
+          <p className="mt-5 text-[#1C1C1C]/65 text-lg">
+            The Cultural Center's income doesn't concentrate in one place — it spreads across
+            the people who make Pelling work every day.
+          </p>
+        </div>
+      </Reveal>
 
-        <Reveal delay={100}>
-          <div className="bg-white rounded-2xl p-4 md:p-8 border border-[#1C1C1C]/10">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <div className="text-xs uppercase tracking-[0.3em] text-[#4A7C59] mb-1">
-                  Monthly Income (₹)
-                </div>
-                <div className="font-serif text-2xl">Projected Year-2 Distribution</div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+        {STAKEHOLDER_GROUPS.map((s, i) => (
+          <Reveal key={s.group} delay={i * 90}>
+            <div
+              className="relative h-full rounded-2xl p-7 bg-white border border-[#1C1C1C]/10 overflow-hidden transition-all hover:-translate-y-1"
+              style={{ boxShadow: `0 10px 30px -18px ${s.accent}40` }}
+            >
+              <div
+                className="absolute inset-x-0 top-0 h-1"
+                style={{ background: s.accent }}
+              />
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                style={{ background: `${s.accent}18`, color: s.accent }}
+              >
+                <Users className="w-6 h-6" />
               </div>
-              <div className="hidden md:flex items-center gap-2 text-xs text-[#1C1C1C]/50">
-                <TrendingUp className="w-4 h-4" />
-                <span>based on Rajasthan Kala Kendra economic impact study</span>
-              </div>
+              <h3 className="font-serif text-2xl text-[#1C1C1C] leading-tight mb-3">
+                {s.group}
+              </h3>
+              <p className="text-[#1C1C1C]/70 text-sm leading-relaxed">{s.detail}</p>
             </div>
-
-            <div className="h-[360px] md:h-[440px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={CHART_DATA}
-                  margin={{ top: 20, right: 20, left: 10, bottom: 40 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1C1C1C" strokeOpacity={0.08} />
-                  <XAxis
-                    dataKey="group"
-                    stroke="#1C1C1C"
-                    tick={{ fill: '#1C1C1C', fontSize: 12 }}
-                    tickLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    axisLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    interval={0}
-                    angle={-18}
-                    textAnchor="end"
-                    height={70}
-                  />
-                  <YAxis
-                    stroke="#1C1C1C"
-                    tick={{ fill: '#1C1C1C', fontSize: 12 }}
-                    tickLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    axisLine={{ stroke: '#1C1C1C', strokeOpacity: 0.2 }}
-                    tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip
-                    cursor={{ fill: '#D4A574', fillOpacity: 0.08 }}
-                    contentStyle={{
-                      background: '#1C1C1C',
-                      border: 'none',
-                      borderRadius: 8,
-                      color: '#FAF7F2',
-                      fontSize: 12,
-                    }}
-                    formatter={(v: number) => [`₹${v.toLocaleString('en-IN')} / month`, 'Income']}
-                    labelStyle={{ color: '#D4A574' }}
-                  />
-                  <Bar
-                    dataKey="income"
-                    radius={[8, 8, 0, 0]}
-                    isAnimationActive={inView}
-                    animationDuration={1400}
-                  >
-                    {CHART_DATA.map((_, i) => (
-                      <Cell key={i} fill={BAR_COLORS[i % BAR_COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
-              {CHART_DATA.map((d, i) => (
-                <div
-                  key={d.group}
-                  className="border-l-4 pl-3 py-1"
-                  style={{ borderColor: BAR_COLORS[i] }}
-                >
-                  <div className="text-xs uppercase tracking-[0.2em] text-[#1C1C1C]/60">
-                    {d.group}
-                  </div>
-                  <div className="font-serif text-lg text-[#1C1C1C]">
-                    ₹{d.income.toLocaleString('en-IN')}
-                  </div>
-                  <div className="text-[11px] text-[#1C1C1C]/55 leading-snug">{d.detail}</div>
-                </div>
-              ))}
-            </div>
-
-            <p className="mt-6 text-xs text-[#1C1C1C]/50 italic border-t border-[#1C1C1C]/10 pt-4">
-              Projections scaled from Rajasthan Kala Kendra economic impact study, adjusted for
-              Pelling tourism volume (~180,000 annual visitors). Figures are monthly income per
-              group, not per person.
-            </p>
-          </div>
-        </Reveal>
+          </Reveal>
+        ))}
       </div>
-    </section>
-  );
-};
+
+      <Reveal delay={250}>
+        <div className="mt-10 flex items-center gap-3 text-sm text-[#1C1C1C]/65 italic">
+          <TrendingUp className="w-4 h-4 text-[#4A7C59] shrink-0" />
+          <span>
+            A rising tide — with the boats evenly distributed across artists, vendors,
+            transport, hospitality, and the surrounding economy.
+          </span>
+        </div>
+      </Reveal>
+    </div>
+  </section>
+);
 
 /* -------------------------------------------------------------------------- */
 /*                          6. PARTNERSHIP MODEL (PPP)                        */

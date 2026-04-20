@@ -47,7 +47,10 @@ const AdminDashboard: React.FC = () => {
   const { isAdmin, signOut, loading: authLoading } = useAuth();
   
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState<'overview' | 'rooms' | 'bookings' | 'staff' | 'finance' | 'financial-tracker' | 'settings'>('overview');
+  const [currentView, setCurrentView] = useState<'overview' | 'rooms' | 'bookings' | 'staff' | 'finance' | 'financial-tracker' | 'settings' | 'rangotsav'>('overview');
+  const [rangotsavVendors, setRangotsavVendors] = useState<any[]>([]);
+  const [rangotsavNotify, setRangotsavNotify] = useState<any[]>([]);
+  const [rangotsavLoading, setRangotsavLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
@@ -132,6 +135,24 @@ const AdminDashboard: React.FC = () => {
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
+  };
+
+  // Rangotsav data loading
+  const loadRangotsavData = async () => {
+    setRangotsavLoading(true);
+    try {
+      const { data: vendors } = await supabase.from('rangotsav_vendors').select('*').order('created_at', { ascending: false });
+      const { data: notify } = await supabase.from('rangotsav_notify').select('*').order('created_at', { ascending: false });
+      setRangotsavVendors(vendors || []);
+      setRangotsavNotify(notify || []);
+    } catch (e) { console.error(e); }
+    setRangotsavLoading(false);
+  };
+
+  const updateVendorStatus = async (id: string, status: string) => {
+    await supabase.from('rangotsav_vendors').update({ status }).eq('id', id);
+    showNotification(`Vendor ${status}`);
+    loadRangotsavData();
   };
 
   const handleBookingEdit = (bookingId: string, field: 'status' | 'paymentStatus', value: string) => {
@@ -509,8 +530,12 @@ const AdminDashboard: React.FC = () => {
                   <span className={`font-medium ${currentView === 'financial-tracker' ? 'text-white' : 'text-gray-300'}`}>Financial Tracker</span>
               </button>
               */}
+              <button onClick={() => { setCurrentView('rangotsav'); loadRangotsavData(); }} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'rangotsav' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
+                  <Briefcase size={20} className={currentView === 'rangotsav' ? 'text-urbane-gold' : 'text-gray-400'} />
+                  <span className={`font-medium ${currentView === 'rangotsav' ? 'text-white' : 'text-gray-300'}`}>Rangotsav</span>
+              </button>
               <button onClick={() => setCurrentView('settings')} className={`w-full flex items-center space-x-3 p-3.5 rounded-lg transition-all duration-300 ${currentView === 'settings' ? 'bg-white/10 border-l-4 border-urbane-gold shadow-lg backdrop-blur-sm' : 'hover:bg-white/5 hover:translate-x-1'}`}>
-                  <Settings size={20} className={currentView === 'settings' ? 'text-urbane-gold' : 'text-gray-400'} /> 
+                  <Settings size={20} className={currentView === 'settings' ? 'text-urbane-gold' : 'text-gray-400'} />
                   <span className={`font-medium ${currentView === 'settings' ? 'text-white' : 'text-gray-300'}`}>Settings</span>
               </button>
           </div>
@@ -1168,6 +1193,107 @@ const AdminDashboard: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {currentView === 'rangotsav' && (
+          <div className="animate-fade-in max-w-6xl mx-auto space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-serif text-2xl font-bold text-gray-800">Rangotsav · 25 May 2026</h2>
+                <p className="text-gray-500 text-sm">Vendor applications, ticket notifications & event management</p>
+              </div>
+              <button onClick={loadRangotsavData} className="bg-urbane-gold text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-opacity-90 flex items-center gap-2">
+                <RotateCcw size={14} className={rangotsavLoading ? 'animate-spin' : ''} /> Refresh
+              </button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Total Vendors</p>
+                <p className="text-2xl font-bold text-gray-800 mt-1">{rangotsavVendors.length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Approved</p>
+                <p className="text-2xl font-bold text-green-600 mt-1">{rangotsavVendors.filter(v => v.status === 'approved').length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Pending</p>
+                <p className="text-2xl font-bold text-yellow-600 mt-1">{rangotsavVendors.filter(v => v.status === 'pending').length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Notify Signups</p>
+                <p className="text-2xl font-bold text-blue-600 mt-1">{rangotsavNotify.length}</p>
+              </div>
+            </div>
+
+            {/* Vendor Applications */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="p-5 border-b border-gray-100 bg-gray-50">
+                <h3 className="font-bold text-gray-700">Food Vendor Applications</h3>
+              </div>
+              {rangotsavVendors.length === 0 ? (
+                <div className="p-8 text-center text-gray-400">No vendor applications yet</div>
+              ) : (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="text-xs text-gray-400 uppercase border-b border-gray-100">
+                      <th className="px-5 py-3 font-bold tracking-wider">Name</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Email</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">What They'll Sell</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Applied</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Status</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {rangotsavVendors.map((v) => (
+                      <tr key={v.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                        <td className="px-5 py-3 font-semibold text-gray-800">{v.name}</td>
+                        <td className="px-5 py-3 text-gray-600">{v.email}</td>
+                        <td className="px-5 py-3 text-gray-600 max-w-xs truncate">{v.what_selling}</td>
+                        <td className="px-5 py-3 text-gray-400 text-xs">{new Date(v.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</td>
+                        <td className="px-5 py-3">
+                          <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                            v.status === 'approved' ? 'bg-green-100 text-green-700' :
+                            v.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                            'bg-yellow-100 text-yellow-700'
+                          }`}>{v.status}</span>
+                        </td>
+                        <td className="px-5 py-3">
+                          {v.status === 'pending' && (
+                            <div className="flex gap-2">
+                              <button onClick={() => updateVendorStatus(v.id, 'approved')} className="px-3 py-1 bg-green-100 text-green-700 rounded text-xs font-bold hover:bg-green-200">Approve</button>
+                              <button onClick={() => updateVendorStatus(v.id, 'rejected')} className="px-3 py-1 bg-red-100 text-red-700 rounded text-xs font-bold hover:bg-red-200">Reject</button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            {/* Notify Signups */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="p-5 border-b border-gray-100 bg-gray-50">
+                <h3 className="font-bold text-gray-700">Ticket Notification Signups</h3>
+              </div>
+              {rangotsavNotify.length === 0 ? (
+                <div className="p-8 text-center text-gray-400">No signups yet</div>
+              ) : (
+                <div className="divide-y divide-gray-50">
+                  {rangotsavNotify.map((n) => (
+                    <div key={n.id} className="px-5 py-3 flex items-center justify-between hover:bg-gray-50/50">
+                      <span className="text-sm text-gray-700">{n.email}</span>
+                      <span className="text-xs text-gray-400">{new Date(n.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Ranglaher Utsav — Landing Page Changes Report</title>
+<style>
+  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; margin: 0; padding: 40px; color: #1a1a1a; line-height: 1.6; max-width: 900px; margin: 0 auto; }
+  h1 { font-family: Georgia, serif; font-size: 28px; margin: 0 0 8px; }
+  h2 { font-size: 18px; color: #7c3a00; margin: 36px 0 12px; padding-bottom: 8px; border-bottom: 2px solid #e8d5c0; }
+  .meta { color: #666; font-size: 13px; margin-bottom: 32px; }
+  .change { background: #fafaf8; border: 1px solid #e8e4de; border-radius: 8px; padding: 16px 20px; margin: 14px 0; page-break-inside: avoid; }
+  .change-num { display: inline-block; background: #7c3a00; color: #fff; font-size: 11px; font-weight: 700; width: 24px; height: 24px; line-height: 24px; text-align: center; border-radius: 50%; margin-right: 10px; }
+  .change-title { font-weight: 700; font-size: 15px; }
+  .before, .after { margin: 8px 0 4px; padding: 10px 14px; border-radius: 6px; font-size: 13px; }
+  .before { background: #fff0f0; border-left: 3px solid #e74c3c; }
+  .after { background: #f0fff4; border-left: 3px solid #27ae60; }
+  .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-bottom: 4px; }
+  .label.red { color: #e74c3c; }
+  .label.green { color: #27ae60; }
+  .file { font-size: 12px; color: #888; font-family: monospace; margin-top: 6px; }
+  .summary { background: linear-gradient(135deg, #f8f0e6, #f0e8dc); border-radius: 10px; padding: 20px 24px; margin: 24px 0; }
+  .summary h3 { margin: 0 0 8px; font-size: 16px; color: #7c3a00; }
+  .summary ul { margin: 0; padding-left: 18px; }
+  .summary li { margin: 4px 0; font-size: 14px; }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #ddd; color: #999; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<h1>Ranglaher Utsav — Landing Page Changes</h1>
+<div class="meta">
+  Report generated: 20 April 2026 &middot; File: <code>pages/Rangbhoomi.tsx</code> &middot; 15 changes applied &middot; Build: clean
+</div>
+
+<div class="summary">
+  <h3>Summary</h3>
+  <ul>
+    <li>Event renamed from <strong>"Rangbhoomi"</strong> to <strong>"Ranglaher Utsav"</strong> across all text, meta tags, and URLs</li>
+    <li>Tagline <strong>"The Tale Of Two States"</strong> added prominently</li>
+    <li>Logo image replaces text header</li>
+    <li>Orchid SVGs replace flower designs</li>
+    <li>All programme card descriptions rewritten with full new copy</li>
+    <li>Art moved to first agenda position</li>
+    <li>Tongba (alcohol) removed, replaced with Phaley + Thai Po</li>
+    <li>Mishti Doi replaced with Rolls</li>
+    <li>Registration tiers renamed to Volunteers / Cultural Pass / Participants</li>
+    <li>Duplicate 3-card section removed entirely</li>
+  </ul>
+</div>
+
+<h2>Change 1 — Logo in Header</h2>
+<div class="change">
+  <span class="change-num">1</span><span class="change-title">Use Urbane Haauz logo image instead of text</span>
+  <div class="before"><div class="label red">Before</div>Text "Urbane Haauz &middot; PELLING CULTURAL INITIATIVE" styled with CSS fonts</div>
+  <div class="after"><div class="label green">After</div><code>&lt;img src="/logo.jpeg" alt="Urbane Haauz" /&gt;</code> with "PELLING CULTURAL INITIATIVE" text below. Logo file copied from Downloads to <code>public/logo.jpeg</code></div>
+  <div class="file">Lines ~193-197</div>
+</div>
+
+<h2>Change 2 — Orchid Decorations</h2>
+<div class="change">
+  <span class="change-num">2</span><span class="change-title">Replace flower SVGs with Orchids (Sikkim = Land of Orchids)</span>
+  <div class="before"><div class="label red">Before</div><code>LotusSVG</code> and <code>RhododendronSVG</code> — pink/red cherry blossom style flowers</div>
+  <div class="after"><div class="label green">After</div><code>OrchidSVG</code> and <code>OrchidAltSVG</code> — purple/white orchid-style petals with elongated shapes</div>
+  <div class="file">Lines ~220-223</div>
+</div>
+
+<h2>Change 3 — Event Renamed</h2>
+<div class="change">
+  <span class="change-num">3</span><span class="change-title">"Rangbhoomi" &rarr; "Ranglaher Utsav" + tagline added</span>
+  <div class="before"><div class="label red">Before</div>"Rangbhoomi" everywhere (hero, manifesto, footer, meta tags, etc.)</div>
+  <div class="after"><div class="label green">After</div>"Ranglaher Utsav" everywhere. Tagline <strong>"The Tale Of Two States"</strong> added below the event name in hero section and footer. Meta title updated.</div>
+  <div class="file">All occurrences across the file</div>
+</div>
+
+<h2>Change 4 — Hero Tagline Updated</h2>
+<div class="change">
+  <span class="change-num">4</span><span class="change-title">New cultural taglines replace old ones</span>
+  <div class="before"><div class="label red">Before</div>"Where the Himalayas Meet the Ganges" / "Stage of Colours"</div>
+  <div class="after"><div class="label green">After</div>Primary: <em>"Art is in the Air; Music is in the Mist and Flavours on your Plate."</em><br/>Supporting: <em>"From Bengal's Soul to Sikkim's Spirit. From Bengal's red soil to Sikkim's mountain rocks — A Cultural Confluence."</em></div>
+  <div class="file">Lines ~253-260</div>
+</div>
+
+<h2>Change 5 — Manifesto Fix</h2>
+<div class="change">
+  <span class="change-num">5</span><span class="change-title">"creating new songs" &rarr; "creating new stories"</span>
+  <div class="before"><div class="label red">Before</div>"...finding new valleys, creating new <strong>songs</strong>."</div>
+  <div class="after"><div class="label green">After</div>"...finding new valleys, creating new <strong>stories</strong>."</div>
+  <div class="file">Line ~306</div>
+</div>
+
+<h2>Change 6 — Artist Description Updated</h2>
+<div class="change">
+  <span class="change-num">6</span><span class="change-title">New text for artist travel paragraph</span>
+  <div class="before"><div class="label red">Before</div>"This May, a group of artists from West Bengal — baul singers, classical dancers, poets, painters, storytellers — will travel to Pelling..."</div>
+  <div class="after"><div class="label green">After</div>"This May, a group of exceptionally talented artists from West Bengal—painters whose brushes tell countless stories, along with folk Baul singers, instrumentalists, dancers, and reciters—will come together to meet and collaborate with their counterparts from Sikkim."</div>
+  <div class="file">Lines ~323-326</div>
+</div>
+
+<h2>Change 7 — Programme Section Header</h2>
+<div class="change">
+  <span class="change-num">7</span><span class="change-title">Section title + subtitle updated</span>
+  <div class="before"><div class="label red">Before</div>Kicker: "THE PROGRAM" / Title: "What's Happening" / Sub: "Five strands of the festival..."</div>
+  <div class="after"><div class="label green">After</div>Kicker: "WHAT'S HAPPENING" / Title: "What's Happening" / Sub: "A celebration of Creativity, Rhythm &amp; Taste"</div>
+  <div class="file">Lines ~416-423</div>
+</div>
+
+<h2>Change 8 — Art Card (now FIRST)</h2>
+<div class="change">
+  <span class="change-num">8</span><span class="change-title">Art/Art Competition moved to first position with new description</span>
+  <div class="before"><div class="label red">Before</div>Art card was after Music. Short description about "pencils, paint, Kanchenjunga as muse".</div>
+  <div class="after"><div class="label green">After</div>Art is now the FIRST agenda item. Full description: "Art and Art Competition at Ranglaher Utsav brings together creativity, learning, and cultural exchange on one vibrant platform. Young participants receive first-hand guidance and inspiration from seasoned stalwarts..." (full paragraph as provided in feedback)</div>
+  <div class="file">Lines ~348-378</div>
+</div>
+
+<h2>Change 9 — Performing Arts / Music Card</h2>
+<div class="change">
+  <span class="change-num">9</span><span class="change-title">New description for music/dance/performance</span>
+  <div class="before"><div class="label red">Before</div>"Bengal's wandering baul singers share the stage with Sikkimese folk musicians. Two tongues, one mountain, one rhythm."</div>
+  <div class="after"><div class="label green">After</div>Full new text: "Folk Music, Instrumental Performances, and Dance at Ranglaher Utsav present a vibrant cultural tapestry of Bengal and Sikkim. Folk singers from both regions bring soulful melodies... Dancers from Bengal showcase expressive forms like Kathak and contemporary, alongside Sikkim's Limbu, Lepcha, and Bhutia communities performing traditional dances such as the Chyabrung..."</div>
+  <div class="file">Programme cards section</div>
+</div>
+
+<h2>Change 10 — Food / Culinary Card</h2>
+<div class="change">
+  <span class="change-num">10</span><span class="change-title">New description for culinary heritage</span>
+  <div class="before"><div class="label red">Before</div>"Local Sikkimese cooks and Bengali home chefs feed the festival. Thukpa next to luchi. Gundruk next to shorshe maach."</div>
+  <div class="after"><div class="label green">After</div>"The Culinary Heritage segment at Ranglaher Utsav celebrates the rich and diverse palates of Bengal and Sikkim, bringing together flavours shaped by tradition, culture, and generations of expertise... It also empowers small and large food joints of Pelling to present their masterful touch and age-old traditions..."</div>
+  <div class="file">Programme cards section</div>
+</div>
+
+<h2>Change 11 — "Two States" Conglomerate Section</h2>
+<div class="change">
+  <span class="change-num">11</span><span class="change-title">"Two States. Three Traditions." &rarr; "Tale of Two States"</span>
+  <div class="before"><div class="label red">Before</div>"Two States. Three Traditions." with text about "a meeting of West Bengal and Sikkim across the things that travel easiest between valleys"</div>
+  <div class="after"><div class="label green">After</div>"Tale of Two States" with: "...brings together the vibrant spirit of West Bengal and the serene soul of Sikkim in a unique cultural celebration. From the red soils of Bengal to the misty mountains of Sikkim... It is not just a festival, but a journey where two cultures meet, interact, and become one."</div>
+  <div class="file">Lines ~440-498</div>
+</div>
+
+<h2>Change 12 — Duplicate Section Removed</h2>
+<div class="change">
+  <span class="change-num">12</span><span class="change-title">Removed repeated 3-card section</span>
+  <div class="before"><div class="label red">Before</div>A second grid with: "Canvases Meet the Mountains" / "Two Musical Traditions, One Stage" / "Two Kitchens, One Table" — duplicated content from the programme cards above</div>
+  <div class="after"><div class="label green">After</div>Entire section removed. No duplicate.</div>
+</div>
+
+<h2>Change 13 — Sikkimese Kitchen Menu</h2>
+<div class="change">
+  <span class="change-num">13</span><span class="change-title">Remove Tongba (alcohol), add Phaley + Thai Po</span>
+  <div class="before"><div class="label red">Before</div>Thukpa, Momo, Gundruk, <strong>Tongba</strong> (warm millet beer, sipped through bamboo)</div>
+  <div class="after"><div class="label green">After</div>Thukpa, Momo, Gundruk, <strong>Phaley</strong> (Tibetan fried bread, stuffed with meat or vegetables), <strong>Thai Po</strong> (fermented soybean curry)</div>
+  <div class="file">Lines ~605-610</div>
+</div>
+
+<h2>Change 14 — Bengali Kitchen Menu</h2>
+<div class="change">
+  <span class="change-num">14</span><span class="change-title">Replace Mishti Doi with Rolls</span>
+  <div class="before"><div class="label red">Before</div><strong>Mishti Doi</strong> (Earthen-pot sweet yogurt from Bengal), Luchi &amp; Alur Dom, Shorshe Maach, Rosogolla</div>
+  <div class="after"><div class="label green">After</div><strong>Rolls</strong> (Kolkata-style kathi rolls — fast food with flair), Luchi &amp; Alur Dom, Shorshe Maach, Rosogolla</div>
+  <div class="file">Line ~614</div>
+</div>
+
+<h2>Change 15 — Registration Tiers Renamed</h2>
+<div class="change">
+  <span class="change-num">15</span><span class="change-title">Pass categories updated</span>
+  <div class="before"><div class="label red">Before</div>
+    <strong>Community</strong> (FREE FOR CHILDREN) &middot;
+    <strong>Cultural Pass</strong> (FULL FESTIVAL) &middot;
+    <strong>Supporter Pass</strong> (INCLUDES DINNER)
+  </div>
+  <div class="after"><div class="label green">After</div>
+    <strong>Volunteers</strong> (COMMUNITY SUPPORT) &middot;
+    <strong>Cultural Pass</strong> (FULL FESTIVAL) &middot;
+    <strong>Participants</strong> (FULL ACCESS)
+  </div>
+  <div class="file">Lines ~712-730</div>
+</div>
+
+<footer>
+  Generated by Claude Code &middot; File: <code>pages/Rangbhoomi.tsx</code> &middot; Logo: <code>public/logo.jpeg</code> &middot; Build: clean &middot; Not yet committed
+</footer>
+
+</body>
+</html>

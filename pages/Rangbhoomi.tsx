@@ -16,6 +16,8 @@ import {
   Heart,
   Plus,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 const useInView = (threshold = 0.15) => {
@@ -133,13 +135,6 @@ const StandaloneHeader: React.FC = () => (
         Pelling Cultural Initiative
       </span>
     </Link>
-    <a
-      href="#"
-      onClick={(e: React.MouseEvent) => { e.preventDefault(); document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' }); }}
-      className="hidden md:inline-flex items-center gap-2 border border-[#D4A574]/60 text-[#D4A574] px-4 py-1.5 rounded-full text-xs uppercase tracking-[0.18em] hover:bg-[#D4A574] hover:text-[#1C1C1C] transition"
-    >
-      Register <ArrowRight className="w-3.5 h-3.5" />
-    </a>
   </header>
 );
 
@@ -421,7 +416,6 @@ type Artist = {
   name: string;
   image: string;
   bio: string;
-  feature?: boolean;
 };
 
 const ARTISTS: Artist[] = [
@@ -429,31 +423,26 @@ const ARTISTS: Artist[] = [
     name: 'Sudip Biswas',
     image: '/artists/sudip-biswas.jpeg',
     bio: "A professional painter since 2004, trained with an M.V.A. from Kolkata's Government College of Art and Craft. Recipient of the Kala Ratna Award (2025) and a first-prize honour from the Ministry of Culture, Government of India, with exhibitions across India and Bangladesh.",
-    feature: true,
   },
   {
     name: 'Bappa Maji',
     image: '/artists/bappa-maji.jpeg',
     bio: "Art curator, visual artist, and educator with a Ph.D. from IIT Kanpur and MVA & BVA from Govt. College of Art & Craft, Kolkata. Currently Assistant Professor at CSJMU with experience at Amity and LPU. Recipient of the Debi Prasad Roy Chowdhury Award. Solo exhibition at Academy of Fine Arts, Kolkata, and group shows across major Indian cities.",
-    feature: true,
   },
   {
     name: 'Tanmoy Hazra',
     image: '/artists/tanmoy-hazra.jpeg',
     bio: "A contemporary painter bringing a quiet, observational lens to colour and composition. His paintings have been shown at group exhibitions across West Bengal.",
-    feature: true,
   },
   {
     name: 'Santanu Baidya',
     image: '/artists/santanu-baidya.jpeg',
     bio: "A First-Class B.V.A. graduate of Kolkata's Government College of Art and Craft, with two decades of participation in group shows, annual exhibitions, and art fairs across India. He teaches art at Springdale School in Nadia, West Bengal.",
-    feature: true,
   },
   {
     name: 'Pijush Das',
     image: '/artists/pijush-das.jpeg',
     bio: "A deeply passionate artist who transforms emotion into visual language, blending traditional techniques with modern creativity. Trained at Chitrangan College of Art with a 7-year Diploma in Painting. Has worked with National Geographic on the Ganga expedition and exhibited with MAC Group in Kolkata and Barrackpore.",
-    feature: true,
   },
   {
     name: 'Kartick Roy',
@@ -515,11 +504,6 @@ const ArtistCard: React.FC<{ artist: Artist; idx: number; onOpen: () => void }> 
             Painter · W. Bengal
           </p>
         </div>
-        {artist.feature && (
-          <div className="absolute top-2.5 left-2.5 text-[8px] uppercase tracking-[0.2em] bg-[#D4A574] text-[#1C1C1C] px-2 py-0.5 rounded-full font-bold">
-            Featured
-          </div>
-        )}
         <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-black/45 backdrop-blur-sm flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:bg-[#D4A574] group-hover:text-[#1C1C1C] transition-all">
           <Plus className="w-3.5 h-3.5" />
         </div>
@@ -571,11 +555,6 @@ const ArtistModal: React.FC<{ artist: Artist | null; onClose: () => void }> = ({
           />
         </div>
         <div className="p-8 md:p-10 flex flex-col justify-center overflow-y-auto">
-          {artist.feature && (
-            <div className="inline-block self-start text-[9px] uppercase tracking-[0.25em] bg-[#D4A574] text-[#1C1C1C] px-2.5 py-1 rounded-full font-bold mb-5">
-              Featured
-            </div>
-          )}
           <h3 className="font-serif text-3xl md:text-4xl text-[#FAF7F2] leading-tight">
             {artist.name}
           </h3>
@@ -587,6 +566,105 @@ const ArtistModal: React.FC<{ artist: Artist | null; onClose: () => void }> = ({
           </p>
         </div>
       </div>
+    </div>
+  );
+};
+
+const ARTWORKS: { src: string; title: string; medium: string }[] = [
+  { src: '/artists/artwork-angel.jpg', title: 'Orchid Bearer', medium: 'Mixed media on canvas' },
+  { src: '/artists/artwork-buddha-monk.jpeg', title: 'Passage of the Novice', medium: 'Acrylic on canvas' },
+  { src: '/artists/artwork-buddha-lotus.jpeg', title: 'Lotus Throne', medium: 'Mixed media on canvas' },
+  { src: '/rangotsav-ganesh.jpeg', title: 'Shubh Aarambh', medium: 'Watercolour on paper' },
+  { src: '/artists/artwork-stupa.jpg', title: 'Mountain Shrine', medium: 'Oil on canvas' },
+  { src: '/artists/artwork-sunset.jpg', title: 'Himalayan Dusk', medium: 'Oil on canvas' },
+  { src: '/artists/artwork-lake.jpg', title: 'Still Waters', medium: 'Oil on canvas' },
+  { src: '/artists/artwork-sculpture-brass.jpeg', title: 'Ascension', medium: 'Wood & brass · sculpture' },
+  { src: '/artists/artwork-sculpture-teapot.jpeg', title: "The Potter's Hour", medium: 'Wood sculpture · Samrat Chowdhury' },
+];
+
+const ArtworkCarousel: React.FC = () => {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+
+  const updateEdges = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setAtStart(el.scrollLeft <= 2);
+    setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 2);
+  };
+
+  useEffect(() => {
+    updateEdges();
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', updateEdges, { passive: true });
+    window.addEventListener('resize', updateEdges);
+    return () => {
+      el.removeEventListener('scroll', updateEdges);
+      window.removeEventListener('resize', updateEdges);
+    };
+  }, []);
+
+  const scrollBy = (dir: -1 | 1) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const card = el.querySelector<HTMLElement>('[data-art-card]');
+    const step = card ? card.offsetWidth + 20 : el.clientWidth * 0.8;
+    el.scrollBy({ left: step * dir, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="relative max-w-7xl mx-auto">
+      <div
+        ref={scrollRef}
+        className="flex overflow-x-auto snap-x snap-mandatory gap-5 pb-6 px-1 no-scrollbar"
+        style={{ scrollbarWidth: 'none' }}
+      >
+        <style>{`.no-scrollbar::-webkit-scrollbar{display:none;}`}</style>
+        {ARTWORKS.map((art, i) => (
+          <div
+            key={i}
+            data-art-card
+            className="flex-none w-[82%] sm:w-[60%] md:w-[44%] lg:w-[32%] snap-start"
+          >
+            <div className="group relative">
+              <div className="aspect-square rounded-2xl overflow-hidden border border-[#D4A574]/20 shadow-xl bg-gradient-to-br from-[#1C1C1C] to-[#2D1B69] group-hover:shadow-2xl group-hover:shadow-[#D4A574]/20 transition-all duration-500">
+                <img
+                  src={art.src}
+                  alt={art.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent flex items-end p-5">
+                  <div>
+                    <p className="text-[#FAF7F2] font-serif text-lg md:text-xl leading-tight">{art.title}</p>
+                    <p className="text-[#D4A574] text-[10px] uppercase tracking-[0.25em] mt-1.5">{art.medium}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={() => scrollBy(-1)}
+        disabled={atStart}
+        aria-label="Previous artwork"
+        className={`hidden md:flex absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-[#D4A574] text-[#1C1C1C] items-center justify-center shadow-lg transition-all ${atStart ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110'}`}
+      >
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+      <button
+        type="button"
+        onClick={() => scrollBy(1)}
+        disabled={atEnd}
+        aria-label="Next artwork"
+        className={`hidden md:flex absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-[#D4A574] text-[#1C1C1C] items-center justify-center shadow-lg transition-all ${atEnd ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110'}`}
+      >
+        <ChevronRight className="w-5 h-5" />
+      </button>
     </div>
   );
 };
@@ -623,37 +701,12 @@ const ArtistsSection: React.FC = () => {
       <ArtistModal artist={activeArtist} onClose={() => setActiveArtist(null)} />
 
       <Reveal delay={200}>
-        <div className="mt-14 max-w-6xl mx-auto">
+        <div className="mt-20">
           <div className="text-center mb-10">
             <p className="text-[#D4A574] text-xs uppercase tracking-[0.3em]">Artwork by visiting artists</p>
             <p className="text-[#FAF7F2]/60 text-sm mt-2">A glimpse of the art that will be exhibited at Rangotsav</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
-            {[
-              { src: '/artists/artwork-angel.jpg', title: 'Orchid Bearer', medium: 'Mixed media on canvas' },
-              { src: '/artists/artwork-stupa.jpg', title: 'Mountain Shrine', medium: 'Oil on canvas' },
-              { src: '/artists/artwork-sunset.jpg', title: 'Himalayan Dusk', medium: 'Oil on canvas' },
-              { src: '/artists/artwork-lake.jpg', title: 'Still Waters', medium: 'Oil on canvas' },
-            ].map((art, i) => (
-              <Reveal key={i} delay={i * 100}>
-                <div className="group relative">
-                  <div className="aspect-square rounded-2xl overflow-hidden border border-[#D4A574]/20 shadow-xl group-hover:shadow-2xl group-hover:shadow-[#D4A574]/20 transition-all duration-500 group-hover:-translate-y-2">
-                    <img
-                      src={art.src}
-                      alt={art.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
-                      <div>
-                        <p className="text-[#FAF7F2] font-serif text-lg leading-tight">{art.title}</p>
-                        <p className="text-[#D4A574] text-[10px] uppercase tracking-[0.25em] mt-1">{art.medium}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <ArtworkCarousel />
         </div>
       </Reveal>
 

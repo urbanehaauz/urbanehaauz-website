@@ -390,16 +390,24 @@ export async function sendRangotsavNotifyConfirmation(email: string): Promise<bo
 
           <!-- Brand bar -->
           <tr>
-            <td style="background-color: #FAF7F2; padding: 20px 40px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.3);">
-              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="64" height="64" style="display: inline-block; width: 64px; height: 64px; border: 0; outline: none; text-decoration: none;">
+            <td style="background-color: #FAF7F2; padding: 28px 40px 10px; text-align: center;">
+              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
               <p style="color: #1C1C1C; margin: 10px 0 0; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Urbane Haauz &middot; Pelling, Sikkim</p>
             </td>
           </tr>
 
-          <!-- Hero image -->
+          <!-- Framed Ganesh hero -->
           <tr>
-            <td style="padding: 0; font-size: 0; line-height: 0;">
-              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026 — a cultural conglomerate in the mountains" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
+            <td style="background-color: #FAF7F2; padding: 18px 40px 40px; text-align: center;">
+              <p style="color: #A67833; margin: 0 0 14px; font-size: 14px; letter-spacing: 0.4em; font-family: Georgia, 'Times New Roman', serif;">&#10038; &middot; &#10038;</p>
+              <p style="color: #A67833; margin: 0 0 22px; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Shubh Aarambh</p>
+              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026 — a cultural conglomerate in the mountains" width="380" style="display: block; width: 100%; max-width: 380px; height: auto; border: 3px solid #D4A574; box-shadow: 0 4px 16px rgba(28,28,28,0.15); margin: 0 auto; outline: none; text-decoration: none;">
+              <p style="color: #8B6F47; margin: 22px 0 0; font-size: 12px; letter-spacing: 0.18em; font-family: Georgia, 'Times New Roman', serif; font-style: italic;">A blessing on the festival to come</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #1C1C1C; padding: 0; font-size: 0; line-height: 0;">
+              <div style="height: 3px; background-color: #D4A574;"></div>
             </td>
           </tr>
 
@@ -535,16 +543,24 @@ export async function sendRangotsavVendorWelcome(data: {
 
           <!-- Brand bar -->
           <tr>
-            <td style="background-color: #FAF7F2; padding: 20px 40px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.3);">
-              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="64" height="64" style="display: inline-block; width: 64px; height: 64px; border: 0; outline: none; text-decoration: none;">
+            <td style="background-color: #FAF7F2; padding: 28px 40px 10px; text-align: center;">
+              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
               <p style="color: #1C1C1C; margin: 10px 0 0; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Urbane Haauz &middot; Pelling, Sikkim</p>
             </td>
           </tr>
 
-          <!-- Hero image -->
+          <!-- Framed Ganesh hero -->
           <tr>
-            <td style="padding: 0; font-size: 0; line-height: 0;">
-              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
+            <td style="background-color: #FAF7F2; padding: 18px 40px 40px; text-align: center;">
+              <p style="color: #A67833; margin: 0 0 14px; font-size: 14px; letter-spacing: 0.4em; font-family: Georgia, 'Times New Roman', serif;">&#10038; &middot; &#10038;</p>
+              <p style="color: #A67833; margin: 0 0 22px; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Shubh Aarambh</p>
+              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026" width="380" style="display: block; width: 100%; max-width: 380px; height: auto; border: 3px solid #D4A574; box-shadow: 0 4px 16px rgba(28,28,28,0.15); margin: 0 auto; outline: none; text-decoration: none;">
+              <p style="color: #8B6F47; margin: 22px 0 0; font-size: 12px; letter-spacing: 0.18em; font-family: Georgia, 'Times New Roman', serif; font-style: italic;">A blessing on the festival to come</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #1C1C1C; padding: 0; font-size: 0; line-height: 0;">
+              <div style="height: 3px; background-color: #D4A574;"></div>
             </td>
           </tr>
 
@@ -687,14 +703,22 @@ function rangotsavShellHtml(args: {
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1C1C1C; border: 1px solid rgba(212,165,116,0.2); border-radius: 4px; overflow: hidden;">
           <tr>
-            <td style="background-color: #FAF7F2; padding: 20px 40px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.3);">
-              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="64" height="64" style="display: inline-block; width: 64px; height: 64px; border: 0; outline: none; text-decoration: none;">
+            <td style="background-color: #FAF7F2; padding: 28px 40px 10px; text-align: center;">
+              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
               <p style="color: #1C1C1C; margin: 10px 0 0; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Urbane Haauz &middot; Pelling, Sikkim</p>
             </td>
           </tr>
           <tr>
-            <td style="padding: 0; font-size: 0; line-height: 0;">
-              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
+            <td style="background-color: #FAF7F2; padding: 18px 40px 40px; text-align: center;">
+              <p style="color: #A67833; margin: 0 0 14px; font-size: 14px; letter-spacing: 0.4em; font-family: Georgia, 'Times New Roman', serif;">&#10038; &middot; &#10038;</p>
+              <p style="color: #A67833; margin: 0 0 22px; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Shubh Aarambh</p>
+              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026 — a cultural conglomerate in the mountains" width="380" style="display: block; width: 100%; max-width: 380px; height: auto; border: 3px solid #D4A574; box-shadow: 0 4px 16px rgba(28,28,28,0.15); margin: 0 auto; outline: none; text-decoration: none;">
+              <p style="color: #8B6F47; margin: 22px 0 0; font-size: 12px; letter-spacing: 0.18em; font-family: Georgia, 'Times New Roman', serif; font-style: italic;">A blessing on the festival to come</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #1C1C1C; padding: 0; font-size: 0; line-height: 0;">
+              <div style="height: 3px; background-color: #D4A574;"></div>
             </td>
           </tr>
           <tr>

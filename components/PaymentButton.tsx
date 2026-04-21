@@ -202,10 +202,10 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         <div className="text-center text-xs text-gray-400 pt-2">
           <p>We accept UPI, Cards, Net Banking & Wallets</p>
           <div className="flex justify-center items-center space-x-3 mt-2 opacity-60">
-            <img src="https://cdn.razorpay.com/static/assets/logo/payment_methods/visa.svg" alt="Visa" className="h-5" />
-            <img src="https://cdn.razorpay.com/static/assets/logo/payment_methods/mastercard.svg" alt="Mastercard" className="h-5" />
-            <img src="https://cdn.razorpay.com/static/assets/logo/payment_methods/rupay.svg" alt="RuPay" className="h-5" />
-            <img src="https://cdn.razorpay.com/static/assets/logo/payment_methods/upi.svg" alt="UPI" className="h-5" />
+            <img src="https://cdn.razorpay.com/static/assets/logo/payment_methods/visa.svg" alt="Visa" width={40} height={20} loading="lazy" decoding="async" className="h-5" />
+            <img src="https://cdn.razorpay.com/static/assets/logo/payment_methods/mastercard.svg" alt="Mastercard" width={40} height={20} loading="lazy" decoding="async" className="h-5" />
+            <img src="https://cdn.razorpay.com/static/assets/logo/payment_methods/rupay.svg" alt="RuPay" width={40} height={20} loading="lazy" decoding="async" className="h-5" />
+            <img src="https://cdn.razorpay.com/static/assets/logo/payment_methods/upi.svg" alt="UPI" width={40} height={20} loading="lazy" decoding="async" className="h-5" />
           </div>
         </div>
 

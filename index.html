@@ -91,7 +91,7 @@
       ],
       "image": [
         "https://urbanehaauz.com/og-image.jpg",
-        "https://urbanehaauz.com/lib/hero-image.png",
+        "https://urbanehaauz.com/lib/hero-image.jpg",
         "https://urbanehaauz.com/rangotsav-ganesh.jpeg"
       ],
       "founder": [
@@ -114,11 +114,12 @@
         - openingHoursSpecification: confirm 24/7 reception (currently assumed)
         - logo: replace with real square PNG logo once designed
         - sameAs: add social profile URLs once live
+        - @type array adds LocalBusiness per audit P1 #13
     -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "LodgingBusiness",
+      "@type": ["LodgingBusiness", "LocalBusiness"],
       "@id": "https://urbanehaauz.com/#organization",
       "name": "Urbane Haauz",
       "legalName": "Urbane Haauz Boutique Hotel",
@@ -186,9 +187,109 @@
     }
     </script>
 
+    <!--
+      Structured Data — WebSite + SearchAction
+      Enables Google Sitelinks Search Box. Search URL pattern is prepared for a
+      future /search?q= route; until then Google simply falls back to surfacing
+      internal results via the standard site: operator.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://urbanehaauz.com/#website",
+      "url": "https://urbanehaauz.com/",
+      "name": "Urbane Haauz",
+      "alternateName": "Urbane Haauz Boutique Hotel",
+      "publisher": {"@id": "https://urbanehaauz.com/#organization"},
+      "inLanguage": ["en-IN", "hi-IN"],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://urbanehaauz.com/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!--
+      Structured Data — FAQPage (global, site-wide)
+      Seeded from docs/urbanehaauz-seo-agents/gbp-description.md (Q1–Q6 owner-answered).
+      Phone number inline per GBP ticket 4-3669000040947 workaround.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "@id": "https://urbanehaauz.com/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What's the phone number to book Urbane Haauz directly?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Call or WhatsApp us at +91 9136032524, or email urbanehaauz@gmail.com. You can also book direct at urbanehaauz.com with best-rate guarantee and instant Razorpay confirmation."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Urbane Haauz have Kanchenjunga view rooms?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — our property in Upper Pelling has direct Kanchenjunga views from the upper-floor balconies and common areas. On clear mornings you'll see Kanchenjunga lit in gold at sunrise. Premium rooms have private balconies facing the range."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you have dormitory beds for backpackers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — Urbane Haauz is the only property in Upper Pelling offering both private hotel rooms and dorm beds. Dorm beds come with lockers, shared hot-water bathrooms, and the same Kanchenjunga-view balcony access as other guests."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How far is Urbane Haauz from Pelling Skywalk?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "10-minute walk. We're on Skywalk Road in Upper Pelling, close to Pemayangtse Monastery (5 min drive), Rabdentse Ruins, Sangachoeling, and Khecheopalri Lake."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you serve food? Any Bengali or vegetarian options?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — in-house restaurant with CP (breakfast included) and MAP (breakfast + dinner) meal plans. Our kitchen does Bengali, North Indian, Sikkimese, and continental. Pure veg and Jain-friendly options available on request."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I reach Pelling from NJP or Bagdogra?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "NJP station or Bagdogra airport to Pelling is approximately 140 km / 4.5–5 hours by shared or private cab via Siliguri–Jorethang–Legship. We can arrange pickup — call +91 9136032524 at least 24 hours in advance."
+          }
+        }
+      ]
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!--
+      LCP optimization — preload the homepage hero image and the branding logo used in the navbar.
+      The hero JPEG is ~150 KB and replaces the 1 MB PNG that previously shipped. If an admin has
+      overridden the home hero via the dashboard, this preload will be a mild overfetch on the home
+      route (browser will fall back to the admin-set URL at render time), but the win for the
+      default-hero case is substantial.
+    -->
+    <link rel="preload" as="image" href="/lib/hero-image.jpg" fetchpriority="high" />
+    <link rel="preload" as="image" href="/uh-badge.png" />
   </head>
   <body>
     <div id="root"></div>

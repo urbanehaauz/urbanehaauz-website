@@ -10,9 +10,12 @@ INSERT INTO rooms (name, category, price, max_occupancy, image, description, ame
 ON CONFLICT (name) DO NOTHING;
 
 -- Insert initial settings (default hero image)
--- The image is stored in public/lib/hero-image.png and served from /lib/hero-image.png
+-- The image is stored in public/lib/hero-image.jpg and served from /lib/hero-image.jpg
+-- (Optimised JPEG — ~150 KB vs the previous 1 MB PNG. The PNG file remains in public/
+-- as a cold fallback for older browser cache / pinned settings rows, but new installs
+-- should default to the JPEG which is what index.html preloads for LCP.)
 INSERT INTO settings (key, value) VALUES
-('home_hero_image', '/lib/hero-image.png'),
-('admin_background_image', '/lib/hero-image.png')
+('home_hero_image', '/lib/hero-image.jpg'),
+('admin_background_image', '/lib/hero-image.jpg')
 ON CONFLICT (key) DO NOTHING;
 

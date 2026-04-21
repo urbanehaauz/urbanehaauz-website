@@ -30,3 +30,6 @@ nginx-logs/
 *.sln
 *.sw?
 .vercel
+
+# Local image backups from optimization pass (not tracked)
+.backup-images/

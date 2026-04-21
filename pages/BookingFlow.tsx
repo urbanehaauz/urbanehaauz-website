@@ -10,6 +10,15 @@ import PaymentButton from '../components/PaymentButton';
 import { sendBookingConfirmation } from '../lib/email/emailService';
 import { supabase } from '../lib/supabase';
 
+const BOOK_BREADCRUMB_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://urbanehaauz.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Book', item: 'https://urbanehaauz.com/book' },
+  ],
+};
+
 const BookingFlow: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -348,6 +357,7 @@ const BookingFlow: React.FC = () => {
         <meta property="og:description" content="Direct booking. Best rate guaranteed. Instant confirmation." />
         <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
         <meta property="og:url" content="https://urbanehaauz.com/book" />
+        <script type="application/ld+json">{JSON.stringify(BOOK_BREADCRUMB_JSONLD)}</script>
       </Helmet>
       <div className="max-w-6xl mx-auto px-4">
 
@@ -392,7 +402,7 @@ const BookingFlow: React.FC = () => {
               {selectedRoom ? (
                 <div className="space-y-6">
                   <div className="relative h-40 rounded overflow-hidden">
-                    <img src={selectedRoom.image} alt="Room" className="w-full h-full object-cover" />
+                    <img src={selectedRoom.image} alt="Room" width={400} height={160} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     <div className="absolute bottom-0 left-0 w-full bg-black/50 p-2 text-white text-xs font-bold uppercase">
                         {selectedRoom.category}
                     </div>
@@ -514,7 +524,7 @@ const BookingFlow: React.FC = () => {
                               className={`group flex flex-col sm:flex-row border cursor-pointer transition-all duration-300 hover:shadow-md ${selectedRoom?.id === room.id ? 'border-urbane-gold bg-amber-50/30' : 'border-gray-100 hover:border-urbane-gold/50'}`}
                             >
                               <div className="sm:w-40 h-32 sm:h-auto relative overflow-hidden">
-                                  <img src={room.image} className="w-full h-full object-cover" alt={room.name} />
+                                  <img src={room.image} className="w-full h-full object-cover" alt={room.name} width={160} height={128} loading="lazy" decoding="async" />
                               </div>
                               <div className="p-5 flex-grow flex flex-col justify-center">
                                   <div className="flex justify-between items-start mb-2">

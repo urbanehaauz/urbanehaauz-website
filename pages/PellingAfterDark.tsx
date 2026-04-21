@@ -357,7 +357,7 @@ const StandaloneHeader: React.FC<{ onDark?: boolean }> = ({ onDark = true }) => 
       to="/"
       className="group flex items-center gap-2 hover:text-[#D4A574] transition-colors"
     >
-      <img src="/uh-badge.png" alt="Urbane Haauz" className="w-10 h-10 rounded-full object-cover" />
+      <img src="/uh-badge.png" alt="Urbane Haauz" width={40} height={40} decoding="async" className="w-10 h-10 rounded-full object-cover" />
       <span className="opacity-60 text-sm">·</span>
       <span className="text-xs uppercase tracking-[0.2em] opacity-70 group-hover:opacity-100">
         Pelling Cultural Initiative
@@ -873,11 +873,14 @@ const CaseCard: React.FC<{ c: CaseStudy; idx: number }> = ({ c, idx }) => {
           <img
             src={c.image}
             alt={c.name}
+            width={960}
+            height={600}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).style.display = 'none';
             }}
-            loading="lazy"
           />
         ) : (
           <div

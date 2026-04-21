@@ -130,7 +130,7 @@ const StandaloneHeader: React.FC = () => (
       to="/"
       className="group flex items-center gap-2 text-[#FAF7F2]/90 hover:text-[#D4A574] transition-colors"
     >
-      <img src="/uh-badge.png" alt="Urbane Haauz logo" className="w-12 h-12 rounded-full" />
+      <img src="/uh-badge.png" alt="Urbane Haauz logo" width={48} height={48} decoding="async" className="w-12 h-12 rounded-full" />
       <span className="text-xs uppercase tracking-[0.2em] opacity-70 group-hover:opacity-100">
         Pelling Cultural Initiative
       </span>
@@ -158,10 +158,10 @@ const HeroSection: React.FC = () => (
     <NoiseOverlay />
 
     {/* Floating decorative orchid images */}
-    <img src="/orchid-flower.png" alt="" className="absolute top-[18%] left-[6%] w-28 md:w-36 h-28 md:h-36 opacity-80 rotate-12 animate-[rb-float_9s_ease-in-out_infinite]" />
-    <img src="/orchid-flower.png" alt="" className="absolute top-[14%] right-[8%] w-32 md:w-40 h-32 md:h-40 opacity-80 -rotate-6 animate-[rb-float_11s_ease-in-out_infinite_0.5s]" />
-    <img src="/orchid-flower.png" alt="" className="absolute bottom-[30%] right-[14%] w-24 md:w-28 h-24 md:h-28 opacity-80 rotate-45 animate-[rb-float_13s_ease-in-out_infinite_1.5s]" />
-    <img src="/orchid-flower.png" alt="" className="absolute bottom-[34%] left-[12%] w-24 md:w-32 h-24 md:h-32 opacity-80 -rotate-12 animate-[rb-float_10s_ease-in-out_infinite_2s]" />
+    <img src="/orchid-flower.png" alt="" aria-hidden="true" width={160} height={160} loading="lazy" decoding="async" className="absolute top-[18%] left-[6%] w-28 md:w-36 h-28 md:h-36 opacity-80 rotate-12 animate-[rb-float_9s_ease-in-out_infinite]" />
+    <img src="/orchid-flower.png" alt="" aria-hidden="true" width={160} height={160} loading="lazy" decoding="async" className="absolute top-[14%] right-[8%] w-32 md:w-40 h-32 md:h-40 opacity-80 -rotate-6 animate-[rb-float_11s_ease-in-out_infinite_0.5s]" />
+    <img src="/orchid-flower.png" alt="" aria-hidden="true" width={160} height={160} loading="lazy" decoding="async" className="absolute bottom-[30%] right-[14%] w-24 md:w-28 h-24 md:h-28 opacity-80 rotate-45 animate-[rb-float_13s_ease-in-out_infinite_1.5s]" />
+    <img src="/orchid-flower.png" alt="" aria-hidden="true" width={160} height={160} loading="lazy" decoding="async" className="absolute bottom-[34%] left-[12%] w-24 md:w-32 h-24 md:h-32 opacity-80 -rotate-12 animate-[rb-float_10s_ease-in-out_infinite_2s]" />
     <MountainRangeSVG className="absolute bottom-0 left-0 w-full h-[38%]" />
 
     {/* Ornamental frame */}
@@ -451,7 +451,7 @@ const ARTISTS: Artist[] = [
   },
   {
     name: 'Samir Debnath',
-    image: '/artists/samir-debnath.png',
+    image: '/artists/samir-debnath.jpg',
     bio: "A contemporary Bengal painter whose studio practice bridges portraiture and quiet interior scenes. His work has been part of group exhibitions across West Bengal.",
   },
   {
@@ -493,7 +493,10 @@ const ArtistCard: React.FC<{ artist: Artist; idx: number; onOpen: () => void }> 
         <img
           src={artist.image}
           alt={`Portrait of ${artist.name}, painter`}
+          width={400}
+          height={500}
           loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
         />
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0D0D2B]/95 via-[#0D0D2B]/65 to-transparent pt-14 pb-4 px-4">
@@ -551,6 +554,9 @@ const ArtistModal: React.FC<{ artist: Artist | null; onClose: () => void }> = ({
           <img
             src={artist.image}
             alt={`Portrait of ${artist.name}`}
+            width={800}
+            height={1000}
+            decoding="async"
             className="w-full h-full object-cover"
           />
         </div>
@@ -620,6 +626,9 @@ const ArtworkLightbox: React.FC<{ art: Artwork | null; onClose: () => void }> = 
         <img
           src={art.src}
           alt={art.title}
+          width={1200}
+          height={1200}
+          decoding="async"
           className="max-h-[78vh] w-auto max-w-full object-contain rounded-lg shadow-2xl"
         />
         <div className="mt-5 text-center">
@@ -689,7 +698,10 @@ const ArtworkCarousel: React.FC = () => {
                   <img
                     src={art.src}
                     alt={art.title}
+                    width={600}
+                    height={600}
                     loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent flex items-end p-5">

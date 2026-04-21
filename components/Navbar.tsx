@@ -42,6 +42,9 @@ const Navbar: React.FC = () => {
             <img
               src="/uh-badge.png"
               alt="Urbane Haauz logo"
+              width={40}
+              height={40}
+              decoding="async"
               className="h-10 w-10 rounded-full ring-1 ring-white/20 group-hover:ring-urbane-gold transition-all"
             />
             <div className="flex flex-col">

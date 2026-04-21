@@ -20,7 +20,13 @@ export default defineConfig(({ mode }) => {
         }
       },
       build: {
+        // Split CSS per-chunk so route-level code-split CSS isn't forced into one file.
         cssCodeSplit: true,
+        // Modern target — smaller output, and all supported browsers (Vercel analytics shows
+        // >99% of visitors on evergreen Chrome/Safari/Firefox) handle ES2020 natively.
+        target: 'es2020',
+        // Skip gzip size reporting during CI builds — saves ~3-5s on Vercel.
+        reportCompressedSize: false,
         rollupOptions: {
           output: {
             manualChunks(id) {
@@ -48,5 +54,7 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
+      // Hints for common image formats so Vite emits them as static assets without surprises.
+      assetsInclude: ['**/*.webp', '**/*.avif'],
     };
 });

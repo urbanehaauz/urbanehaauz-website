@@ -267,6 +267,10 @@ const MyBookings: React.FC = () => {
                     <img
                       src={booking.rooms?.image_url || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400'}
                       alt={booking.rooms?.name || 'Room'}
+                      width={400}
+                      height={300}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                     />
                   </div>

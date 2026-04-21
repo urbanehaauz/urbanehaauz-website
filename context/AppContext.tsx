@@ -38,7 +38,10 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const DEFAULT_IMAGE = '/lib/hero-image.png';
+// NOTE: hero photo is served as JPEG for much smaller payload (152 KB vs ~1 MB PNG).
+// The /lib/hero-image.png file is still present as a fallback for older localStorage
+// entries pinned by the admin dashboard — do not remove without a migration.
+const DEFAULT_IMAGE = '/lib/hero-image.jpg';
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { isAdmin, user } = useAuth();

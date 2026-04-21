@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet-async';
 import { Lock, Mountain } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 // @ts-ignore
-import heroImage from '../lib/hero-image.png';
+import heroImage from '../lib/hero-image.jpg';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');

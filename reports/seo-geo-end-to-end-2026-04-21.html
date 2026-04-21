@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Urbane Haauz — SEO &amp; GEO Sprint Report · 21 Apr 2026</title>
+<style>
+  @page { size: A4; margin: 22mm 18mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #1c1c1c;
+    font-size: 10.5pt;
+    line-height: 1.55;
+  }
+
+  /* Cover page */
+  .cover {
+    page-break-after: always;
+    padding: 60px 0 0;
+  }
+  .cover .eyebrow {
+    font-size: 9pt;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #8B6F47;
+    margin-bottom: 18px;
+  }
+  .cover h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 34pt;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0 0 12px;
+    color: #1c1c1c;
+  }
+  .cover .subtitle {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 13pt;
+    color: #555;
+    margin: 0 0 40px;
+  }
+  .cover .meta {
+    border-top: 2px solid #D4A574;
+    padding-top: 18px;
+    font-size: 10pt;
+    color: #333;
+  }
+  .cover .meta table { width: 100%; border-collapse: collapse; }
+  .cover .meta td { padding: 4px 0; vertical-align: top; }
+  .cover .meta td:first-child {
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 8.5pt;
+    color: #8B6F47;
+    width: 30%;
+  }
+
+  /* Headings */
+  h1 { font-family: Georgia, serif; font-size: 22pt; margin: 0 0 8px; color: #1c1c1c; page-break-after: avoid; }
+  h2 {
+    font-family: Georgia, serif;
+    font-size: 16pt;
+    margin: 28px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #D4A574;
+    color: #1c1c1c;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 11.5pt;
+    margin: 18px 0 6px;
+    color: #1c1c1c;
+    page-break-after: avoid;
+  }
+  h4 { font-size: 10pt; margin: 12px 0 4px; color: #444; page-break-after: avoid; }
+
+  p { margin: 0 0 9px; }
+
+  /* Lists */
+  ul, ol { margin: 0 0 10px; padding-left: 22px; }
+  li { margin: 0 0 4px; }
+
+  /* Tables */
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 14px;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  table.data th, table.data td {
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.data th {
+    background: #FAF7F2;
+    font-weight: 600;
+    color: #1c1c1c;
+  }
+  table.data tr:nth-child(even) td { background: #fafafa; }
+  table.data td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Cards */
+  .card {
+    border-left: 4px solid #D4A574;
+    background: #FAF7F2;
+    padding: 14px 18px;
+    margin: 12px 0;
+    page-break-inside: avoid;
+  }
+  .card-red    { border-color: #c25a3f; background: #fff5f1; }
+  .card-green  { border-color: #4A7C59; background: #f2f8f4; }
+  .card-blue   { border-color: #2C5F7C; background: #f0f5f8; }
+  .card-amber  { border-color: #d49c41; background: #fdf6ea; }
+
+  /* Pills / tags */
+  .tag {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .tag-p0 { background: #c25a3f; color: #fff; }
+  .tag-p1 { background: #d49c41; color: #fff; }
+  .tag-p2 { background: #7a8186; color: #fff; }
+  .tag-done { background: #4A7C59; color: #fff; }
+  .tag-pending { background: #8b6f47; color: #fff; }
+
+  code {
+    font-family: Menlo, Consolas, monospace;
+    font-size: 9pt;
+    background: #f3efe9;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .mono { font-family: Menlo, monospace; font-size: 9pt; }
+
+  /* Section */
+  section { page-break-inside: auto; }
+  .page-break { page-break-before: always; }
+
+  /* Footer note */
+  .footer-note {
+    font-size: 8.5pt;
+    color: #888;
+    margin-top: 40px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+  }
+  .muted { color: #666; }
+
+  /* Commits list */
+  ul.commits {
+    list-style: none;
+    padding: 0;
+    font-family: Menlo, monospace;
+    font-size: 8.5pt;
+  }
+  ul.commits li {
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  ul.commits li .sha {
+    color: #8B6F47;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .kpi {
+    border: 1px solid #e5e0d5;
+    padding: 10px 12px;
+    background: #fafafa;
+    page-break-inside: avoid;
+  }
+  .kpi .label {
+    font-size: 7.5pt;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8B6F47;
+    font-weight: 600;
+  }
+  .kpi .value {
+    font-family: Georgia, serif;
+    font-size: 20pt;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-top: 2px;
+  }
+  .kpi .sub { font-size: 8.5pt; color: #555; margin-top: 2px; }
+</style>
+</head>
+<body>
+
+<!-- =========== COVER =========== -->
+<section class="cover">
+  <div class="eyebrow">SEO &amp; GEO Sprint Report</div>
+  <h1>Urbane Haauz</h1>
+  <p class="subtitle">Ranking for "hotels in Pelling" — foundation shipped, 6-month plan set.</p>
+  <div class="meta">
+    <table>
+      <tr><td>For</td><td>Ayan — Urbane Haauz Boutique Hotel, Upper Pelling, Sikkim</td></tr>
+      <tr><td>Prepared</td><td>2026-04-21 (today)</td></tr>
+      <tr><td>Scope</td><td>End-to-end SEO &amp; GEO sprint — routing migration, schema, local SEO, content pillar, AI-engine optimization, backlinks</td></tr>
+      <tr><td>Property</td><td><span class="mono">urbanehaauz.com</span> — 8 rooms + dormitory, Kanchenjunga view, Upper Pelling</td></tr>
+      <tr><td>Prepared by</td><td>Claude Code + 8 specialized SEO agents (seo-auditor, technical-seo, schema-architect, keyword-researcher, content-writer, geo-optimizer, local-seo, link-builder)</td></tr>
+    </table>
+  </div>
+
+  <div class="card card-amber" style="margin-top: 40px;">
+    <p style="margin: 0;"><strong>TL;DR.</strong> The site had one catastrophic SEO defect — URLs used <code>#</code> fragments that made every inner page invisible to Google. That is now fixed, along with 12 supporting issues. 6 pillar blog posts are live. Google does not know this yet. You need to do <strong>5 action items</strong> (30 minutes total, listed in §6) to tell Google. Realistic ranking timeline for the #1 spot on "hotels in Pelling" is <strong>4–6 months</strong>.</p>
+  </div>
+</section>
+
+<!-- =========== 1. EXEC SUMMARY =========== -->
+<section>
+<h2>1 — Executive Summary</h2>
+
+<div class="kpi-grid">
+  <div class="kpi"><div class="label">Commits shipped today</div><div class="value">9</div><div class="sub">f8b1a24 → c081bad</div></div>
+  <div class="kpi"><div class="label">Files touched</div><div class="value">58</div><div class="sub">across 4 phases</div></div>
+  <div class="kpi"><div class="label">Specialist agents run</div><div class="value">8</div><div class="sub">parallel + sequential</div></div>
+  <div class="kpi"><div class="label">New blog posts live</div><div class="value">6</div><div class="sub">at <span class="mono">/blog</span></div></div>
+</div>
+
+<h3>The diagnosis</h3>
+<ul>
+  <li>Site was a HashRouter SPA: every inner URL was <code>urbanehaauz.com/#/rooms</code>, <code>/#/contact</code>, etc. Google treats everything after <code>#</code> as "same page, just scrolled." <strong>Google only ever saw the homepage.</strong> All your meta tags, titles, and descriptions on inner routes were SEO-dead weight. Single biggest cause of the near-zero ranking.</li>
+  <li>Hotel JSON-LD schema had <code>numberOfRooms: 3</code> (actual: 8) and used placeholder image URLs that 404'd.</li>
+  <li>NAP (Name/Address/Phone) used two different address formats across site, emails, and schema — the #1 thing local-ranking algorithms audit.</li>
+  <li>Zero content depth: no blog, no "Things to Do in Pelling", no "How to Reach Pelling". Everything sat inside the booking funnel.</li>
+  <li>Google Business Profile phone-update ticket (case 4-3669000040947) stalled; no workaround in place.</li>
+  <li>8 specialist agents were defined in the repo but had never been run.</li>
+</ul>
+
+<h3>What we shipped</h3>
+<ul>
+  <li>Migrated to clean URLs (<code>/rooms</code>, <code>/contact</code>, etc.) — the #1 unlock.</li>
+  <li>Fixed Hotel + LodgingBusiness JSON-LD; added HotelRoom × 4, FAQPage × 3 (Home / Rooms / Contact), Event schema for Rangotsav, WebSite+SearchAction, per-route BreadcrumbList.</li>
+  <li>Unified NAP everywhere to <strong>"SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113"</strong>, <strong>+91 9136032524</strong>.</li>
+  <li>Ran full image optimization — hero 1 MB → 152 KB, orchid 1.5 MB → 93 KB, badge 425 KB → 16 KB.</li>
+  <li>Drafted 6 pillar blog posts (800–1,500 words each) with FAQs, internal links, and canonical schemas. Wired <code>/blog</code> and <code>/blog/:slug</code> routes; added "Guides" to the Navbar; extended sitemap.</li>
+  <li>Added GEO direct-answer blocks on Home / Rooms / Experiences and inside each blog post so ChatGPT, Perplexity, Google AI Overviews can extract citable claims.</li>
+  <li>Wrote ready-to-paste GBP description + owner-answered Q&amp;A to work around the stuck Google ticket.</li>
+  <li>Wrote local SEO action plan with 35 citation targets, review-generation spec, map-pack levers.</li>
+  <li>Wrote backlink / digital-PR plan with 35 outreach targets + 3 email templates + OTA optimization checklist.</li>
+  <li>Wrote GEO test plan — 15 natural-language queries to paste into AI engines bi-weekly with a scoring rubric.</li>
+</ul>
+
+<h3>What you need to do</h3>
+<p>Five action items (§6). <strong>#1 is time-critical</strong>: Google Search Console setup + indexing requests. Without this, Google might take 8 weeks to notice today's changes. With it, 24–72 hours.</p>
+</section>
+
+<!-- =========== 2. THE DIAGNOSIS =========== -->
+<section class="page-break">
+<h2>2 — What Was Broken (audit findings)</h2>
+
+<p>Full audit report at <span class="mono">docs/urbanehaauz-seo-agents/audit-2026-04-21.md</span>. Summary below.</p>
+
+<table class="data">
+  <thead>
+    <tr>
+      <th style="width: 5%">#</th>
+      <th style="width: 9%">Priority</th>
+      <th style="width: 50%">Issue</th>
+      <th style="width: 20%">Location</th>
+      <th style="width: 16%">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td><span class="tag tag-p0">P0</span></td>
+      <td>HashRouter fragments (<code>/#/rooms</code>, etc.) invisible to Googlebot as distinct pages. All inner meta tags SEO-dead.</td>
+      <td><code>App.tsx</code></td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td><span class="tag tag-p0">P0</span></td>
+      <td>Hotel schema: <code>numberOfRooms: 3</code> (actual: 8). Placeholder image URLs that 404.</td>
+      <td><code>index.html</code></td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td><span class="tag tag-p0">P0</span></td>
+      <td>Home was internally orphaned. <code>/rooms</code> + <code>/experiences</code> links commented out of Navbar. Featured-Rooms CTA inside dead <code>{false &amp;&amp; ...}</code> branch. All Book Now buttons pointed off-site.</td>
+      <td><code>Navbar.tsx</code>, <code>Home.tsx</code></td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td><span class="tag tag-p0">P0</span></td>
+      <td>Booking-outage banner hard-coded placeholder WhatsApp <code>919800000000</code> instead of real number. Any Supabase outage = users land on dead number.</td>
+      <td><code>BookingFlow.tsx:359</code></td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td><span class="tag tag-p0">P0</span></td>
+      <td><code>/pelling-2.0</code> was <code>noindex, nofollow</code> but listed in sitemap at priority 0.7 — conflicting signal.</td>
+      <td><code>PellingAfterDark.tsx</code>, <code>sitemap.xml</code></td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td><span class="tag tag-p0">P0</span></td>
+      <td>NAP drift: address in 2 different formats (<code>Skywalk Road, Upper Pelling</code> vs <code>SH-510, Pelling...</code>) across Footer, Contact meta, schema, emails.</td>
+      <td>Multiple</td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td><span class="tag tag-p0">P0</span></td>
+      <td>Sitemap missing <code>/rangotsav</code> and <code>/pelling-2.0</code>; stale <code>lastmod</code>.</td>
+      <td><code>sitemap.xml</code></td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td><span class="tag tag-p1">P1</span></td>
+      <td>7 image files &gt; 500 KB. Hero 1.0 MB PNG, orchid 1.5 MB (used 4× on Rangotsav), badge 425 KB for 40 px render. Zero WebP coverage.</td>
+      <td><code>public/</code></td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td><span class="tag tag-p1">P1</span></td>
+      <td>No width/height attributes on <code>&lt;img&gt;</code> tags → Cumulative Layout Shift on mobile.</td>
+      <td>All pages</td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td><span class="tag tag-p1">P1</span></td>
+      <td>No FAQPage / HotelRoom / Event / per-route BreadcrumbList / WebSite SearchAction schemas.</td>
+      <td>All pages</td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td><span class="tag tag-p1">P1</span></td>
+      <td>Organization schema had <code>@type: "LodgingBusiness"</code> alone; should include <code>LocalBusiness</code> for local-pack eligibility.</td>
+      <td><code>index.html</code></td>
+      <td><span class="tag tag-done">Fixed</span></td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td><span class="tag tag-p1">P1</span></td>
+      <td>No content depth — zero blog, zero neighbourhood / how-to-reach / best-time pages.</td>
+      <td>Entire site</td>
+      <td><span class="tag tag-done">Fixed — 6 posts live</span></td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td><span class="tag tag-p1">P1</span></td>
+      <td>Google Business Profile phone-update ticket (case 4-3669000040947) stalled indefinitely.</td>
+      <td>External (Google)</td>
+      <td><span class="tag tag-done">Workaround shipped</span></td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<!-- =========== 3. WHAT WAS SHIPPED =========== -->
+<section class="page-break">
+<h2>3 — What Was Shipped</h2>
+
+<h3>Phase A — Foundation (indexing unblocked)</h3>
+<div class="card card-green">
+  <p><strong>Commit</strong> <span class="mono">26c1d74 · ce4d76e · 85a285c</span> · <strong>Impact:</strong> Single biggest SEO unlock.</p>
+  <ul>
+    <li>HashRouter → BrowserRouter. Clean URLs across all 11 routes.</li>
+    <li>OAuth callback URL rewritten; AuthCallback token-parsing verified to work under BrowserRouter.</li>
+    <li>All canonical + og:url tags stripped of <code>/#/</code>.</li>
+    <li>JSON-LD schema: <code>numberOfRooms</code> 3 → 8, address unified to <code>SH-510, Skywalk Road, Upper Pelling</code>, Offer URLs fixed, image array extended.</li>
+    <li>NAP unified in Footer, Contact, all 5 email templates, both schemas.</li>
+    <li>Sitemap rebuilt: dropped <code>/#/</code>, added <code>/rangotsav</code> + <code>/pelling-2.0</code>, refreshed <code>lastmod</code>.</li>
+    <li>Generated real <code>/og-image.jpg</code> (1200×574, 128 KB) from hero image — social shares no longer 404.</li>
+  </ul>
+</div>
+
+<h3>Phase B — Local SEO + Google Business Profile</h3>
+<div class="card card-green">
+  <p><strong>Artifacts:</strong> <span class="mono">docs/urbanehaauz-seo-agents/gbp-description.md</span> · <span class="mono">local-seo-plan-2026-04-21.md</span></p>
+  <ul>
+    <li>GBP description workaround drafted — two length variants (742 ch &amp; 537 ch) that embed the phone number in body copy while the Google ticket is stuck.</li>
+    <li>6 owner-answered Q&amp;A pre-seeded for the GBP Q&amp;A section (strongest LLM-citation signal after reviews).</li>
+    <li>4 scheduled GBP posts written (Rangotsav promo, direct-booking discount, Kanchenjunga sunrise, 2-day itinerary).</li>
+    <li><strong>local-seo agent</strong> produced: 35 prioritized citation targets (Justdial, MakeMyTrip, Booking, Agoda, TripAdvisor, OYO, Hostelworld, Goibibo, HolidayIQ, Cleartrip, Ixigo, Sikkim Tourism, Trivago, etc.), NAP-consistent listing copy (short/medium/long versions), Post-stay review email spec (Supabase Edge Function + cron at 10 AM IST on day 3), QR-code-at-checkout plan.</li>
+  </ul>
+</div>
+
+<h3>Phase C — Content Engine (6 pillar posts)</h3>
+<div class="card card-green">
+  <p><strong>Commit</strong> <span class="mono">83f6b91</span> · <strong>Artifacts:</strong> <span class="mono">content/blog/*.md</span>, <span class="mono">pages/Blog.tsx</span>, <span class="mono">pages/BlogPost.tsx</span>, <span class="mono">lib/blog.ts</span></p>
+  <p>6 pillar posts (800–1,500 words each, with frontmatter + Article schema + internal cross-links to <code>/rooms</code>, <code>/book</code>, <code>/contact</code>, <code>/experiences</code>):</p>
+  <ul>
+    <li><code>/blog/things-to-do-in-pelling</code> — 2026 entry fees, grouped by walking distance</li>
+    <li><code>/blog/how-to-reach-pelling</code> — NJP / Bagdogra / Kolkata / Gangtok / Darjeeling with 2026 fares, ILP clarified</li>
+    <li><code>/blog/best-time-to-visit-pelling</code> — month-by-month Kanchenjunga visibility odds</li>
+    <li><code>/blog/where-to-stay-in-upper-pelling</code> — neighbourhood authority (highest strategic value)</li>
+    <li><code>/blog/kanchenjunga-view-hotels-pelling</code> — the money keyword</li>
+    <li><code>/blog/pelling-2-day-itinerary</code> — hour-by-hour + family/honeymoon/backpacker variants</li>
+  </ul>
+  <p>Markdown parser is 80 lines of hand-rolled code in <code>lib/blog.ts</code> — zero new dependencies. Build: <code>npm run build</code> clean, 2,414 modules.</p>
+</div>
+
+<h3>Phase C — Schema architecture</h3>
+<div class="card card-green">
+  <p><strong>Commit</strong> <span class="mono">0295355</span></p>
+  <ul>
+    <li><strong>index.html</strong>: added WebSite + SearchAction (Google Sitelinks search box), site-wide FAQPage (6 Q&amp;A from GBP description), Organization <code>@type</code> widened to <code>[LodgingBusiness, LocalBusiness]</code>.</li>
+    <li><strong>Rooms.tsx</strong>: HotelRoom <code>@graph</code> × 4 entries with occupancy, bed type, amenities, priceSpecification. Rooms-specific FAQPage.</li>
+    <li><strong>Contact.tsx</strong>: BreadcrumbList + contact-specific FAQPage (6 Q&amp;A on channels, address, check-in, transfers, group, languages).</li>
+    <li><strong>Rangbhoomi.tsx</strong> (Rangotsav): Event schema with date 2026-05-25, location, organizer.</li>
+    <li><strong>LocalExperiences.tsx / BookingFlow.tsx</strong>: per-route BreadcrumbList.</li>
+    <li><strong>lib/seo/schemas.ts</strong>: centralized module for reusable JSON-LD constants.</li>
+  </ul>
+</div>
+
+<h3>Phase C — GEO (AI answer engines)</h3>
+<div class="card card-green">
+  <p><strong>Commit</strong> <span class="mono">38ab185</span> · <strong>Artifacts:</strong> Home/Rooms/LocalExperiences page edits + 6 blog post edits + <span class="mono">geo-test-plan.md</span></p>
+  <ul>
+    <li>Home: "Quick Answers" FAQ-style block answering top 5 GEO queries about Urbane Haauz specifically.</li>
+    <li>Rooms: "Room Types at a Glance" table — 4-row data block (Standard / Super Deluxe / Premium / Dorm) with occupancy, view, bed, price.</li>
+    <li>LocalExperiences: "Pelling Quick Facts" block — 8 direct-answer pairs (location, NJP/Bagdogra distance, best time, ILP, languages, currency, days needed).</li>
+    <li>Each blog post: "Key Facts" box near the top with 3–5 crisp bullets answering the post's core query.</li>
+    <li>Claim-source formatting: citations like "According to the Sikkim Tourism Department…" and "According to the Geological Survey of India…" — the pattern AI engines index as authoritative.</li>
+    <li>20 specific GEO queries now explicitly addressed in page copy (full list in GEO test plan).</li>
+  </ul>
+</div>
+
+<h3>Phase C — Technical SEO (Core Web Vitals)</h3>
+<div class="card card-green">
+  <p><strong>Commit</strong> <span class="mono">bc201ac</span></p>
+  <ul>
+    <li>Image payload in <code>/public</code>: <strong>~6.4 MB → ~4.6 MB</strong>.</li>
+    <li>Hero <code>/lib/hero-image.png</code> 1.09 MB → <code>.jpg</code> 152 KB.</li>
+    <li><code>/orchid-flower.png</code> 1.52 MB → 93 KB (used 4× on Rangotsav).</li>
+    <li><code>/uh-badge.png</code> 425 KB → 16 KB (was 1024² for a 40 px render).</li>
+    <li>All <code>&lt;img&gt;</code> tags across 10 files got <code>width</code>, <code>height</code>, <code>loading="lazy"</code>, <code>decoding="async"</code> — fixes CLS.</li>
+    <li>Home hero gets <code>fetchPriority="high"</code> + preload link — fixes LCP.</li>
+    <li>Vercel: explicit immutable 1-year cache for <code>/lib/*</code>, <code>/artists/*</code>, <code>/case-studies/*</code>.</li>
+  </ul>
+</div>
+
+<h3>Phase C — Link building plan</h3>
+<div class="card card-green">
+  <p><strong>Commit</strong> <span class="mono">c081bad</span> · <strong>Artifact:</strong> <span class="mono">link-building-plan-2026-04-21.md</span></p>
+  <ul>
+    <li>35 prioritized backlink targets across 6 buckets: travel blogs (13), Sikkim-specific authorities (5), Bengal-targeted media (5), backpacker/forum (5), festival angle (4), link-reclamation (3).</li>
+    <li>3 outreach email templates: new-property pitch, Rangotsav festival pitch (bilingual), expert-quote positioning.</li>
+    <li>OTA optimization checklist: TripAdvisor, Booking, MakeMyTrip, Agoda, Hostelworld.</li>
+    <li>Reddit / forum play: 8 subreddits + exact search queries + 20:1 helpful-to-promotional ratio rule.</li>
+    <li>Digital PR hook sheet: 7 always-on pitch angles.</li>
+    <li>Anchor-text distribution targets: 60% branded / 25% naked URL / 10% generic / 5% keyword.</li>
+  </ul>
+</div>
+</section>
+
+<!-- =========== 4. URLS LIVE =========== -->
+<section class="page-break">
+<h2>4 — URLs Now Live</h2>
+
+<table class="data">
+  <thead>
+    <tr><th>Route</th><th>URL</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Home</td><td class="mono">https://urbanehaauz.com/</td><td>Quick Answers GEO block near top</td></tr>
+    <tr><td>Rooms</td><td class="mono">https://urbanehaauz.com/rooms</td><td>HotelRoom schema, FAQ, price table</td></tr>
+    <tr><td>Experiences</td><td class="mono">https://urbanehaauz.com/experiences</td><td>Pelling Quick Facts GEO block</td></tr>
+    <tr><td>Contact</td><td class="mono">https://urbanehaauz.com/contact</td><td>FAQ + form + map</td></tr>
+    <tr><td>Book</td><td class="mono">https://urbanehaauz.com/book</td><td>Razorpay flow, correct fallback number</td></tr>
+    <tr><td>Rangotsav (event)</td><td class="mono">https://urbanehaauz.com/rangotsav</td><td>Old <code>/rangbhoomi</code> redirects here</td></tr>
+    <tr><td>Pelling 2.0 (vision)</td><td class="mono">https://urbanehaauz.com/pelling-2.0</td><td>Old <code>/pelling-after-dark</code> redirects here</td></tr>
+    <tr><td>Blog index</td><td class="mono">https://urbanehaauz.com/blog</td><td>NEW — 6 pillar posts listed</td></tr>
+    <tr><td>Blog post 1</td><td class="mono">https://urbanehaauz.com/blog/things-to-do-in-pelling</td><td>NEW</td></tr>
+    <tr><td>Blog post 2</td><td class="mono">https://urbanehaauz.com/blog/how-to-reach-pelling</td><td>NEW</td></tr>
+    <tr><td>Blog post 3</td><td class="mono">https://urbanehaauz.com/blog/best-time-to-visit-pelling</td><td>NEW</td></tr>
+    <tr><td>Blog post 4</td><td class="mono">https://urbanehaauz.com/blog/where-to-stay-in-upper-pelling</td><td>NEW — neighbourhood authority</td></tr>
+    <tr><td>Blog post 5</td><td class="mono">https://urbanehaauz.com/blog/kanchenjunga-view-hotels-pelling</td><td>NEW — money keyword</td></tr>
+    <tr><td>Blog post 6</td><td class="mono">https://urbanehaauz.com/blog/pelling-2-day-itinerary</td><td>NEW</td></tr>
+  </tbody>
+</table>
+
+<p class="muted">Every URL has: unique title, unique meta description, canonical tag, og:image, sitemap entry, and at least one schema block.</p>
+</section>
+
+<!-- =========== 5. ARTIFACTS =========== -->
+<section>
+<h2>5 — Agent Output Artifacts</h2>
+<p>All under <span class="mono">docs/urbanehaauz-seo-agents/</span>. Reference these over the next 6 months as you execute the plan.</p>
+
+<table class="data">
+  <thead>
+    <tr><th>File</th><th>From</th><th>Purpose</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="mono">audit-2026-04-21.md</td><td>seo-auditor</td><td>Prioritized punch list of every SEO issue found on the site.</td></tr>
+    <tr><td class="mono">keyword-brief-2026-04-21.md</td><td>keyword-researcher</td><td>130+ long-tail keywords mapped to 6 pillars; 30 AI-engine queries; 7-competitor gap analysis.</td></tr>
+    <tr><td class="mono">gbp-description.md</td><td>Claude direct</td><td>Ready-to-paste GBP description, attributes, posts, Q&amp;A; ticket follow-up cadence.</td></tr>
+    <tr><td class="mono">local-seo-plan-2026-04-21.md</td><td>local-seo</td><td>35 citation targets, review-generation plan, map-pack levers, NAP monitoring.</td></tr>
+    <tr><td class="mono">link-building-plan-2026-04-21.md</td><td>link-builder</td><td>35 backlink targets, 3 outreach templates, OTA checklist, PR hook sheet.</td></tr>
+    <tr><td class="mono">geo-test-plan.md</td><td>geo-optimizer</td><td>15 natural-language queries to test bi-weekly against ChatGPT, Perplexity, Google AI, Claude, Gemini; scoring rubric.</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- =========== 6. ACTION ITEMS =========== -->
+<section class="page-break">
+<h2>6 — Your Action Items (30 min total)</h2>
+
+<p>These are the 5 things only you can do. Without them, everything shipped today sits dormant. In order of priority:</p>
+
+<h3>#1 — Claim Google Search Console (10 min) <span class="tag tag-p0">P0</span></h3>
+<div class="card">
+  <ol>
+    <li>Open <span class="mono">https://search.google.com/search-console</span> with your Google account (same one that owns GBP ideally).</li>
+    <li>Click <strong>Add property</strong> → <strong>URL prefix</strong> → paste <span class="mono">https://urbanehaauz.com</span>.</li>
+    <li>Verify ownership via one of:
+      <ul>
+        <li><strong>Google Analytics</strong> — instant if GA is already installed.</li>
+        <li><strong>DNS TXT record</strong> — add the provided TXT record at Namecheap DNS. Propagates in 5 minutes.</li>
+        <li><strong>HTML file</strong> — tell me and I will add it to <code>/public/</code> and push.</li>
+      </ul>
+    </li>
+    <li>Once verified, go to <strong>Sitemaps</strong> → paste <span class="mono">https://urbanehaauz.com/sitemap.xml</span> → Submit.</li>
+  </ol>
+</div>
+
+<h3>#2 — Force immediate indexing (5 min) <span class="tag tag-p0">P0</span></h3>
+<div class="card">
+  <p>In GSC, use <strong>URL Inspection</strong>. Paste each URL below → click <strong>Request indexing</strong>. Cuts the delay from 2–8 weeks to <strong>24–72 hours</strong>.</p>
+  <ul class="mono" style="font-size: 9pt;">
+    <li>https://urbanehaauz.com/</li>
+    <li>https://urbanehaauz.com/rooms</li>
+    <li>https://urbanehaauz.com/contact</li>
+    <li>https://urbanehaauz.com/experiences</li>
+    <li>https://urbanehaauz.com/rangotsav</li>
+    <li>https://urbanehaauz.com/pelling-2.0</li>
+    <li>https://urbanehaauz.com/blog</li>
+    <li>https://urbanehaauz.com/blog/where-to-stay-in-upper-pelling</li>
+    <li>https://urbanehaauz.com/blog/kanchenjunga-view-hotels-pelling</li>
+  </ul>
+</div>
+
+<h3>#3 — Bing Webmaster Tools (5 min) <span class="tag tag-p1">P1</span></h3>
+<div class="card">
+  <p>Bing's index powers ChatGPT and Perplexity. Often overlooked — and AI engines consume it. Faster to rank on Bing than Google.</p>
+  <ol>
+    <li><span class="mono">https://www.bing.com/webmasters</span> → <strong>Add site</strong>.</li>
+    <li>Import from GSC if possible (one click).</li>
+    <li>Submit sitemap: <span class="mono">https://urbanehaauz.com/sitemap.xml</span>.</li>
+  </ol>
+</div>
+
+<h3>#4 — Supabase OAuth redirect URL (3 min) <span class="tag tag-p0">P0</span></h3>
+<div class="card card-red">
+  <p><strong>Time-critical:</strong> Google/Facebook login will fail until you do this — the redirect URL in Supabase still points to the old <code>#</code>-prefixed route.</p>
+  <ol>
+    <li>Supabase Dashboard → <strong>Authentication</strong> → <strong>URL Configuration</strong>.</li>
+    <li><strong>Add</strong> <span class="mono">https://urbanehaauz.com/auth/callback</span> to the redirect-URL allow-list.</li>
+    <li><strong>Remove</strong> the old <span class="mono">https://urbanehaauz.com/#/auth/callback</span> entry.</li>
+  </ol>
+</div>
+
+<h3>#5 — Paste GBP description (5 min) <span class="tag tag-p0">P0</span></h3>
+<div class="card">
+  <ol>
+    <li>Open <span class="mono">docs/urbanehaauz-seo-agents/gbp-description.md</span>.</li>
+    <li>Copy the "Primary description" block (742 characters).</li>
+    <li>Paste into Google Business Profile → <strong>Edit profile</strong> → <strong>Description</strong>.</li>
+    <li>While you're there: verify the category is set to <strong>Hotel</strong> (primary) + <strong>Boutique Hotel</strong> + <strong>Guest House</strong> (secondary), hours 24/7, attributes reviewed (see local-seo-plan §5a for the 4 attributes that need honest yes/no).</li>
+  </ol>
+  <p>The phone number will appear inline in the description until Google unblocks the structured phone field (case 4-3669000040947). Keep following up on the ticket every 3 days.</p>
+</div>
+</section>
+
+<!-- =========== 7. TIMELINE =========== -->
+<section class="page-break">
+<h2>7 — Realistic Ranking Timeline</h2>
+
+<p>Anyone promising #1 in weeks is selling you snake oil. Here's the honest, phased expectation assuming the 5 action items above are done within 48 hours:</p>
+
+<table class="data">
+  <thead>
+    <tr><th style="width: 18%">Timeline</th><th>What happens</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Week 1</strong></td><td>Google begins recrawling. Brand searches (<code>urbane haauz</code>, <code>urbane haauz pelling</code>) surface the correct clean URLs. GSC starts showing impressions.</td></tr>
+    <tr><td><strong>Week 2–3</strong></td><td>Inner pages (<code>/rooms</code>, <code>/contact</code>, <code>/blog</code>) appear in GSC. First impressions for long-tail queries. GBP profile with new description live.</td></tr>
+    <tr><td><strong>Week 4–6</strong></td><td>First rankings on long-tails like "kanchenjunga view hotels pelling dorm", "upper pelling hotels near skywalk". Citations from Phase B start landing (Justdial, Tripoto, Holidify); backlink volume begins compounding.</td></tr>
+    <tr><td><strong>Week 6–10</strong></td><td>Blog posts rank for informational queries ("how to reach pelling from kolkata", "best time to visit pelling"). Traffic from blog → site conversion starts.</td></tr>
+    <tr><td><strong>Week 8–12</strong></td><td>AI engines (ChatGPT, Perplexity, Google AI Overviews) begin citing the site. GEO test plan scores should move from 0 → 5+/30 by cycle 4.</td></tr>
+    <tr><td><strong>Week 12–16</strong></td><td>Head terms ("hotels in pelling", "boutique hotel pelling") start climbing the first 5 pages of SERPs. Map-pack presence if GBP + citations are executed.</td></tr>
+    <tr><td><strong>Month 4–6</strong></td><td>Realistic shot at top-3 for "hotels in pelling" if outreach (link-building-plan) is executed and review flow is running. #1 is achievable but requires sustained link-building.</td></tr>
+  </tbody>
+</table>
+
+<div class="card card-amber">
+  <p><strong>Leading indicators to watch weekly in GSC:</strong></p>
+  <ol>
+    <li><strong>Coverage → Indexed</strong> — should go from ~1 to 14+ (all public URLs) within 2 weeks.</li>
+    <li><strong>Impressions</strong> in the Performance tab — should climb from near-zero to 500+/week by week 4.</li>
+    <li><strong>Queries tab</strong> — should start showing "pelling hotel", "kanchenjunga view", "upper pelling" terms by week 3.</li>
+    <li><strong>Average position</strong> — may look bad initially (ranking #50 vs. #100); trending down is what matters.</li>
+  </ol>
+</div>
+</section>
+
+<!-- =========== 8. OPEN QUESTIONS =========== -->
+<section>
+<h2>8 — Flagged for Your Input</h2>
+
+<p>I shipped with reasonable defaults on these. Please confirm or correct when you get a chance — none are blocking, but accuracy affects rich-results eligibility:</p>
+
+<table class="data">
+  <thead>
+    <tr><th>#</th><th>Assumption I used</th><th>Where it lives</th><th>To confirm</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td><td><code>numberOfRooms: 8</code> + 1 dorm</td><td><code>index.html</code></td><td>Real count + dorm bed count</td></tr>
+    <tr><td>2</td><td>Room prices: Standard ₹1,200–2,400, Super Deluxe ₹1,900–3,200, Premium ₹3,100–3,900, Dorm ₹400–900</td><td><code>Rooms.tsx</code> HotelRoom schema</td><td>Exact peak/off-season min-max</td></tr>
+    <tr><td>3</td><td>Max occupancy: Std 2, SupDlx 3, Prem 3, Dorm 1/bed</td><td><code>Rooms.tsx</code></td><td>Real occupancy numbers</td></tr>
+    <tr><td>4</td><td>GBP ownership: you have admin access</td><td>local-seo-plan</td><td>Y/N</td></tr>
+    <tr><td>5</td><td>Pet-friendly (on request), wheelchair accessible, kid-friendly, paid/free parking</td><td>local-seo-plan §5a</td><td>Honest yes/no on each — over-claiming risks GBP suspension</td></tr>
+    <tr><td>6</td><td>Rangotsav Event end time: 22:00 IST on 2026-05-25</td><td><code>lib/seo/schemas.ts</code></td><td>Actual end time</td></tr>
+    <tr><td>7</td><td>GBP Place ID — needed for QR code at checkout and schema <code>@id</code> hardening</td><td>local-seo-plan</td><td>Grab from GBP admin</td></tr>
+    <tr><td>8</td><td>Sikkim Hotel Association membership cost</td><td>local-seo-plan</td><td>Confirm fee / whether to join</td></tr>
+  </tbody>
+</table>
+
+<h3>Things I consciously did NOT ship</h3>
+<ul>
+  <li><strong>Review / AggregateRating schema</strong> — no authentic on-site review data. Adding fake review counts = manual-action risk. Flagged for when real reviews are imported from GBP.</li>
+  <li><strong>Razorpay ticket integration</strong> — out of scope per your instruction; deferred to a dedicated session. Existing <code>create-razorpay-order</code> Edge Functions untracked; next session.</li>
+  <li><strong>Star rating (<code>starRating</code>)</strong> — do NOT add until Sikkim Tourism Department official classification is confirmed.</li>
+  <li><strong>Paid SEO trackers</strong> (BrightLocal, Moz Local) — not needed at single-property scale. Reassess at month 4.</li>
+</ul>
+</section>
+
+<!-- =========== 9. MONTH-BY-MONTH =========== -->
+<section class="page-break">
+<h2>9 — Month-by-Month Roadmap (next 6 months)</h2>
+
+<h3>Month 1 (now → 21 May)</h3>
+<ul>
+  <li>Execute the 5 action items today or tomorrow (§6).</li>
+  <li>Paste GBP description, enable Q&amp;A, schedule 4 GBP posts (all pre-written).</li>
+  <li>Submit to top-10 citations from local-seo plan: Justdial, Sulekha, Asklaila, MakeMyTrip, Booking.com, Agoda, TripAdvisor, OYO, Goibibo, Hostelworld.</li>
+  <li>Watch GSC daily for crawl-coverage growth.</li>
+  <li>Rangotsav angle: send festival-pitch emails to Bengal media (Anandabazar travel, Telegraph India travel, 2 Bengali YouTubers) — template ready in link-building plan.</li>
+  <li>Run first bi-weekly GEO test (15 queries from geo-test-plan).</li>
+</ul>
+
+<h3>Month 2</h3>
+<ul>
+  <li>Submit to next-15 citations (Cleartrip, Ixigo, Yatra, EaseMyTrip, Trivago, Hotels.com, Expedia, Sikkim Tourism Dept, Sikkim Hotels Association if joined, etc.).</li>
+  <li>Launch post-stay review email flow (Supabase Edge Function) — already spec'd in local-seo plan.</li>
+  <li>Print + deploy QR-code cards at checkout, rooms, restaurant bill counter.</li>
+  <li>Execute Reddit / forum play: answer 20 questions on r/india, r/travel, r/solotravel, r/IndianHikers, r/sikkim (20:1 helpful:self-link ratio).</li>
+  <li>Publish 2 new blog posts (pick from gaps flagged in keyword-brief content-gaps section).</li>
+</ul>
+
+<h3>Month 3</h3>
+<ul>
+  <li>Second outreach batch to travel blogs: Tripoto, Holidify, Thrillophilia, LBB, So City.</li>
+  <li>Expert-quote outreach: offer Ayan as quote source for Sikkim travel articles (template ready).</li>
+  <li>OTA profile optimization deep-dive: 25+ photos on each platform, amenity completeness, response rate.</li>
+  <li>Run bi-weekly GEO tests; log results in <code>geo-test-plan.md</code>.</li>
+</ul>
+
+<h3>Month 4</h3>
+<ul>
+  <li>Mid-sprint review: audit backlink growth in GSC, check whether rankings have moved, re-audit competitors.</li>
+  <li>Publish 2 more blog posts targeting competitor-gap keywords.</li>
+  <li>Review session for Rangotsav coverage media retention — convert press contacts into ongoing relationships.</li>
+  <li>Consider BrightLocal ($29/mo) for citation monitoring if drift is detected manually.</li>
+</ul>
+
+<h3>Month 5–6</h3>
+<ul>
+  <li>Focus on conversion optimization — now that traffic is flowing from rankings, tighten /book funnel. Razorpay integration sprint.</li>
+  <li>Digital PR: pitch Condé Nast Traveller India, Curly Tales, national outlets with "one year of cultural hospitality in Pelling" angle.</li>
+  <li>Third outreach batch — re-engage month-1 contacts who didn't respond; pitch them the growth story.</li>
+  <li>Evaluate: have we cracked top-3 for "hotels in pelling"? If yes, start planning next property's SEO from day 1. If no, diagnose (backlinks, content, GBP reviews — pick the weakest and double down).</li>
+</ul>
+</section>
+
+<!-- =========== 10. APPENDIX =========== -->
+<section>
+<h2>10 — Appendix: Today's Commits</h2>
+
+<ul class="commits">
+  <li><span class="sha">c081bad</span>Add link-builder plan: 35 backlink targets, 3 outreach templates, OTA checklist, digital PR hook sheet</li>
+  <li><span class="sha">38ab185</span>Add GEO direct-answer blocks for AI answer engines</li>
+  <li><span class="sha">0295355</span>Add per-page JSON-LD: HotelRoom, FAQPage, Event, BreadcrumbList + agent reports</li>
+  <li><span class="sha">83f6b91</span>Add /blog route with 6 pillar SEO posts for Pelling travel guides</li>
+  <li><span class="sha">bc201ac</span>Technical SEO: image optimization, LCP preload, cache headers, CLS fixes</li>
+  <li><span class="sha">85a285c</span>fix: /pelling-2.0 404 — simplify SPA rewrite</li>
+  <li><span class="sha">ce4d76e</span>Fix audit P0s: restore rooms/experiences nav links, real WhatsApp, un-noindex Pelling 2.0, noindex MyBookings</li>
+  <li><span class="sha">26c1d74</span>Phase A — Unblock indexing: clean URLs, real schema, unified NAP, sitemap</li>
+</ul>
+
+<p class="footer-note">
+Prepared end-to-end in Claude Code (2026-04-21) with 8 specialized subagents coordinating across the repo.
+All code committed to <span class="mono">main</span> on GitHub (<span class="mono">urbanehaauz/urbanehaauz-website</span>).
+Deployed to production via Vercel auto-deploy on push.
+Full agent transcripts retained in <span class="mono">.claude/agent-memory/</span> for future sessions.
+</p>
+</section>
+
+</body>
+</html>

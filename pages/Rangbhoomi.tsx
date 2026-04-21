@@ -570,7 +570,9 @@ const ArtistModal: React.FC<{ artist: Artist | null; onClose: () => void }> = ({
   );
 };
 
-const ARTWORKS: { src: string; title: string; medium: string }[] = [
+type Artwork = { src: string; title: string; medium: string };
+
+const ARTWORKS: Artwork[] = [
   { src: '/artists/artwork-angel.jpg', title: 'Orchid Bearer', medium: 'Mixed media on canvas' },
   { src: '/artists/artwork-buddha-monk.jpeg', title: 'Passage of the Novice', medium: 'Acrylic on canvas' },
   { src: '/artists/artwork-buddha-lotus.jpeg', title: 'Lotus Throne', medium: 'Mixed media on canvas' },
@@ -582,10 +584,58 @@ const ARTWORKS: { src: string; title: string; medium: string }[] = [
   { src: '/artists/artwork-sculpture-teapot.jpeg', title: "The Potter's Hour", medium: 'Wood sculpture · Samrat Chowdhury' },
 ];
 
+const ArtworkLightbox: React.FC<{ art: Artwork | null; onClose: () => void }> = ({ art, onClose }) => {
+  useEffect(() => {
+    if (!art) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [art, onClose]);
+
+  if (!art) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-center justify-center px-4 py-8 bg-black/90 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${art.title} — artwork`}
+    >
+      <div
+        className="relative w-full max-w-5xl flex flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-2 right-0 md:top-0 md:-right-12 z-10 w-10 h-10 rounded-full bg-black/60 hover:bg-[#D4A574] hover:text-[#1C1C1C] text-[#FAF7F2] flex items-center justify-center transition"
+          aria-label="Close"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <img
+          src={art.src}
+          alt={art.title}
+          className="max-h-[78vh] w-auto max-w-full object-contain rounded-lg shadow-2xl"
+        />
+        <div className="mt-5 text-center">
+          <h3 className="text-[#FAF7F2] font-serif text-2xl md:text-3xl leading-tight">{art.title}</h3>
+          <p className="text-[#D4A574] text-xs uppercase tracking-[0.3em] mt-2">{art.medium}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ArtworkCarousel: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
+  const [activeArt, setActiveArt] = useState<Artwork | null>(null);
 
   const updateEdges = () => {
     const el = scrollRef.current;
@@ -628,22 +678,32 @@ const ArtworkCarousel: React.FC = () => {
             data-art-card
             className="flex-none w-[82%] sm:w-[60%] md:w-[44%] lg:w-[32%] snap-start"
           >
-            <div className="group relative">
-              <div className="aspect-square rounded-2xl overflow-hidden border border-[#D4A574]/20 shadow-xl bg-gradient-to-br from-[#1C1C1C] to-[#2D1B69] group-hover:shadow-2xl group-hover:shadow-[#D4A574]/20 transition-all duration-500">
-                <img
-                  src={art.src}
-                  alt={art.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent flex items-end p-5">
-                  <div>
-                    <p className="text-[#FAF7F2] font-serif text-lg md:text-xl leading-tight">{art.title}</p>
-                    <p className="text-[#D4A574] text-[10px] uppercase tracking-[0.25em] mt-1.5">{art.medium}</p>
+            <button
+              type="button"
+              onClick={() => setActiveArt(art)}
+              aria-label={`View ${art.title} full size`}
+              className="group block w-full text-left focus:outline-none"
+            >
+              <div className="relative">
+                <div className="aspect-square rounded-2xl overflow-hidden border border-[#D4A574]/20 shadow-xl bg-gradient-to-br from-[#1C1C1C] to-[#2D1B69] group-hover:shadow-2xl group-hover:shadow-[#D4A574]/20 group-focus:border-[#D4A574] transition-all duration-500">
+                  <img
+                    src={art.src}
+                    alt={art.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent flex items-end p-5">
+                    <div>
+                      <p className="text-[#FAF7F2] font-serif text-lg md:text-xl leading-tight">{art.title}</p>
+                      <p className="text-[#D4A574] text-[10px] uppercase tracking-[0.25em] mt-1.5">{art.medium}</p>
+                    </div>
+                  </div>
+                  <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-black/45 backdrop-blur-sm flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:bg-[#D4A574] group-hover:text-[#1C1C1C] transition-all">
+                    <Plus className="w-3.5 h-3.5" />
                   </div>
                 </div>
               </div>
-            </div>
+            </button>
           </div>
         ))}
       </div>
@@ -665,6 +725,7 @@ const ArtworkCarousel: React.FC = () => {
       >
         <ChevronRight className="w-5 h-5" />
       </button>
+      <ArtworkLightbox art={activeArt} onClose={() => setActiveArt(null)} />
     </div>
   );
 };

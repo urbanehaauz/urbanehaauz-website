@@ -50,6 +50,7 @@ const AdminDashboard: React.FC = () => {
   const [currentView, setCurrentView] = useState<'overview' | 'rooms' | 'bookings' | 'staff' | 'finance' | 'financial-tracker' | 'settings' | 'rangotsav'>('overview');
   const [rangotsavVendors, setRangotsavVendors] = useState<any[]>([]);
   const [rangotsavNotify, setRangotsavNotify] = useState<any[]>([]);
+  const [rangotsavVolunteers, setRangotsavVolunteers] = useState<any[]>([]);
   const [rangotsavLoading, setRangotsavLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
@@ -137,21 +138,63 @@ const AdminDashboard: React.FC = () => {
     setTimeout(() => setNotification(null), 3000);
   };
 
-  // Rangotsav data loading
+  // Rangotsav data loading — single unified table, split client-side by type.
   const loadRangotsavData = async () => {
     setRangotsavLoading(true);
     try {
-      const { data: vendors } = await supabase.from('rangotsav_vendors').select('*').order('created_at', { ascending: false });
-      const { data: notify } = await supabase.from('rangotsav_notify').select('*').order('created_at', { ascending: false });
-      setRangotsavVendors(vendors || []);
-      setRangotsavNotify(notify || []);
+      const { data, error } = await supabase
+        .from('rangotsav_registrations')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) {
+        console.error('rangotsav_registrations load failed:', error);
+      }
+      const rows = data || [];
+      // Reshape vendor rows so downstream UI can still read v.what_selling.
+      setRangotsavVendors(
+        rows
+          .filter((r) => r.type === 'vendor')
+          .map((r) => ({ ...r, what_selling: r.details?.what_selling ?? '' })),
+      );
+      setRangotsavVolunteers(
+        rows
+          .filter((r) => r.type === 'volunteer')
+          .map((r) => ({ ...r, skills: r.details?.skills ?? '' })),
+      );
+      setRangotsavNotify(rows.filter((r) => r.type === 'notify'));
     } catch (e) { console.error(e); }
     setRangotsavLoading(false);
   };
 
-  const updateVendorStatus = async (id: string, status: string) => {
-    await supabase.from('rangotsav_vendors').update({ status }).eq('id', id);
+  const updateVendorStatus = async (id: string, status: 'approved' | 'rejected') => {
+    const vendor = rangotsavVendors.find((v) => v.id === id);
+    const { error } = await supabase
+      .from('rangotsav_registrations')
+      .update({ status })
+      .eq('id', id);
+    if (error) {
+      console.error('updateVendorStatus failed:', error);
+      showNotification('Failed to update vendor status', 'error');
+      return;
+    }
     showNotification(`Vendor ${status}`);
+    if (vendor) {
+      try {
+        if (status === 'approved') {
+          const { sendRangotsavVendorApproved } = await import('../lib/email/emailService');
+          await sendRangotsavVendorApproved({
+            name: vendor.name,
+            email: vendor.email,
+            whatSelling: vendor.what_selling || vendor.details?.what_selling || '',
+          });
+        } else if (status === 'rejected') {
+          const { sendRangotsavVendorRejected } = await import('../lib/email/emailService');
+          await sendRangotsavVendorRejected({ name: vendor.name, email: vendor.email });
+        }
+      } catch (e) {
+        console.error('vendor status email failed:', e);
+      }
+    }
     loadRangotsavData();
   };
 
@@ -1210,7 +1253,7 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
                 <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Total Vendors</p>
                 <p className="text-2xl font-bold text-gray-800 mt-1">{rangotsavVendors.length}</p>
@@ -1222,6 +1265,10 @@ const AdminDashboard: React.FC = () => {
               <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
                 <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Pending</p>
                 <p className="text-2xl font-bold text-yellow-600 mt-1">{rangotsavVendors.filter(v => v.status === 'pending').length}</p>
+              </div>
+              <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Volunteers</p>
+                <p className="text-2xl font-bold text-orange-600 mt-1">{rangotsavVolunteers.length}</p>
               </div>
               <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
                 <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Notify Signups</p>
@@ -1270,6 +1317,39 @@ const AdminDashboard: React.FC = () => {
                             </div>
                           )}
                         </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            {/* Volunteer Registrations */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="p-5 border-b border-gray-100 bg-gray-50">
+                <h3 className="font-bold text-gray-700">Volunteer Registrations</h3>
+              </div>
+              {rangotsavVolunteers.length === 0 ? (
+                <div className="p-8 text-center text-gray-400">No volunteer signups yet</div>
+              ) : (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="text-xs text-gray-400 uppercase border-b border-gray-100">
+                      <th className="px-5 py-3 font-bold tracking-wider">Name</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Email</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Phone</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">How They'd Help</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Signed Up</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {rangotsavVolunteers.map((v) => (
+                      <tr key={v.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                        <td className="px-5 py-3 font-semibold text-gray-800">{v.name}</td>
+                        <td className="px-5 py-3 text-gray-600">{v.email}</td>
+                        <td className="px-5 py-3 text-gray-600">{v.phone || '—'}</td>
+                        <td className="px-5 py-3 text-gray-600 max-w-md">{v.skills}</td>
+                        <td className="px-5 py-3 text-gray-400 text-xs">{new Date(v.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</td>
                       </tr>
                     ))}
                   </tbody>

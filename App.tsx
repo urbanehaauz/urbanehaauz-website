@@ -32,7 +32,7 @@ const ScrollToTop = () => {
   return null;
 };
 
-const STANDALONE_ROUTES = ['/rangbhoomi', '/pelling-2.0'];
+const STANDALONE_ROUTES = ['/rangotsav', '/pelling-2.0'];
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -78,7 +78,8 @@ const App: React.FC = () => {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/auth/callback" element={<AuthCallback />} />
-                    <Route path="/rangbhoomi" element={<Rangbhoomi />} />
+                    <Route path="/rangotsav" element={<Rangbhoomi />} />
+                    <Route path="/rangbhoomi" element={<Navigate to="/rangotsav" replace />} />
                     <Route path="/pelling-2.0" element={<PellingAfterDark />} />
                     <Route path="/pelling-after-dark" element={<Navigate to="/pelling-2.0" replace />} />
                   </Routes>

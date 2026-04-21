@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
                 {t.home}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
-            <Link to="/rangbhoomi" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
+            <Link to="/rangotsav" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
                 Event
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
@@ -150,7 +150,7 @@ const Navbar: React.FC = () => {
               {t.home}
             </Link>
             <Link
-              to="/rangbhoomi"
+              to="/rangotsav"
               className="text-white text-lg font-serif hover:text-urbane-gold"
               onClick={() => setIsOpen(false)}
             >

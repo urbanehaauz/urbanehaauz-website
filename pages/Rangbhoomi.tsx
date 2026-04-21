@@ -483,6 +483,11 @@ const ARTISTS: Artist[] = [
     image: '/artists/sristha-ganguly.jpeg',
     bio: "A young painter from West Bengal whose evolving practice engages contemporary themes through a distinctly personal palette. Her work represents a new generation of Bengal's painters stepping onto the gallery scene.",
   },
+  {
+    name: 'Samrat Chowdhury',
+    image: '/artists/samrat-chowdhury.jpeg',
+    bio: "A B.V.A. graduate of Government College of Art & Craft, Kolkata. Honoured by the Indian Society of Oriental Art (2009) and Altamira Art Gallery (2022), with two decades of participation in shows at Academy of Fine Arts, Birla Academy, Gaganendra Pradarshasala, and Karnataka Chitrakala Parishath.",
+  },
 ];
 
 const ArtistCard: React.FC<{ artist: Artist; idx: number }> = ({ artist, idx }) => (
@@ -530,13 +535,13 @@ const ArtistsSection: React.FC = () => (
             Painters from Bengal
           </h2>
           <p className="mt-4 text-[#FAF7F2]/70 text-base md:text-lg leading-relaxed">
-            Eleven contemporary painters travelling to Pelling — each bringing a distinct
+            Twelve contemporary painters travelling to Pelling — each bringing a distinct
             vocabulary of colour, form, and quiet observation to the Himalayas.
           </p>
         </div>
       </Reveal>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 md:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-5">
         {ARTISTS.map((a, i) => (
           <ArtistCard key={a.name} artist={a} idx={i} />
         ))}
@@ -732,34 +737,34 @@ const RegistrationSection: React.FC = () => {
   const [vendorEmail, setVendorEmail] = useState('');
   const [vendorSelling, setVendorSelling] = useState('');
   const [vendorDone, setVendorDone] = useState(false);
-  const [activeTab, setActiveTab] = useState<'tickets' | 'vendors'>('tickets');
+  const [volName, setVolName] = useState('');
+  const [volEmail, setVolEmail] = useState('');
+  const [volPhone, setVolPhone] = useState('');
+  const [volSkills, setVolSkills] = useState('');
+  const [volDone, setVolDone] = useState(false);
+  const [activeTab, setActiveTab] = useState<'tickets' | 'vendors' | 'volunteers'>('tickets');
 
   const handleNotify = async (e: React.FormEvent) => {
     e.preventDefault();
     const email = notifyEmail.trim();
     if (!email) return;
-    let isNewSignup = false;
     try {
       const { supabase } = await import('../lib/supabase');
-      const { data, error } = await supabase
-        .from('rangotsav_notify')
-        .upsert({ email }, { onConflict: 'email', ignoreDuplicates: true })
-        .select();
-      if (error) {
-        console.error('rangotsav_notify upsert failed:', error);
-      } else {
-        isNewSignup = (data?.length ?? 0) > 0;
-      }
+      const { error } = await supabase
+        .from('rangotsav_registrations')
+        .upsert(
+          { type: 'notify', email },
+          { onConflict: 'type,email', ignoreDuplicates: true },
+        );
+      if (error) console.error('rangotsav_registrations notify upsert failed:', error);
     } catch (e) {
-      console.error('rangotsav_notify exception:', e);
+      console.error('rangotsav_registrations notify exception:', e);
     }
-    if (isNewSignup) {
-      try {
-        const { sendRangotsavNotifyConfirmation } = await import('../lib/email/emailService');
-        await sendRangotsavNotifyConfirmation(email);
-      } catch (e) {
-        console.error('sendRangotsavNotifyConfirmation exception:', e);
-      }
+    try {
+      const { sendRangotsavNotifyConfirmation } = await import('../lib/email/emailService');
+      await sendRangotsavNotifyConfirmation(email);
+    } catch (e) {
+      console.error('sendRangotsavNotifyConfirmation exception:', e);
     }
     setNotifyDone(true);
   };
@@ -770,30 +775,66 @@ const RegistrationSection: React.FC = () => {
     const email = vendorEmail.trim();
     const whatSelling = vendorSelling.trim();
     if (!name || !email || !whatSelling) return;
-    let inserted = false;
     try {
       const { supabase } = await import('../lib/supabase');
-      const { data, error } = await supabase
-        .from('rangotsav_vendors')
-        .insert({ name, email, what_selling: whatSelling })
-        .select();
-      if (error) {
-        console.error('rangotsav_vendors insert failed:', error);
-      } else {
-        inserted = (data?.length ?? 0) > 0;
-      }
+      const { error } = await supabase
+        .from('rangotsav_registrations')
+        .upsert(
+          {
+            type: 'vendor',
+            email,
+            name,
+            details: { what_selling: whatSelling },
+            status: 'pending',
+          },
+          { onConflict: 'type,email' },
+        );
+      if (error) console.error('rangotsav_registrations vendor upsert failed:', error);
     } catch (e) {
-      console.error('rangotsav_vendors exception:', e);
+      console.error('rangotsav_registrations vendor exception:', e);
     }
-    if (inserted) {
-      try {
-        const { sendRangotsavVendorWelcome } = await import('../lib/email/emailService');
-        await sendRangotsavVendorWelcome({ name, email, whatSelling });
-      } catch (e) {
-        console.error('sendRangotsavVendorWelcome exception:', e);
-      }
+    try {
+      const { sendRangotsavVendorWelcome } = await import('../lib/email/emailService');
+      await sendRangotsavVendorWelcome({ name, email, whatSelling });
+    } catch (e) {
+      console.error('sendRangotsavVendorWelcome exception:', e);
     }
     setVendorDone(true);
+  };
+
+  const handleVolunteer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = volName.trim();
+    const email = volEmail.trim();
+    const phone = volPhone.trim();
+    const skills = volSkills.trim();
+    if (!name || !email || !skills) return;
+    try {
+      const { supabase } = await import('../lib/supabase');
+      const { error } = await supabase
+        .from('rangotsav_registrations')
+        .upsert(
+          {
+            type: 'volunteer',
+            email,
+            name,
+            phone: phone || null,
+            details: { skills },
+            status: 'pending',
+          },
+          { onConflict: 'type,email' },
+        );
+      if (error) console.error('rangotsav_registrations volunteer upsert failed:', error);
+    } catch (e) {
+      console.error('rangotsav_registrations volunteer exception:', e);
+    }
+    try {
+      const { sendRangotsavVolunteerWelcome } = await import('../lib/email/emailService');
+      await sendRangotsavVolunteerWelcome({ name, email, skills });
+    } catch (e) {
+      console.error('sendRangotsavVolunteerWelcome exception:', e);
+    }
+    setVolDone(true);
   };
 
   return (
@@ -836,29 +877,39 @@ const RegistrationSection: React.FC = () => {
           No physical tickets. All confirmations via email after registration.
         </p>
 
-        {/* Tab switcher: Tickets / Vendors */}
+        {/* Tab switcher: Tickets / Vendors / Volunteers */}
         <Reveal delay={200}>
           <div className="mt-16 max-w-2xl mx-auto">
-            <div className="flex justify-center gap-2 mb-8">
+            <div className="flex flex-wrap justify-center gap-2 mb-8">
               <button
                 onClick={() => setActiveTab('tickets')}
-                className={`px-6 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
+                className={`px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
                   activeTab === 'tickets'
                     ? 'bg-[#D4A574] text-[#1C1C1C]'
                     : 'border border-[#FAF7F2]/20 text-[#FAF7F2]/60 hover:border-[#D4A574]/40'
                 }`}
               >
-                Get Notified for Tickets
+                Notify Me
               </button>
               <button
                 onClick={() => setActiveTab('vendors')}
-                className={`px-6 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
+                className={`px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
                   activeTab === 'vendors'
                     ? 'bg-[#4A7C59] text-[#FAF7F2]'
                     : 'border border-[#FAF7F2]/20 text-[#FAF7F2]/60 hover:border-[#4A7C59]/40'
                 }`}
               >
-                Join as Food Vendor
+                Food Vendor
+              </button>
+              <button
+                onClick={() => setActiveTab('volunteers')}
+                className={`px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
+                  activeTab === 'volunteers'
+                    ? 'bg-[#C84B0F] text-[#FAF7F2]'
+                    : 'border border-[#FAF7F2]/20 text-[#FAF7F2]/60 hover:border-[#C84B0F]/40'
+                }`}
+              >
+                Volunteer
               </button>
             </div>
 
@@ -953,6 +1004,79 @@ const RegistrationSection: React.FC = () => {
                       className="w-full bg-[#4A7C59] hover:bg-[#5a9469] text-[#FAF7F2] font-semibold px-8 py-3.5 rounded-full uppercase tracking-[0.15em] text-sm transition"
                     >
                       Submit Application
+                    </button>
+                  </form>
+                )}
+              </div>
+            )}
+
+            {/* Volunteer Registration */}
+            {activeTab === 'volunteers' && (
+              <div>
+                <div className="text-center mb-6">
+                  <h4 className="font-serif text-2xl mb-2">Volunteer at Rangotsav</h4>
+                  <p className="text-[#FAF7F2]/60 text-sm">
+                    Help us host Bengal-meets-Sikkim in Pelling. Tell us how you'd like to contribute — on-ground coordination, artist hospitality, logistics, social & content, or hands at the food stalls.
+                  </p>
+                </div>
+                {volDone ? (
+                  <div className="text-center bg-[#C84B0F]/20 border border-[#C84B0F]/60 rounded-2xl px-6 py-5 text-[#D4A574]">
+                    Thank you! Our team will get back to you with the volunteer brief.
+                  </div>
+                ) : (
+                  <form onSubmit={handleVolunteer} className="space-y-5">
+                    <div>
+                      <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">Full Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={volName}
+                        onChange={(e) => setVolName(e.target.value)}
+                        placeholder="Your name"
+                        style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
+                        className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#C84B0F] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">Email Address *</label>
+                      <input
+                        type="email"
+                        required
+                        value={volEmail}
+                        onChange={(e) => setVolEmail(e.target.value)}
+                        placeholder="your@email.com"
+                        style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
+                        className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#C84B0F] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">Phone (optional)</label>
+                      <input
+                        type="tel"
+                        value={volPhone}
+                        onChange={(e) => setVolPhone(e.target.value)}
+                        placeholder="+91 ..."
+                        style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
+                        className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#C84B0F] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">How would you like to help? *</label>
+                      <textarea
+                        required
+                        value={volSkills}
+                        onChange={(e) => setVolSkills(e.target.value)}
+                        placeholder="e.g., On-ground coordination, artist hospitality, social media, photography, stage logistics, food stalls…"
+                        rows={3}
+                        style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
+                        className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#C84B0F] focus:outline-none resize-none"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full bg-[#C84B0F] hover:bg-[#d95a1f] text-[#FAF7F2] font-semibold px-8 py-3.5 rounded-full uppercase tracking-[0.15em] text-sm transition"
+                    >
+                      Sign Up to Volunteer
                     </button>
                   </form>
                 )}

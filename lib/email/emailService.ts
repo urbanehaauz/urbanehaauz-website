@@ -399,7 +399,7 @@ export async function sendRangotsavNotifyConfirmation(email: string): Promise<bo
           <!-- Hero image -->
           <tr>
             <td style="padding: 0; font-size: 0; line-height: 0;">
-              <img src="https://urbanehaauz.com/artists/artwork-sunset.jpg" alt="Rangotsav 2026 — a cultural conglomerate in the mountains" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
+              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026 — a cultural conglomerate in the mountains" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
             </td>
           </tr>
 
@@ -544,7 +544,7 @@ export async function sendRangotsavVendorWelcome(data: {
           <!-- Hero image -->
           <tr>
             <td style="padding: 0; font-size: 0; line-height: 0;">
-              <img src="https://urbanehaauz.com/artists/artwork-sunset.jpg" alt="Rangotsav 2026" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
+              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
             </td>
           </tr>
 
@@ -662,6 +662,256 @@ export async function sendRangotsavVendorWelcome(data: {
     result.error
   );
 
+  return result.success;
+}
+
+function rangotsavShellHtml(args: {
+  title: string;
+  eyebrow: string;
+  heading: string;
+  lead: string;
+  bodyBlocks: string;
+  signOff: string;
+}): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${args.title}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Georgia, 'Times New Roman', serif; background-color: #1C1C1C;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #1C1C1C; padding: 24px 12px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1C1C1C; border: 1px solid rgba(212,165,116,0.2); border-radius: 4px; overflow: hidden;">
+          <tr>
+            <td style="background-color: #FAF7F2; padding: 20px 40px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.3);">
+              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="64" height="64" style="display: inline-block; width: 64px; height: 64px; border: 0; outline: none; text-decoration: none;">
+              <p style="color: #1C1C1C; margin: 10px 0 0; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Urbane Haauz &middot; Pelling, Sikkim</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0; font-size: 0; line-height: 0;">
+              <img src="https://urbanehaauz.com/rangotsav-ganesh.jpeg" alt="Rangotsav 2026" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 48px 40px 32px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.15);">
+              <p style="color: #D4A574; margin: 0 0 18px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">A Cultural Conglomerate</p>
+              <h1 style="color: #FAF7F2; margin: 0; font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;">Rangotsav</h1>
+              <p style="color: #D4A574; margin: 18px 0 0; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; 25 May 2026 &middot; Pelling &mdash;</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 40px 40px 8px; text-align: center;">
+              <p style="color: #D4A574; margin: 0 0 18px; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-family: Arial, sans-serif;">${args.eyebrow}</p>
+              <h2 style="color: #FAF7F2; margin: 0 0 20px; font-size: 26px; font-weight: 400; font-style: italic; line-height: 1.3;">${args.heading}</h2>
+              <p style="color: rgba(250,247,242,0.65); margin: 0; font-size: 15px; line-height: 1.7; font-family: Georgia, serif;">${args.lead}</p>
+            </td>
+          </tr>
+          ${args.bodyBlocks}
+          <tr>
+            <td style="padding: 32px 40px 32px; text-align: center;">
+              <div style="height: 1px; background-color: rgba(212,165,116,0.2); margin: 0 auto 24px;"></div>
+              <p style="color: rgba(250,247,242,0.6); margin: 0; font-size: 13px; line-height: 1.8; font-family: Georgia, serif; font-style: italic;">${args.signOff}</p>
+              <p style="color: #D4A574; margin: 14px 0 0; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; Team Urbane Haauz</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #141414; padding: 24px 40px; text-align: center; border-top: 1px solid rgba(212,165,116,0.1);">
+              <p style="color: rgba(250,247,242,0.4); margin: 0 0 6px; font-size: 11px; font-family: Arial, sans-serif;">
+                Urbane Haauz &middot; SH-510, Pelling, West Sikkim 737113
+              </p>
+              <p style="color: rgba(250,247,242,0.35); margin: 0; font-size: 11px; font-family: Arial, sans-serif;">
+                <a href="tel:+919136032524" style="color: #D4A574; text-decoration: none;">+91 91360 32524</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://urbanehaauz.com" style="color: #D4A574; text-decoration: none;">urbanehaauz.com</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+}
+
+function escHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+export async function sendRangotsavVolunteerWelcome(data: {
+  name: string;
+  email: string;
+  skills: string;
+}): Promise<boolean> {
+  const name = escHtml(data.name);
+  const skills = escHtml(data.skills).replace(/\n/g, '<br>');
+  const subject = 'Volunteer sign-up received — Rangotsav 2026';
+
+  const bodyBlocks = `
+    <tr>
+      <td style="padding: 32px 40px;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: rgba(212,165,116,0.05); border: 1px solid rgba(212,165,116,0.25); border-radius: 12px;">
+          <tr>
+            <td style="padding: 24px 28px;">
+              <p style="color: #D4A574; margin: 0 0 14px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">Your Signup</p>
+              <p style="color: rgba(250,247,242,0.55); margin: 0 0 4px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Name</p>
+              <p style="color: #FAF7F2; margin: 0 0 16px; font-size: 15px; font-family: Georgia, serif;">${name}</p>
+              <p style="color: rgba(250,247,242,0.55); margin: 0 0 4px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">How you'd like to help</p>
+              <p style="color: #FAF7F2; margin: 0; font-size: 15px; line-height: 1.6; font-family: Georgia, serif;">${skills}</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 40px 0;">
+        <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">What happens next</h3>
+        <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          We'll match you to a team &mdash; hospitality, stage &amp; logistics, food stalls, social &amp; content, or on-ground coordination &mdash; and send a volunteer brief with call times, travel guidance, and festival day-of kit details a few weeks before the event.
+        </p>
+        <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          Volunteers receive festival meals, a Rangotsav crew lanyard, and the front-row view of every performance. Travel and accommodation are self-arranged; we can suggest homestay options in Pelling if you're coming in from Bengal.
+        </p>
+        <p style="color: rgba(250,247,242,0.55); margin: 0 0 12px; font-size: 13px; line-height: 1.7; font-family: Georgia, serif; font-style: italic;">
+          Reply to this email if you have questions or want to add to your signup.
+        </p>
+      </td>
+    </tr>
+  `;
+
+  const html = rangotsavShellHtml({
+    title: 'Rangotsav — Volunteer signup',
+    eyebrow: 'Signup Received',
+    heading: `Glad to have you on the crew, ${name}.`,
+    lead: "Thank you for offering your time to Rangotsav 2026. Our team will come back to you with where you fit best.",
+    bodyBlocks,
+    signOff: 'A festival is only as warm as the people who show up to build it.',
+  });
+
+  const result = await sendEmail({ to: data.email, subject, html });
+  await logEmail(
+    data.email, data.name, 'rangotsav_volunteer_welcome', subject, null,
+    result.success ? 'sent' : 'failed', result.id, result.error,
+  );
+  return result.success;
+}
+
+export async function sendRangotsavVendorApproved(data: {
+  name: string;
+  email: string;
+  whatSelling: string;
+}): Promise<boolean> {
+  const name = escHtml(data.name);
+  const whatSelling = escHtml(data.whatSelling).replace(/\n/g, '<br>');
+  const subject = "You're confirmed — Rangotsav 2026 Food Vendor";
+
+  const bodyBlocks = `
+    <tr>
+      <td style="padding: 32px 40px;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: rgba(74,124,89,0.10); border: 1px solid rgba(74,124,89,0.45); border-radius: 12px;">
+          <tr>
+            <td style="padding: 24px 28px;">
+              <p style="color: #7FB88F; margin: 0 0 14px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Confirmed &middot; You're In</p>
+              <p style="color: rgba(250,247,242,0.55); margin: 0 0 4px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Business / Name</p>
+              <p style="color: #FAF7F2; margin: 0 0 16px; font-size: 15px; font-family: Georgia, serif;">${name}</p>
+              <p style="color: rgba(250,247,242,0.55); margin: 0 0 4px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Your Menu</p>
+              <p style="color: #FAF7F2; margin: 0; font-size: 15px; line-height: 1.6; font-family: Georgia, serif;">${whatSelling}</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 40px 0;">
+        <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">Commission on on-site sales</h3>
+        <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          A commission on gross on-site sales is shared with the festival to cover infrastructure, licensing, and programming. The exact percentage and settlement schedule will be confirmed in your participation agreement, which we'll send separately in the next 5 business days for your e-signature.
+        </p>
+        <p style="color: rgba(250,247,242,0.75); margin: 0; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          Settlement happens within 7 working days after the festival, net of commission and any cashless-payments reconciliation.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 32px 40px 0;">
+        <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">Before 25 May</h3>
+        <ul style="color: rgba(250,247,242,0.75); margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.85; font-family: Georgia, serif;">
+          <li>You'll receive a stall allocation, setup window, and load-in gate pass by 10 May.</li>
+          <li>FSSAI registration number, food-handler ID photo, and sample menu (with prices) are required for your participation agreement.</li>
+          <li>Basic infrastructure (stall, power point, shared water) is provided. Signage, serving ware, and staff are your responsibility.</li>
+          <li>Please don't commit to third-party catering on 25 May until the agreement is signed &mdash; we'll turn this around quickly.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 32px 40px 0;">
+        <p style="color: rgba(250,247,242,0.55); margin: 0; font-size: 13px; line-height: 1.7; font-family: Georgia, serif; font-style: italic;">
+          Reply to this email with your FSSAI details and we'll fast-track your agreement.
+        </p>
+      </td>
+    </tr>
+  `;
+
+  const html = rangotsavShellHtml({
+    title: 'Rangotsav — Vendor confirmed',
+    eyebrow: 'Application Approved',
+    heading: `You're confirmed, ${name}.`,
+    lead: 'We loved what you proposed to bring to the festival. Below are your on-site sales commission terms and what we need from you before 25 May.',
+    bodyBlocks,
+    signOff: 'Looking forward to your stall being one of the stops everyone tells their friends about.',
+  });
+
+  const result = await sendEmail({ to: data.email, subject, html });
+  await logEmail(
+    data.email, data.name, 'rangotsav_vendor_approved', subject, null,
+    result.success ? 'sent' : 'failed', result.id, result.error,
+  );
+  return result.success;
+}
+
+export async function sendRangotsavVendorRejected(data: {
+  name: string;
+  email: string;
+}): Promise<boolean> {
+  const name = escHtml(data.name);
+  const subject = 'Update on your Rangotsav 2026 vendor application';
+
+  const bodyBlocks = `
+    <tr>
+      <td style="padding: 32px 40px 0;">
+        <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          Rangotsav 2026 is our first edition, and we're hosting a small, tightly curated set of food stalls centred on Pelling and surrounding community kitchens. We reviewed your application carefully, and this time we won't be able to offer you a stall.
+        </p>
+        <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          This is not a reflection of your offering &mdash; it's a function of stall count and curation for this edition. We've kept your application on file, and you'll be first on our list for Rangotsav 2027 and any Urbane Haauz tasting pop-ups we host in the interim.
+        </p>
+        <p style="color: rgba(250,247,242,0.75); margin: 0; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          You're warmly invited to visit the festival on 25 May as a guest. We'd love to meet you in person.
+        </p>
+      </td>
+    </tr>
+  `;
+
+  const html = rangotsavShellHtml({
+    title: 'Rangotsav — Application update',
+    eyebrow: 'Application Update',
+    heading: `Thank you for applying, ${name}.`,
+    lead: "We received many more vendor applications than we had stalls for this first edition. Here's where we landed.",
+    bodyBlocks,
+    signOff: "We're building something long-term here, and we hope our paths cross again soon.",
+  });
+
+  const result = await sendEmail({ to: data.email, subject, html });
+  await logEmail(
+    data.email, data.name, 'rangotsav_vendor_rejected', subject, null,
+    result.success ? 'sent' : 'failed', result.id, result.error,
+  );
   return result.success;
 }
 

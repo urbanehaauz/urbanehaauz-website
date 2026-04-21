@@ -455,8 +455,13 @@ const ARTISTS: Artist[] = [
   },
   {
     name: 'Kartick Roy',
-    image: '/artists/kartick-roy.png',
+    image: '/artists/kartick-roy.jpg',
     bio: "A painter with a 7-year Diploma in Painting from SBS & SP, West Bengal. Exhibited at Annual Art Exhibitions at Chitrangan College (1994-96), Academy of Fine Arts Kolkata (2004), Chitrakala Parisad Bengaluru (2019), S.B.C.O.K.N Academy Kolkata (2024), Government Museum Jhansi (2024), and Art Hive All India Exhibition Kolkata (2025). Solo show at Art Plaza, Mumbai (2025).",
+  },
+  {
+    name: 'Samir Debnath',
+    image: '/artists/samir-debnath.png',
+    bio: "A contemporary Bengal painter whose studio practice bridges portraiture and quiet interior scenes. His work has been part of group exhibitions across West Bengal.",
   },
   {
     name: 'Kanika Sarkar',
@@ -525,7 +530,7 @@ const ArtistsSection: React.FC = () => (
             Painters from Bengal
           </h2>
           <p className="mt-4 text-[#FAF7F2]/70 text-base md:text-lg leading-relaxed">
-            Ten contemporary painters travelling to Pelling — each bringing a distinct
+            Eleven contemporary painters travelling to Pelling — each bringing a distinct
             vocabulary of colour, form, and quiet observation to the Himalayas.
           </p>
         </div>

@@ -14,6 +14,8 @@ import {
   ExternalLink,
   Users,
   Heart,
+  Plus,
+  X,
 } from 'lucide-react';
 
 const useInView = (threshold = 0.15) => {
@@ -490,62 +492,135 @@ const ARTISTS: Artist[] = [
   },
 ];
 
-const ArtistCard: React.FC<{ artist: Artist; idx: number }> = ({ artist, idx }) => (
-  <Reveal delay={idx * 60}>
-    <article className="group h-full bg-[#FAF7F2]/[0.04] border border-[#FAF7F2]/10 hover:border-[#D4A574]/60 rounded-2xl overflow-hidden backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#D4A574]/10 flex flex-col">
+const ArtistCard: React.FC<{ artist: Artist; idx: number; onOpen: () => void }> = ({ artist, idx, onOpen }) => (
+  <Reveal delay={idx * 50}>
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`View bio for ${artist.name}`}
+      className="group block w-full h-full text-left bg-[#FAF7F2]/[0.04] border border-[#FAF7F2]/10 hover:border-[#D4A574]/60 rounded-2xl overflow-hidden backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#D4A574]/10 focus:outline-none focus:border-[#D4A574]"
+    >
       <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#1C1C1C] to-[#2D1B69]">
         <img
           src={artist.image}
           alt={`Portrait of ${artist.name}, painter`}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
         />
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0D0D2B]/90 via-[#0D0D2B]/40 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0D0D2B]/95 via-[#0D0D2B]/65 to-transparent pt-14 pb-4 px-4">
+          <h3 className="font-serif text-base md:text-lg text-[#FAF7F2] leading-tight">
+            {artist.name}
+          </h3>
+          <p className="text-[9px] uppercase tracking-[0.3em] text-[#D4A574] mt-1">
+            Painter · W. Bengal
+          </p>
+        </div>
         {artist.feature && (
-          <div className="absolute top-3 left-3 text-[9px] uppercase tracking-[0.25em] bg-[#D4A574] text-[#1C1C1C] px-2.5 py-1 rounded-full font-semibold">
+          <div className="absolute top-2.5 left-2.5 text-[8px] uppercase tracking-[0.2em] bg-[#D4A574] text-[#1C1C1C] px-2 py-0.5 rounded-full font-bold">
             Featured
           </div>
         )}
+        <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-black/45 backdrop-blur-sm flex items-center justify-center opacity-70 group-hover:opacity-100 group-hover:bg-[#D4A574] group-hover:text-[#1C1C1C] transition-all">
+          <Plus className="w-3.5 h-3.5" />
+        </div>
       </div>
-      <div className="p-5 md:p-6 flex-1 flex flex-col">
-        <h3 className="font-serif text-xl md:text-2xl text-[#FAF7F2] leading-tight">
-          {artist.name}
-        </h3>
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4A574] mt-1.5">
-          Painter · West Bengal
-        </p>
-        <p className="mt-4 text-sm text-[#FAF7F2]/75 leading-relaxed flex-1">
-          {artist.bio}
-        </p>
-      </div>
-    </article>
+    </button>
   </Reveal>
 );
 
-const ArtistsSection: React.FC = () => (
-  <section className="py-28 md:py-36 relative overflow-hidden bg-[#1f1248] text-[#FAF7F2]">
-    <NoiseOverlay />
-    <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
-      <Reveal>
-        <div className="text-center mb-16 max-w-3xl mx-auto">
-          <span className="text-xs uppercase tracking-[0.5em] text-[#D4A574]">
-            The Lineup
-          </span>
-          <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
-            Painters from Bengal
-          </h2>
-          <p className="mt-4 text-[#FAF7F2]/70 text-base md:text-lg leading-relaxed">
-            Twelve contemporary painters travelling to Pelling — each bringing a distinct
-            vocabulary of colour, form, and quiet observation to the Himalayas.
+const ArtistModal: React.FC<{ artist: Artist | null; onClose: () => void }> = ({ artist, onClose }) => {
+  useEffect(() => {
+    if (!artist) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [artist, onClose]);
+
+  if (!artist) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-8 bg-black/80 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${artist.name} — artist bio`}
+    >
+      <div
+        className="relative w-full max-w-4xl bg-[#1f1248] border border-[#D4A574]/30 rounded-2xl shadow-2xl grid md:grid-cols-2 max-h-[90vh] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/50 hover:bg-black/85 text-[#FAF7F2] flex items-center justify-center transition"
+          aria-label="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
+        <div className="relative aspect-[4/5] md:aspect-auto md:h-full bg-gradient-to-br from-[#1C1C1C] to-[#2D1B69]">
+          <img
+            src={artist.image}
+            alt={`Portrait of ${artist.name}`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="p-8 md:p-10 flex flex-col justify-center overflow-y-auto">
+          {artist.feature && (
+            <div className="inline-block self-start text-[9px] uppercase tracking-[0.25em] bg-[#D4A574] text-[#1C1C1C] px-2.5 py-1 rounded-full font-bold mb-5">
+              Featured
+            </div>
+          )}
+          <h3 className="font-serif text-3xl md:text-4xl text-[#FAF7F2] leading-tight">
+            {artist.name}
+          </h3>
+          <p className="text-[10px] uppercase tracking-[0.35em] text-[#D4A574] mt-2">
+            Painter · West Bengal
+          </p>
+          <p className="mt-6 text-[#FAF7F2]/80 text-sm md:text-base leading-relaxed">
+            {artist.bio}
           </p>
         </div>
-      </Reveal>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-5">
-        {ARTISTS.map((a, i) => (
-          <ArtistCard key={a.name} artist={a} idx={i} />
-        ))}
       </div>
+    </div>
+  );
+};
+
+const ArtistsSection: React.FC = () => {
+  const [activeArtist, setActiveArtist] = useState<Artist | null>(null);
+  return (
+    <section className="py-28 md:py-36 relative overflow-hidden bg-[#1f1248] text-[#FAF7F2]">
+      <NoiseOverlay />
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12">
+        <Reveal>
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            <span className="text-xs uppercase tracking-[0.5em] text-[#D4A574]">
+              The Lineup
+            </span>
+            <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
+              Painters from Bengal
+            </h2>
+            <p className="mt-4 text-[#FAF7F2]/70 text-base md:text-lg leading-relaxed">
+              Twelve contemporary painters travelling to Pelling — each bringing a distinct
+              vocabulary of colour, form, and quiet observation to the Himalayas.
+            </p>
+            <p className="mt-3 text-[#D4A574]/80 text-xs uppercase tracking-[0.3em]">
+              Tap any portrait for the full bio
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-5">
+          {ARTISTS.map((a, i) => (
+            <ArtistCard key={a.name} artist={a} idx={i} onOpen={() => setActiveArtist(a)} />
+          ))}
+        </div>
+      <ArtistModal artist={activeArtist} onClose={() => setActiveArtist(null)} />
 
       <Reveal delay={200}>
         <div className="mt-14 max-w-6xl mx-auto">
@@ -591,9 +666,10 @@ const ArtistsSection: React.FC = () => (
           </p>
         </div>
       </Reveal>
-    </div>
-  </section>
-);
+      </div>
+    </section>
+  );
+};
 
 /* -------------------------------------------------------------------------- */
 /*                                FOOD SECTION                                */
@@ -924,7 +1000,10 @@ const RegistrationSection: React.FC = () => {
                 </div>
                 {notifyDone ? (
                   <div className="text-center bg-[#4A7C59]/30 border border-[#4A7C59] rounded-2xl px-6 py-5 text-[#D4A574]">
-                    Thank you! We'll notify you as soon as tickets are available.
+                    <p className="font-semibold">Thank you &mdash; you're on the list.</p>
+                    <p className="text-[#FAF7F2]/80 text-sm mt-2">
+                      A confirmation has been sent to your inbox. We'll email you the moment tickets go live. (Check your spam folder if you don't see it in a few minutes.)
+                    </p>
                   </div>
                 ) : (
                   <form onSubmit={handleNotify} className="flex flex-col md:flex-row gap-3">
@@ -959,7 +1038,10 @@ const RegistrationSection: React.FC = () => {
                 </div>
                 {vendorDone ? (
                   <div className="text-center bg-[#4A7C59]/30 border border-[#4A7C59] rounded-2xl px-6 py-5 text-[#D4A574]">
-                    Application received! We'll reach out to you shortly with next steps.
+                    <p className="font-semibold">Application received.</p>
+                    <p className="text-[#FAF7F2]/80 text-sm mt-2">
+                      A welcome email with our review timeline and commission policy has been sent to your inbox. We'll get back to you within 7 business days. (Check your spam folder if you don't see it shortly.)
+                    </p>
                   </div>
                 ) : (
                   <form onSubmit={handleVendor} className="space-y-5">
@@ -1021,7 +1103,10 @@ const RegistrationSection: React.FC = () => {
                 </div>
                 {volDone ? (
                   <div className="text-center bg-[#C84B0F]/20 border border-[#C84B0F]/60 rounded-2xl px-6 py-5 text-[#D4A574]">
-                    Thank you! Our team will get back to you with the volunteer brief.
+                    <p className="font-semibold">You're signed up to volunteer.</p>
+                    <p className="text-[#FAF7F2]/80 text-sm mt-2">
+                      A confirmation email is on its way to your inbox. Our team will send the volunteer brief with call times and logistics closer to the festival. (Check your spam folder if you don't see it shortly.)
+                    </p>
                   </div>
                 ) : (
                   <form onSubmit={handleVolunteer} className="space-y-5">

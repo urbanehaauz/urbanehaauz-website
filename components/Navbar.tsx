@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Mountain, User, LogOut, CalendarCheck, MapPin, Mail } from 'lucide-react';
+import { Menu, X, User, LogOut, CalendarCheck, MapPin, Mail } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import LoginModal from './LoginModal';
@@ -39,9 +39,11 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="p-2 bg-white/10 rounded-full group-hover:bg-urbane-gold transition-colors duration-300">
-                <Mountain className="h-6 w-6 text-urbane-gold group-hover:text-white transition-colors" />
-            </div>
+            <img
+              src="/uh-badge.png"
+              alt="Urbane Haauz logo"
+              className="h-10 w-10 rounded-full ring-1 ring-white/20 group-hover:ring-urbane-gold transition-all"
+            />
             <div className="flex flex-col">
                 <span className="font-serif text-xl md:text-2xl font-bold text-white tracking-wider leading-none">
                 URBANE HAAUZ

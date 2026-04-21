@@ -11,7 +11,7 @@ import { supabase } from '../supabase';
 
 // Resend API configuration
 const RESEND_API_KEY = import.meta.env.VITE_RESEND_API_KEY || '';
-const FROM_EMAIL = 'Urbane Haauz <onboarding@resend.dev>'; // Change to your domain after verification
+const FROM_EMAIL = 'Urbane Haauz <bookings@urbanehaauz.com>';
 const REPLY_TO = 'urbanehaauz@gmail.com';
 
 interface EmailPayload {

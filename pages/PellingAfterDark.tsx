@@ -795,7 +795,7 @@ const FALLBACK_CASES: CaseStudy[] = [
   {
     name: 'Rajasthan — Chokhi Dhani',
     stat: 'Revenue: ₹10L–₹18L/night | 800–1,500 visitors/night | Entry: ₹1,000–₹1,700/person',
-    image: '',
+    image: '/case-studies/chokhi-dhani.jpg',
     description:
       'Location: Tonk Road, ~20km from Jaipur. Full-scale cultural village + dining ecosystem. Fixed evening timing 5PM–10:30PM, food+culture bundled. A complete evening economy model — food, folk performance, artisans, and retail under one experience.',
     url: 'https://chokhidhani.com/village-fair-restaurant-jaipur/live-entertainment/',
@@ -804,7 +804,7 @@ const FALLBACK_CASES: CaseStudy[] = [
   {
     name: 'Punjab — Sadda Pind',
     stat: 'Revenue: ₹3L–₹8L/night | 300–800 visitors/night | Entry: ₹700–₹1,500',
-    image: '',
+    image: '/case-studies/sadda-pind.jpg',
     description:
       'Location: Amritsar. Cultural village + dining + live performances. Bhangra, Gidda, folk music nightly. Attracts Golden Temple tourists + local families. A proven model of bundling cultural performances with food and community participation.',
     url: 'https://www.saddapind.com/',
@@ -813,7 +813,7 @@ const FALLBACK_CASES: CaseStudy[] = [
   {
     name: 'Kerala — Kathakali Centre',
     stat: 'Revenue: ₹50K–₹2L/night | Capacity: 80–150 seats, 2–3 shows/evening | Entry: ₹400–₹600/show',
-    image: '',
+    image: '/case-studies/kathakali.jpg',
     description:
       'Location: Fort Kochi. Daily cultural performance theatre with fixed schedule. Multiple shows stacked per evening. Small-scale but high-consistency model — proof that even 80 seats/night can generate sustainable cultural income.',
     url: 'https://www.keralakathakali.com/',
@@ -822,7 +822,7 @@ const FALLBACK_CASES: CaseStudy[] = [
   {
     name: 'Goa — Ancestral Goa Big Foot Museum',
     stat: 'Revenue: ₹50K–₹2L/night | 200–600 visitors/day | Entry: ₹100–₹300',
-    image: '',
+    image: '/case-studies/big-foot.jpg',
     description:
       'Location: Loutolim, South Goa. Heritage village + cultural shows. Steady tourist flow year-round with live folk performances. Low entry barrier model demonstrating that even modest pricing generates consistent revenue with volume.',
     url: 'https://www.ancestralgoa.com/',
@@ -831,7 +831,7 @@ const FALLBACK_CASES: CaseStudy[] = [
   {
     name: 'Dubai — Al Seef Cultural District',
     stat: 'Annual visitors: 3–5 million | Daily footfall: 8,000–15,000 | Peak (Nov–Mar): 15,000–25,000/day',
-    image: '',
+    image: '/case-studies/al-seef.jpg',
     description:
       'Waterfront + heritage + dining ecosystem. 20–30% engage in evening cultural programming. Evening-first design philosophy. A PPP model between Dubai Holding and local artisans — proof that cultural districts work at scale when designed around the evening economy.',
     url: 'https://en.wikipedia.org/wiki/Al_Seef',
@@ -840,7 +840,7 @@ const FALLBACK_CASES: CaseStudy[] = [
   {
     name: 'Kandy Esala Perahera, Sri Lanka',
     stat: 'Festival: ~10 days/year | 100,000–200,000 spectators/night | Total: 1–2 million visitors',
-    image: '',
+    image: '/case-studies/kandy-perahera.jpg',
     description:
       'Multi-crore nightly economic activity. Deep religious + cultural significance with fixed annual calendar. A centuries-old festival of dancers, drummers, and fire-breathers — a single city transformed into a cultural destination supported jointly by temple, state, and private operators.',
     url: 'https://en.wikipedia.org/wiki/Kandy_Esala_Perahera',

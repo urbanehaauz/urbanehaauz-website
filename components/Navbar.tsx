@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
                 Event
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
-            <Link to="/pelling-after-dark" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
+            <Link to="/pelling-2.0" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
                 Vision
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
@@ -157,7 +157,7 @@ const Navbar: React.FC = () => {
               Event
             </Link>
             <Link
-              to="/pelling-after-dark"
+              to="/pelling-2.0"
               className="text-white text-lg font-serif hover:text-urbane-gold"
               onClick={() => setIsOpen(false)}
             >

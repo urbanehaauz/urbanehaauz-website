@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -32,7 +32,7 @@ const ScrollToTop = () => {
   return null;
 };
 
-const STANDALONE_ROUTES = ['/rangbhoomi', '/pelling-after-dark'];
+const STANDALONE_ROUTES = ['/rangbhoomi', '/pelling-2.0'];
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -79,7 +79,8 @@ const App: React.FC = () => {
                     <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/auth/callback" element={<AuthCallback />} />
                     <Route path="/rangbhoomi" element={<Rangbhoomi />} />
-                    <Route path="/pelling-after-dark" element={<PellingAfterDark />} />
+                    <Route path="/pelling-2.0" element={<PellingAfterDark />} />
+                    <Route path="/pelling-after-dark" element={<Navigate to="/pelling-2.0" replace />} />
                   </Routes>
                 </Suspense>
               </MainLayout>

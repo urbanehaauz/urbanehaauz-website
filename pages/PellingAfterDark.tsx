@@ -1831,7 +1831,7 @@ const PellingAfterDark: React.FC = () => (
       <meta property="og:description" content="A structured vision for nightly cultural programming, tourist-attraction events, and a sustained evening economy in West Sikkim." />
       {/* Presentation — not indexed publicly */}
       <meta name="robots" content="noindex, nofollow" />
-      <link rel="canonical" href="https://urbanehaauz.com/#/pelling-after-dark" />
+      <link rel="canonical" href="https://urbanehaauz.com/#/pelling-2.0" />
     </Helmet>
     <style>{PRINT_STYLES}</style>
 

@@ -508,6 +508,163 @@ export async function sendRangotsavNotifyConfirmation(email: string): Promise<bo
   return result.success;
 }
 
+export async function sendRangotsavVendorWelcome(data: {
+  name: string;
+  email: string;
+  whatSelling: string;
+}): Promise<boolean> {
+  const esc = (s: string) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const name = esc(data.name);
+  const whatSelling = esc(data.whatSelling).replace(/\n/g, '<br>');
+
+  const subject = 'Application Received — Rangotsav 2026 Food Vendor';
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rangotsav — Vendor Application Received</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Georgia, 'Times New Roman', serif; background-color: #1C1C1C;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #1C1C1C; padding: 24px 12px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1C1C1C; border: 1px solid rgba(212,165,116,0.2); border-radius: 4px; overflow: hidden;">
+
+          <!-- Brand bar -->
+          <tr>
+            <td style="background-color: #FAF7F2; padding: 20px 40px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.3);">
+              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="64" height="64" style="display: inline-block; width: 64px; height: 64px; border: 0; outline: none; text-decoration: none;">
+              <p style="color: #1C1C1C; margin: 10px 0 0; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Urbane Haauz &middot; Pelling, Sikkim</p>
+            </td>
+          </tr>
+
+          <!-- Hero image -->
+          <tr>
+            <td style="padding: 0; font-size: 0; line-height: 0;">
+              <img src="https://urbanehaauz.com/artists/artwork-sunset.jpg" alt="Rangotsav 2026" width="600" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0; outline: none; text-decoration: none;">
+            </td>
+          </tr>
+
+          <!-- Header -->
+          <tr>
+            <td style="padding: 48px 40px 32px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.15);">
+              <p style="color: #D4A574; margin: 0 0 18px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">A Cultural Conglomerate</p>
+              <h1 style="color: #FAF7F2; margin: 0; font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;">Rangotsav</h1>
+              <p style="color: #D4A574; margin: 18px 0 0; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; 25 May 2026 &middot; Pelling &mdash;</p>
+            </td>
+          </tr>
+
+          <!-- Confirmation -->
+          <tr>
+            <td style="padding: 40px 40px 8px; text-align: center;">
+              <p style="color: #D4A574; margin: 0 0 18px; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-family: Arial, sans-serif;">Application Received</p>
+              <h2 style="color: #FAF7F2; margin: 0 0 20px; font-size: 26px; font-weight: 400; font-style: italic; line-height: 1.3;">
+                Thank you for stepping forward, ${name}.
+              </h2>
+              <p style="color: rgba(250,247,242,0.65); margin: 0; font-size: 15px; line-height: 1.7; font-family: Georgia, serif;">
+                Your food vendor application for Rangotsav 2026 has reached us. Our team will review your offering and respond within 7 business days.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Submission recap -->
+          <tr>
+            <td style="padding: 32px 40px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color: rgba(212,165,116,0.05); border: 1px solid rgba(212,165,116,0.25); border-radius: 12px;">
+                <tr>
+                  <td style="padding: 24px 28px;">
+                    <p style="color: #D4A574; margin: 0 0 14px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">Your Submission</p>
+                    <p style="color: rgba(250,247,242,0.55); margin: 0 0 4px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Business / Name</p>
+                    <p style="color: #FAF7F2; margin: 0 0 16px; font-size: 15px; font-family: Georgia, serif;">${name}</p>
+                    <p style="color: rgba(250,247,242,0.55); margin: 0 0 4px; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">What You'll Be Selling</p>
+                    <p style="color: #FAF7F2; margin: 0; font-size: 15px; line-height: 1.6; font-family: Georgia, serif;">${whatSelling}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Policy -->
+          <tr>
+            <td style="padding: 8px 40px 0;">
+              <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">Before you commit stock</h3>
+              <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+                Participation is subject to review. Only confirmed vendors receive a final invitation to trade at Rangotsav &mdash; please don't commit supplies or staff until you hear back from us.
+              </p>
+              <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+                A commission on on-site sales may apply for confirmed vendors. Complete terms &mdash; including the commission percentage and settlement schedule &mdash; will be shared with your participation agreement once we've confirmed your slot.
+              </p>
+              <p style="color: rgba(250,247,242,0.75); margin: 0; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+                Priority goes to Pelling and surrounding community kitchens that reflect the food heritage of Sikkim and Bengal. We welcome authenticity over scale.
+              </p>
+            </td>
+          </tr>
+
+          <!-- What happens next -->
+          <tr>
+            <td style="padding: 32px 40px 0;">
+              <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">What happens next</h3>
+              <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+                We'll review your application and get back to you within 7 business days. If confirmed, you'll receive a participation agreement and logistics brief at this email address.
+              </p>
+              <p style="color: rgba(250,247,242,0.55); margin: 0; font-size: 13px; line-height: 1.7; font-family: Georgia, serif; font-style: italic;">
+                Reply to this email if you'd like to add anything to your application.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Sign-off -->
+          <tr>
+            <td style="padding: 32px 40px 32px; text-align: center;">
+              <div style="height: 1px; background-color: rgba(212,165,116,0.2); margin: 0 auto 24px;"></div>
+              <p style="color: rgba(250,247,242,0.6); margin: 0; font-size: 13px; line-height: 1.8; font-family: Georgia, serif; font-style: italic;">
+                Thank you for wanting to feed our festival.
+              </p>
+              <p style="color: #D4A574; margin: 14px 0 0; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; Team Urbane Haauz</p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #141414; padding: 24px 40px; text-align: center; border-top: 1px solid rgba(212,165,116,0.1);">
+              <p style="color: rgba(250,247,242,0.4); margin: 0 0 6px; font-size: 11px; font-family: Arial, sans-serif;">
+                Urbane Haauz &middot; SH-510, Pelling, West Sikkim 737113
+              </p>
+              <p style="color: rgba(250,247,242,0.35); margin: 0; font-size: 11px; font-family: Arial, sans-serif;">
+                <a href="tel:+919136032524" style="color: #D4A574; text-decoration: none;">+91 91360 32524</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://urbanehaauz.com" style="color: #D4A574; text-decoration: none;">urbanehaauz.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+
+  const result = await sendEmail({ to: data.email, subject, html });
+
+  await logEmail(
+    data.email,
+    data.name,
+    'rangotsav_vendor_welcome',
+    subject,
+    null,
+    result.success ? 'sent' : 'failed',
+    result.id,
+    result.error
+  );
+
+  return result.success;
+}
+
 export async function sendContactInquiryNotification(inquiry: {
   name: string;
   email: string;

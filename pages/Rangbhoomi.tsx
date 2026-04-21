@@ -761,15 +761,33 @@ const RegistrationSection: React.FC = () => {
 
   const handleVendor = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!vendorName.trim() || !vendorEmail.trim() || !vendorSelling.trim()) return;
+    const name = vendorName.trim();
+    const email = vendorEmail.trim();
+    const whatSelling = vendorSelling.trim();
+    if (!name || !email || !whatSelling) return;
+    let inserted = false;
     try {
       const { supabase } = await import('../lib/supabase');
-      await supabase.from('rangotsav_vendors').insert({
-        name: vendorName.trim(),
-        email: vendorEmail.trim(),
-        what_selling: vendorSelling.trim(),
-      });
-    } catch { /* silent */ }
+      const { data, error } = await supabase
+        .from('rangotsav_vendors')
+        .insert({ name, email, what_selling: whatSelling })
+        .select();
+      if (error) {
+        console.error('rangotsav_vendors insert failed:', error);
+      } else {
+        inserted = (data?.length ?? 0) > 0;
+      }
+    } catch (e) {
+      console.error('rangotsav_vendors exception:', e);
+    }
+    if (inserted) {
+      try {
+        const { sendRangotsavVendorWelcome } = await import('../lib/email/emailService');
+        await sendRangotsavVendorWelcome({ name, email, whatSelling });
+      } catch (e) {
+        console.error('sendRangotsavVendorWelcome exception:', e);
+      }
+    }
     setVendorDone(true);
   };
 

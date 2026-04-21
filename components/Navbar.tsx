@@ -76,6 +76,10 @@ const Navbar: React.FC = () => {
                 Experiences
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
             </Link>
+            <Link to="/blog" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
+                Guides
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
+            </Link>
             <Link to="/contact" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
                 {t.contact}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>
@@ -183,6 +187,13 @@ const Navbar: React.FC = () => {
               onClick={() => setIsOpen(false)}
             >
               Experiences
+            </Link>
+            <Link
+              to="/blog"
+              className="text-white text-lg font-serif hover:text-urbane-gold"
+              onClick={() => setIsOpen(false)}
+            >
+              Guides
             </Link>
             <Link
               to="/contact"

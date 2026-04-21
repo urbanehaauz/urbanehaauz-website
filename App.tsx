@@ -10,6 +10,8 @@ import BookingFlow from './pages/BookingFlow';
 import LocalExperiences from './pages/LocalExperiences';
 import Contact from './pages/Contact';
 import MyBookings from './pages/MyBookings';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import { AppProvider } from './context/AppContext';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
@@ -74,6 +76,8 @@ const App: React.FC = () => {
                     <Route path="/experiences" element={<LocalExperiences />} />
                     <Route path="/book" element={<BookingFlow />} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/blog/:slug" element={<BlogPost />} />
                     <Route path="/my-bookings" element={<MyBookings />} />
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/admin/login" element={<AdminLogin />} />

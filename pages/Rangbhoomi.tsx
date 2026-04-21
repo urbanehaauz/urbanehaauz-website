@@ -733,20 +733,28 @@ const RegistrationSection: React.FC = () => {
     e.preventDefault();
     const email = notifyEmail.trim();
     if (!email) return;
+    let isNewSignup = false;
     try {
       const { supabase } = await import('../lib/supabase');
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('rangotsav_notify')
-        .upsert({ email }, { onConflict: 'email', ignoreDuplicates: true });
-      if (error) console.error('rangotsav_notify upsert failed:', error);
+        .upsert({ email }, { onConflict: 'email', ignoreDuplicates: true })
+        .select();
+      if (error) {
+        console.error('rangotsav_notify upsert failed:', error);
+      } else {
+        isNewSignup = (data?.length ?? 0) > 0;
+      }
     } catch (e) {
       console.error('rangotsav_notify exception:', e);
     }
-    try {
-      const { sendRangotsavNotifyConfirmation } = await import('../lib/email/emailService');
-      await sendRangotsavNotifyConfirmation(email);
-    } catch (e) {
-      console.error('sendRangotsavNotifyConfirmation exception:', e);
+    if (isNewSignup) {
+      try {
+        const { sendRangotsavNotifyConfirmation } = await import('../lib/email/emailService');
+        await sendRangotsavNotifyConfirmation(email);
+      } catch (e) {
+        console.error('sendRangotsavNotifyConfirmation exception:', e);
+      }
     }
     setNotifyDone(true);
   };

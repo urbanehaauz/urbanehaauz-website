@@ -357,7 +357,7 @@ const StandaloneHeader: React.FC<{ onDark?: boolean }> = ({ onDark = true }) => 
       to="/"
       className="group flex items-center gap-2 hover:text-[#D4A574] transition-colors"
     >
-      <img src="/logo.jpeg" alt="Urbane Haauz" className="h-10 w-auto" />
+      <img src="/uh-badge.png" alt="Urbane Haauz" className="w-10 h-10 rounded-full object-cover" />
       <span className="opacity-60 text-sm">·</span>
       <span className="text-xs uppercase tracking-[0.2em] opacity-70 group-hover:opacity-100">
         Pelling Cultural Initiative

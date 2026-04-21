@@ -1,18 +1,12 @@
 /**
- * Email Service using Resend
+ * Email Service
  *
- * SETUP INSTRUCTIONS:
- * 1. Add VITE_RESEND_API_KEY to your Vercel environment variables
- * 2. In Resend dashboard, verify your domain or use their test domain
- * 3. For production, set up a proper from email like booking@urbanehaauz.com
+ * Sends go through the `send-email` Supabase Edge Function, which holds
+ * the Resend API key server-side. Deploy with `supabase functions deploy
+ * send-email` and set the secret via `supabase secrets set RESEND_API_KEY=...`.
  */
 
 import { supabase } from '../supabase';
-
-// Resend API configuration
-const RESEND_API_KEY = import.meta.env.VITE_RESEND_API_KEY || '';
-const FROM_EMAIL = 'Urbane Haauz <info@urbanehaauz.com>';
-const REPLY_TO = 'urbanehaauz@gmail.com';
 
 interface EmailPayload {
   to: string;
@@ -33,37 +27,23 @@ interface BookingEmailData {
   paymentStatus: string;
 }
 
-// Send email via Resend API
 async function sendEmail(payload: EmailPayload): Promise<{ success: boolean; id?: string; error?: string }> {
-  if (!RESEND_API_KEY) {
-    console.warn('Resend API key not configured. Email not sent.');
-    return { success: false, error: 'Email service not configured' };
-  }
-
   try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: FROM_EMAIL,
-        to: [payload.to],
-        subject: payload.subject,
-        html: payload.html,
-        reply_to: payload.replyTo || REPLY_TO,
-      }),
+    const { data, error } = await supabase.functions.invoke('send-email', {
+      body: payload,
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      return { success: true, id: data.id };
-    } else {
-      console.error('Resend API error:', data);
-      return { success: false, error: data.message || 'Failed to send email' };
+    if (error) {
+      console.error('send-email invoke error:', error);
+      return { success: false, error: error.message };
     }
+
+    if (data?.error) {
+      console.error('send-email function error:', data.error);
+      return { success: false, error: data.error };
+    }
+
+    return { success: true, id: data?.id };
   } catch (error: any) {
     console.error('Email send error:', error);
     return { success: false, error: error.message };

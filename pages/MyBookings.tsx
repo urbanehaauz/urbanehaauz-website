@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Calendar, MapPin, Users, CreditCard, Clock, AlertCircle, CheckCircle, XCircle, Loader2, ChevronRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -200,6 +201,10 @@ const MyBookings: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-urbane-mist">
+      <Helmet>
+        <title>My Bookings | Urbane Haauz</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       {/* Header */}
       <section className="bg-gradient-to-r from-urbane-darkGreen to-urbane-green py-16">
         <div className="max-w-7xl mx-auto px-4">

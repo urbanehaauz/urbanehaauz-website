@@ -1826,8 +1826,7 @@ const PellingAfterDark: React.FC = () => (
       />
       <meta property="og:title" content="Pelling 2.0 · Pelling's evenings, reimagined." />
       <meta property="og:description" content="A structured vision for nightly cultural programming, tourist-attraction events, and a sustained evening economy in West Sikkim." />
-      {/* Presentation — not indexed publicly */}
-      <meta name="robots" content="noindex, nofollow" />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://urbanehaauz.com/pelling-2.0" />
     </Helmet>
     <style>{PRINT_STYLES}</style>

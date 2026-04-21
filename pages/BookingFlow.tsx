@@ -356,7 +356,7 @@ const BookingFlow: React.FC = () => {
           <div className="mb-6 bg-amber-50 border border-amber-300 rounded-lg p-4 text-amber-900 text-sm">
             <p className="font-bold mb-1">Online booking is temporarily unavailable.</p>
             <p>
-              Please <a href="https://wa.me/919800000000" className="underline font-medium">WhatsApp us</a> or call us to make a reservation. We apologise for the inconvenience.
+              Please <a href="https://wa.me/919136032524" className="underline font-medium">WhatsApp us</a> or call <a href="tel:+919136032524" className="underline font-medium">+91 9136032524</a> to make a reservation. We apologise for the inconvenience.
             </p>
           </div>
         )}

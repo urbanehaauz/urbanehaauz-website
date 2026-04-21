@@ -112,8 +112,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Rooms Preview — hidden; bookings handled externally via runhotel.site */}
-      {false && (
+      {/* Featured Rooms Preview — indexable landing section + internal link equity to /rooms */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16">
@@ -152,7 +151,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-      )}
 
       {/* Testimonials */}
       <section className="py-24 bg-urbane-darkGreen text-white relative overflow-hidden">

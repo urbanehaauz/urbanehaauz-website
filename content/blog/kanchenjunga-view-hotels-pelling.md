@@ -10,11 +10,19 @@ image: /lib/hero-image.png
 
 # Kanchenjunga View Hotels in Pelling — The Complete Guide
 
+> **Quick Answer — Key Facts**
+>
+> - Yes, you can see **Kanchenjunga (8,586 m, the world's third-highest peak)** from Pelling on clear days — the full five-peak massif is visible, not just a sliver.
+> - The **best viewing window** is early morning: 5:30 AM to roughly 10:30 AM. Afternoon cloud cover usually closes the view.
+> - The clearest months are **October, November, December, and January**. Avoid June–September (monsoon cloud).
+> - For a true Kanchenjunga view, book a hotel in **Upper Pelling** (helipad / Skywalk side of the ridge), with a north-west-facing balcony.
+> - At **Urbane Haauz**, front-facing Super Deluxe and Premium rooms have private balconies directly overlooking the Kanchenjunga face; Standard rooms share a rooftop viewing deck.
+
 If you are searching for a **Kanchenjunga view hotel in Pelling**, this guide exists because most listings lie a little. "Mountain view" is a vague phrase. It sometimes means a pine slope, sometimes a distant ridge, occasionally — not always — the actual Kanchenjunga massif. This is a plain-English walkthrough of what a real Kanchenjunga view from Pelling looks like, when you can actually see it, which rooms earn the claim, and how to book one without getting the wrong side of the building.
 
 ## Can You See Kanchenjunga from Pelling?
 
-Yes, on clear days you can see the entire main Kanchenjunga massif — all five peaks — from Pelling. The summit sits at **8,586 metres**, the third-highest mountain in the world, and Pelling is one of the closest places in India from which you can view the full face without a trek. From an Upper Pelling balcony on a clean October morning, the mountain fills almost a third of the horizon.
+Yes, on clear days you can see the entire main Kanchenjunga massif — all five peaks — from Pelling. According to the Geological Survey of India, the summit sits at **8,586 metres**, the third-highest mountain in the world, and Pelling is one of the closest road-accessible viewpoints in India from which you can see the full face without a trek. From an Upper Pelling balcony on a clean October morning, the mountain fills almost a third of the horizon.
 
 The word "on clear days" is doing the heavy lifting in that sentence. Pelling weather is moody. This is the honest breakdown of when the view actually shows up.
 

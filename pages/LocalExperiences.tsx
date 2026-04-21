@@ -121,6 +121,54 @@ const LocalExperiences: React.FC = () => {
         </div>
       </section>
 
+      {/* Pelling Quick Facts — GEO optimization: direct-answer block for AI engines */}
+      <section className="py-12 bg-white border-b border-gray-100" aria-labelledby="pelling-facts-heading">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="bg-urbane-mist border-l-4 border-urbane-gold p-8">
+            <h2 id="pelling-facts-heading" className="font-serif text-2xl md:text-3xl text-urbane-charcoal font-bold mb-2">
+              Pelling Quick Facts
+            </h2>
+            <p className="text-gray-500 text-sm mb-6">
+              Short factual answers to the questions first-time visitors ask about Pelling, Sikkim.
+            </p>
+            <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5 text-sm">
+              <div>
+                <dt className="font-bold text-urbane-charcoal mb-1">Where is Pelling?</dt>
+                <dd className="text-gray-700">West Sikkim, India, at roughly 2,150 m altitude. The nearest large town is Geyzing (10 km).</dd>
+              </div>
+              <div>
+                <dt className="font-bold text-urbane-charcoal mb-1">Nearest railway station</dt>
+                <dd className="text-gray-700">New Jalpaiguri (NJP) — approximately 140 km / 4.5–5 hours by taxi.</dd>
+              </div>
+              <div>
+                <dt className="font-bold text-urbane-charcoal mb-1">Nearest airport</dt>
+                <dd className="text-gray-700">Bagdogra (IXB), near Siliguri — approximately 140 km / 4.5–5 hours by road.</dd>
+              </div>
+              <div>
+                <dt className="font-bold text-urbane-charcoal mb-1">Best time to visit</dt>
+                <dd className="text-gray-700">October–November for the clearest Kanchenjunga views; March–April for rhododendrons; late December–January for snowfall chances.</dd>
+              </div>
+              <div>
+                <dt className="font-bold text-urbane-charcoal mb-1">Do Indians need an Inner Line Permit?</dt>
+                <dd className="text-gray-700">No. According to the Sikkim Tourism Department, Indian citizens do not need an Inner Line Permit for Pelling or most of West Sikkim — a valid photo ID is sufficient. Foreign nationals do need an ILP to enter Sikkim.</dd>
+              </div>
+              <div>
+                <dt className="font-bold text-urbane-charcoal mb-1">Primary languages</dt>
+                <dd className="text-gray-700">Nepali and English are the working languages. Hindi is widely spoken. At Urbane Haauz, Bengali-speaking staff are on hand for Kolkata families.</dd>
+              </div>
+              <div>
+                <dt className="font-bold text-urbane-charcoal mb-1">Currency &amp; payments</dt>
+                <dd className="text-gray-700">Indian Rupee (INR). UPI and cards are accepted in most Pelling hotels and restaurants, including Urbane Haauz. Keep some cash for local taxi fares and monastery entry tickets.</dd>
+              </div>
+              <div>
+                <dt className="font-bold text-urbane-charcoal mb-1">How many days do you need?</dt>
+                <dd className="text-gray-700">Two full days is the sweet spot — one local-sightseeing day and one distant-sightseeing day. Add a third day if you want Yuksom or a Khecheopalri overnight.</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
       {/* Intro Section */}
       <section className="py-16 bg-white">
         <div className="max-w-4xl mx-auto text-center px-6">

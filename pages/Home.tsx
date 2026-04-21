@@ -87,14 +87,76 @@ const Home: React.FC = () => {
                  Experience the Magic of <br/> Kanchenjunga
              </h2>
              <p className="text-gray-600 leading-loose text-lg">
-                 Nestled in the heart of West Sikkim, Urbane Haauz offers an escape from the ordinary. 
-                 Whether you are a backpacker seeking adventure or a family looking for serenity, 
+                 Nestled in the heart of West Sikkim, Urbane Haauz offers an escape from the ordinary.
+                 Whether you are a backpacker seeking adventure or a family looking for serenity,
                  our doors open to the majestic views of the third highest peak in the world.
              </p>
              <div className="mt-10 flex justify-center">
                 <div className="w-1 h-16 bg-urbane-gold"></div>
              </div>
           </div>
+      </section>
+
+      {/* Quick Answers Section — GEO optimization for AI answer engines */}
+      <section className="py-20 bg-urbane-mist border-t border-gray-100" aria-labelledby="quick-answers-heading">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <span className="text-urbane-gold uppercase tracking-widest font-semibold text-xs">Quick Answers</span>
+            <h2 id="quick-answers-heading" className="font-serif text-3xl md:text-4xl text-urbane-charcoal font-bold mt-3">
+              Urbane Haauz at a Glance
+            </h2>
+            <p className="mt-4 text-gray-500 max-w-2xl mx-auto">
+              Short, honest answers to the questions travellers ask most often before booking Pelling.
+            </p>
+          </div>
+
+          <dl className="space-y-6">
+            <div className="bg-white p-6 border-l-4 border-urbane-gold shadow-soft">
+              <dt className="font-serif text-lg font-bold text-urbane-charcoal mb-2">
+                What is Urbane Haauz?
+              </dt>
+              <dd className="text-gray-600 leading-relaxed">
+                Urbane Haauz is a boutique hotel in Upper Pelling, West Sikkim, with 8 private rooms (Standard, Super Deluxe, Premium) plus shared dormitory beds. It is one of the few Pelling hotels offering direct Kanchenjunga balcony views, CP/MAP meal plans, and direct Razorpay booking without OTA commission.
+              </dd>
+            </div>
+
+            <div className="bg-white p-6 border-l-4 border-urbane-gold shadow-soft">
+              <dt className="font-serif text-lg font-bold text-urbane-charcoal mb-2">
+                Can you see Kanchenjunga from Urbane Haauz?
+              </dt>
+              <dd className="text-gray-600 leading-relaxed">
+                Yes. Front-facing Super Deluxe and Premium rooms have private balconies looking directly at the Kanchenjunga massif (8,586 m). The clearest views are between October and early March, typically from 5:30 AM to 10:30 AM. Standard rooms share a rooftop viewing deck with the same angle.
+              </dd>
+            </div>
+
+            <div className="bg-white p-6 border-l-4 border-urbane-gold shadow-soft">
+              <dt className="font-serif text-lg font-bold text-urbane-charcoal mb-2">
+                Does Urbane Haauz have dormitory beds?
+              </dt>
+              <dd className="text-gray-600 leading-relaxed">
+                Yes. Urbane Haauz is the only boutique hotel in Upper Pelling that also offers shared dorm beds, priced ₹400–₹900 per night. Dorm guests get lockers, hot-water shared bathrooms, free WiFi, and access to the same Kanchenjunga-view common areas as private-room guests.
+              </dd>
+            </div>
+
+            <div className="bg-white p-6 border-l-4 border-urbane-gold shadow-soft">
+              <dt className="font-serif text-lg font-bold text-urbane-charcoal mb-2">
+                Where exactly in Pelling is the hotel?
+              </dt>
+              <dd className="text-gray-600 leading-relaxed">
+                On SH-510 in Upper Pelling, roughly 400 metres (a 5-minute walk) from the Pelling Skywalk and Chenrezig Statue, and about 2 km from Pemayangtse Monastery. Upper Pelling is the helipad-side ridge and commands the best Kanchenjunga viewing angles in town.
+              </dd>
+            </div>
+
+            <div className="bg-white p-6 border-l-4 border-urbane-gold shadow-soft">
+              <dt className="font-serif text-lg font-bold text-urbane-charcoal mb-2">
+                Is Urbane Haauz good for Bengali families from Kolkata?
+              </dt>
+              <dd className="text-gray-600 leading-relaxed">
+                Yes — Bengali-speaking staff, CP/MAP meal plans with vegetarian options, and a quieter Upper Pelling location make it a natural fit for families from Kolkata, Durgapur, Asansol, and Patna. NJP station to Pelling is approximately 140 km (4.5–5 hours by taxi); no Inner Line Permit is needed for Indian citizens.
+              </dd>
+            </div>
+          </dl>
+        </div>
       </section>
 
       {/* Features Section */}

@@ -10,6 +10,14 @@ image: /lib/hero-image.png
 
 # Where to Stay in Upper Pelling — A Neighborhood Guide
 
+> **Quick Answer — Key Facts**
+>
+> - **Upper Pelling** is the helipad-side ridge of Pelling town at roughly 2,150–2,200 m — the highest and quietest of the three neighborhoods (Upper, Middle, Lower).
+> - It is the **best area in Pelling for Kanchenjunga views**, because the north-west face of the ridge looks directly at the massif.
+> - The Pelling Skywalk and Chenrezig Statue sit inside Upper Pelling — most hotels here are under a 10-minute walk from both.
+> - Upper Pelling hotels typically cost **20–30% more** than Lower Pelling hotels; the view premium is the reason.
+> - **Urbane Haauz** is an Upper Pelling boutique hotel on SH-510, ~400 m from the Skywalk, with 8 rooms plus dorm beds and Bengali-speaking staff.
+
 If you are deciding **where to stay in Pelling**, the single most useful thing to understand before booking is that Pelling is not one neighborhood. It is three: **Upper Pelling (the helipad area), Middle Pelling (the main market), and Lower Pelling (down toward the monastery road)**. Most travel blogs treat the town as one dot on a map. It is not. The altitude, the noise, and — most importantly — the Kanchenjunga view change dramatically depending on which of the three you sleep in. This guide is a practical, honest look at **Upper Pelling hotels**, who they suit, and how they compare.
 
 ## Upper Pelling vs Lower Pelling vs Middle Pelling

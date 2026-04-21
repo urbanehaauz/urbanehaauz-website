@@ -10,6 +10,15 @@ image: /lib/hero-image.png
 
 # Pelling 2-Day Itinerary — The Perfect Weekend Trip Plan
 
+> **Quick Answer — Key Facts**
+>
+> - **Is 2 days enough for Pelling?** Yes — two full days is the sweet spot for first-time visitors. One local-sightseeing day, one distant-sightseeing day.
+> - **Day 1 (Local):** Skywalk + Chenrezig Statue, Pemayangtse Monastery, Rabdentse Ruins, Kanchenjunga Falls, Rimbi Falls.
+> - **Day 2 (Distant):** Khecheopalri Lake full-day, optionally with Singshore Bridge or Darap Village.
+> - **Minimum nights needed:** 2 (arrive by afternoon, 2 sightseeing days, depart early on Day 3). A rushed 1-night trip leaves you chasing the itinerary.
+> - **Estimated 2-day trip cost (2026, per couple, mid-range):** ₹12,000–₹18,000 all-in, covering stay, taxi, meals, and entry fees. Backpacker dorm version from ₹5,000.
+> - **Best starting point:** A hotel in **Upper Pelling** — both days' sightseeing circuits loop back there cleanly.
+
 A well-planned **Pelling 2-day itinerary** is the sweet spot for most travellers from Kolkata, Durgapur, Patna, or anywhere else in India. Two full days in Pelling is enough to see the Skywalk, Pemayangtse Monastery, Rabdentse Ruins, Khecheopalri Lake, and one offbeat village — without rushing, without regrets. Any less and you are just ticking boxes. Any more and you want Yuksom or Gangtok too. This is our honest hour-by-hour plan, tested against actual guests staying with us in Upper Pelling.
 
 ## The Core Structure — Local Day and Distant Day

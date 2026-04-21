@@ -10,6 +10,15 @@ image: /lib/hero-image.png
 
 # Best Time to Visit Pelling, Sikkim — Month-by-Month 2026 Guide
 
+> **Quick Answer — Key Facts**
+>
+> - **Overall best time:** **October and November** — post-monsoon clarity, crisp mornings, and the most reliable Kanchenjunga views of the year.
+> - **Best time for snow:** Late December to early February. Snow is occasional at 2,150 m and regular at higher altitudes nearby.
+> - **Best time for rhododendrons:** Mid-March to late April.
+> - **Worst time to visit:** June–September (monsoon). Heavy rain, cloud-locked mountain views, and occasional landslides on the approach roads.
+> - **Cheapest time:** June–August — off-season rates at Urbane Haauz and most Pelling hotels drop 25–40%.
+> - **Kanchenjunga visibility** is a morning phenomenon: plan your trip so you are in Pelling with 2+ mornings, not just 1.
+
 The **best time to visit Pelling** depends on one question: why are you going? If the answer is "I want to see Kanchenjunga clearly," the answer is October or November. If it's "I want to see snow," it's late December through early February. If it's "I want cheaper rates," it's the monsoon shoulder — but with honest caveats. This is a month-by-month guide written from Upper Pelling, where we live with this weather.
 
 ## Quick Answer by Trip Goal

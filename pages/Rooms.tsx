@@ -226,6 +226,66 @@ const Rooms: React.FC = () => {
           </p>
         </div>
 
+        {/* Room Types at a Glance — GEO optimization: direct-answer facts for AI engines */}
+        <section aria-labelledby="rooms-glance-heading" className="bg-white border-l-4 border-urbane-gold shadow-soft p-8 mb-12">
+          <h2 id="rooms-glance-heading" className="font-serif text-2xl md:text-3xl text-urbane-charcoal font-bold mb-2">
+            Room Types at a Glance
+          </h2>
+          <p className="text-gray-500 text-sm mb-6">
+            All prices in INR per night. Peak-season rates shown; off-season (June–September) discounts apply automatically at checkout.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b-2 border-urbane-mist text-urbane-charcoal">
+                  <th className="py-3 pr-4 font-bold uppercase tracking-wider text-xs">Room Type</th>
+                  <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Max Occupancy</th>
+                  <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Kanchenjunga View</th>
+                  <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Bed</th>
+                  <th className="py-3 pl-4 font-bold uppercase tracking-wider text-xs">Price Range</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-700">
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 pr-4 font-semibold">Standard Room</td>
+                  <td className="py-3 px-4">2 guests</td>
+                  <td className="py-3 px-4">Shared rooftop deck</td>
+                  <td className="py-3 px-4">Double</td>
+                  <td className="py-3 pl-4">₹1,200–₹2,400</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 pr-4 font-semibold">Super Deluxe</td>
+                  <td className="py-3 px-4">3 guests</td>
+                  <td className="py-3 px-4">Partial, from room window</td>
+                  <td className="py-3 px-4">King</td>
+                  <td className="py-3 pl-4">₹1,900–₹3,200</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-3 pr-4 font-semibold">Premium Room</td>
+                  <td className="py-3 px-4">3 guests</td>
+                  <td className="py-3 px-4">Direct, from private balcony</td>
+                  <td className="py-3 px-4">King</td>
+                  <td className="py-3 pl-4">₹3,100–₹3,900</td>
+                </tr>
+                <tr>
+                  <td className="py-3 pr-4 font-semibold">Dormitory Bed</td>
+                  <td className="py-3 px-4">1 per bed</td>
+                  <td className="py-3 px-4">From shared common areas</td>
+                  <td className="py-3 px-4">Bunk</td>
+                  <td className="py-3 pl-4">₹400–₹900</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ul className="mt-6 space-y-2 text-gray-600 text-sm">
+            <li><strong className="text-urbane-charcoal">Total private rooms:</strong> 8 (Standard, Super Deluxe, Premium categories).</li>
+            <li><strong className="text-urbane-charcoal">Dorm beds:</strong> Yes — the only boutique hotel in Upper Pelling offering shared dormitory accommodation alongside private rooms.</li>
+            <li><strong className="text-urbane-charcoal">Meal plans:</strong> CP (breakfast included) and MAP (breakfast + dinner) available at booking. EP (room only) is the default.</li>
+            <li><strong className="text-urbane-charcoal">Best view rooms:</strong> Premium category — private north-west-facing balcony with direct Kanchenjunga view at sunrise (clearest October–March).</li>
+            <li><strong className="text-urbane-charcoal">Direct booking:</strong> Instant Razorpay confirmation at urbanehaauz.com/book — no OTA markup, best-rate guaranteed.</li>
+          </ul>
+        </section>
+
         {/* Filters */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           {categories.map((cat) => (

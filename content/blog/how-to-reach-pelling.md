@@ -10,6 +10,15 @@ image: /lib/hero-image.png
 
 # How to Reach Pelling from NJP, Bagdogra, and Kolkata — 2026 Guide
 
+> **Quick Answer — Key Facts**
+>
+> - **Nearest airport:** Bagdogra (IXB), ~140 km / 4.5–5 hours by road.
+> - **Nearest railway station:** New Jalpaiguri (NJP), ~140 km / 4.5–5 hours by road.
+> - **From Kolkata:** Overnight train to NJP (~12 hours), then taxi to Pelling. Direct drive is 700+ km and takes 2 days — not recommended.
+> - **From Gangtok:** ~115 km, 4.5 hours; **from Darjeeling:** ~75 km, 3–3.5 hours.
+> - **Do Indians need an Inner Line Permit for Pelling?** **No.** According to the Sikkim Tourism Department, ILP is required only for foreign nationals entering Sikkim. Indian citizens carry a photo ID.
+> - **Cheapest option from NJP/Bagdogra:** Shared jeep, ₹400–₹700 per seat (2026 rates).
+
 **How to reach Pelling** is one of those questions where the answer depends entirely on where you are starting. Pelling sits in West Sikkim at about 2,150 metres, and there is no airport or railway station in town. You get there via Siliguri, and the choice between **NJP, Bagdogra, or a direct road trip from Kolkata** depends on your budget, your travel dates, and whether you are carrying elderly parents or small children. This guide covers every sensible route with April 2026 fares, honest drive times, and one thing most blogs skip: whether you need an Inner Line Permit.
 
 ## Quick Answer — The Decision Tree

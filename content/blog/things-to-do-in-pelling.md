@@ -10,6 +10,14 @@ image: /lib/hero-image.png
 
 # Things to Do in Pelling, Sikkim — The 2026 Local Guide
 
+> **Quick Answer — Key Facts**
+>
+> - The **top 5 things to do in Pelling** are: Pelling Skywalk + Chenrezig Statue, Pemayangtse Monastery, Rabdentse Ruins, Khecheopalri Lake, and Kanchenjunga Falls.
+> - **Pelling Skywalk entry fee (2026):** ₹50 adult / ₹25 child. Open 7:00 AM–5:30 PM daily. Socks mandatory on the glass floor.
+> - **Pemayangtse Monastery timings:** 7:00 AM–5:00 PM, entry ₹20. Sikkim's second-oldest monastery (founded 1705).
+> - **Two days** is the sweet spot for Pelling sightseeing — one local day (walkable + short-drive sites) and one distant day (Khecheopalri + Singshore).
+> - Most attractions are within a 30-minute drive of Upper Pelling; Khecheopalri Lake is the farthest at ~28 km.
+
 The best way to plan **things to do in Pelling** is not to start with a list. It is to start with a map. Pelling is a small hill town in West Sikkim, and almost every attraction falls into one of three distance tiers: **walkable from Upper Pelling, a short drive away, or a proper day trip.** If you sort your plan this way, you stop zigzagging across the district and you actually enjoy each site. Here is everything worth doing, grouped that way, with 2026-verified timings and entry fees.
 
 ## Walkable from Upper Pelling (0–1 km)
@@ -40,7 +48,7 @@ These sites need a taxi or a rented car. Budget ₹1,500–₹2,500 (2026 rates)
 
 ### Pemayangtse Monastery
 
-One of the oldest and most important monasteries in Sikkim, founded in 1705. The upper floor houses an extraordinary seven-tiered wooden sculpture depicting Guru Rinpoche's heavenly palace — it was carved by a single monk over five years.
+Founded in 1705, **Pemayangtse** is one of the oldest and most important monasteries in Sikkim. According to the Sikkim State Archives and the monastery's own records, it belongs to the Nyingma order of Tibetan Buddhism and historically served as the premier monastery for the kingdom's purest-lineage monks. The upper floor houses an extraordinary seven-tiered wooden sculpture depicting Guru Rinpoche's heavenly palace — it was carved by a single monk over five years.
 
 - **Timings (2026):** 7:00 AM – 5:00 PM, daily
 - **Entry fee:** ₹20 per person

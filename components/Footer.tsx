@@ -8,7 +8,7 @@ export const HOTEL_CONTACT = {
   phoneClean: '+919136032524',
   email: 'urbanehaauz@gmail.com',
   whatsapp: '+919136032524',
-  address: 'Skywalk Road, Upper Pelling',
+  address: 'SH-510, Skywalk Road, Upper Pelling',
   city: 'West Sikkim, India 737113',
   instagram: 'https://instagram.com/urbanehaauz',
   facebook: 'https://facebook.com/urbanehaauz',

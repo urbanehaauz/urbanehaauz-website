@@ -20,11 +20,11 @@ const Rooms: React.FC = () => {
       <Helmet>
         <title>Rooms & Dorms | Urbane Haauz Pelling — Kanchenjunga View Hotel</title>
         <meta name="description" content="Standard, Deluxe and Premium rooms plus dormitory beds at Urbane Haauz in Upper Pelling. 8 rooms, Kanchenjunga views, CP/MAP meal plans." />
-        <link rel="canonical" href="https://urbanehaauz.com/#/rooms" />
+        <link rel="canonical" href="https://urbanehaauz.com/rooms" />
         <meta property="og:title" content="Rooms & Dorms | Urbane Haauz Pelling" />
         <meta property="og:description" content="From backpacker dorms to premium Kanchenjunga-view suites." />
         <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
-        <meta property="og:url" content="https://urbanehaauz.com/#/rooms" />
+        <meta property="og:url" content="https://urbanehaauz.com/rooms" />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">

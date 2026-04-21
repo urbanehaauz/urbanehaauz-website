@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { HashRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -64,7 +64,7 @@ const App: React.FC = () => {
       <AuthProvider>
         <LanguageProvider>
           <AppProvider>
-            <HashRouter>
+            <BrowserRouter>
               <ScrollToTop />
               <MainLayout>
                 <Suspense fallback={<AdminFallback />}>
@@ -85,7 +85,7 @@ const App: React.FC = () => {
                   </Routes>
                 </Suspense>
               </MainLayout>
-            </HashRouter>
+            </BrowserRouter>
           </AppProvider>
         </LanguageProvider>
       </AuthProvider>

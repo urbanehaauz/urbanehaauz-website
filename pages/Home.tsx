@@ -13,7 +13,7 @@ const Home: React.FC = () => {
       <Helmet>
         <title>Urbane Haauz | Boutique Hotel in Upper Pelling with Kanchenjunga Views</title>
         <meta name="description" content="Boutique hotel in Upper Pelling, Sikkim with direct Kanchenjunga views. CP/MAP meal plans, dormitory beds, direct Razorpay booking — best rate guaranteed." />
-        <link rel="canonical" href="https://urbanehaauz.com/#/" />
+        <link rel="canonical" href="https://urbanehaauz.com/" />
         <meta property="og:title" content="Urbane Haauz | Boutique Hotel in Upper Pelling" />
         <meta property="og:description" content="Direct Kanchenjunga views, CP/MAP meal plans, dorm beds. Book direct for best rates." />
         <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />

@@ -1381,7 +1381,7 @@ const Rangbhoomi: React.FC = () => (
         content="Art is in the Air; Music is in the Mist and Flavours on your Plate. 25 May 2026, Pelling, Sikkim."
       />
       <meta property="og:type" content="event" />
-      <link rel="canonical" href="https://urbanehaauz.com/#/rangotsav" />
+      <link rel="canonical" href="https://urbanehaauz.com/rangotsav" />
     </Helmet>
 
     <div className="bg-[#FAF7F2] text-[#1C1C1C]">

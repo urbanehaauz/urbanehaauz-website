@@ -95,8 +95,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        // Use hash-based redirect for HashRouter compatibility
-        redirectTo: `${window.location.origin}/#/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
   };

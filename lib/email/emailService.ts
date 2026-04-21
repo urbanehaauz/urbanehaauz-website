@@ -221,7 +221,7 @@ function getBookingConfirmationHTML(data: BookingEmailData): string {
           <tr>
             <td style="background-color: #f8f9fa; padding: 25px 40px; text-align: center; border-top: 1px solid #eee;">
               <p style="color: #888; margin: 0 0 10px; font-size: 13px;">
-                SH-510, Pelling, West Sikkim, India 737113
+                SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113
               </p>
               <p style="color: #888; margin: 0; font-size: 12px;">
                 © ${new Date().getFullYear()} Urbane Haauz. All rights reserved.
@@ -482,7 +482,7 @@ export async function sendRangotsavNotifyConfirmation(email: string): Promise<bo
           <tr>
             <td style="background-color: #141414; padding: 24px 40px; text-align: center; border-top: 1px solid rgba(212,165,116,0.1);">
               <p style="color: rgba(250,247,242,0.4); margin: 0 0 6px; font-size: 11px; font-family: Arial, sans-serif;">
-                Urbane Haauz &middot; SH-510, Pelling, West Sikkim 737113
+                Urbane Haauz &middot; SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113
               </p>
               <p style="color: rgba(250,247,242,0.35); margin: 0; font-size: 11px; font-family: Arial, sans-serif;">
                 <a href="tel:+919136032524" style="color: #D4A574; text-decoration: none;">+91 91360 32524</a>
@@ -647,7 +647,7 @@ export async function sendRangotsavVendorWelcome(data: {
           <tr>
             <td style="background-color: #141414; padding: 24px 40px; text-align: center; border-top: 1px solid rgba(212,165,116,0.1);">
               <p style="color: rgba(250,247,242,0.4); margin: 0 0 6px; font-size: 11px; font-family: Arial, sans-serif;">
-                Urbane Haauz &middot; SH-510, Pelling, West Sikkim 737113
+                Urbane Haauz &middot; SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113
               </p>
               <p style="color: rgba(250,247,242,0.35); margin: 0; font-size: 11px; font-family: Arial, sans-serif;">
                 <a href="tel:+919136032524" style="color: #D4A574; text-decoration: none;">+91 91360 32524</a>
@@ -746,7 +746,7 @@ function rangotsavShellHtml(args: {
           <tr>
             <td style="background-color: #141414; padding: 24px 40px; text-align: center; border-top: 1px solid rgba(212,165,116,0.1);">
               <p style="color: rgba(250,247,242,0.4); margin: 0 0 6px; font-size: 11px; font-family: Arial, sans-serif;">
-                Urbane Haauz &middot; SH-510, Pelling, West Sikkim 737113
+                Urbane Haauz &middot; SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113
               </p>
               <p style="color: rgba(250,247,242,0.35); margin: 0; font-size: 11px; font-family: Arial, sans-serif;">
                 <a href="tel:+919136032524" style="color: #D4A574; text-decoration: none;">+91 91360 32524</a>

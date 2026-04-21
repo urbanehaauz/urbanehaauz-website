@@ -343,11 +343,11 @@ const BookingFlow: React.FC = () => {
       <Helmet>
         <title>Book Your Stay | Urbane Haauz Pelling — Direct Booking</title>
         <meta name="description" content="Book directly with Urbane Haauz in Upper Pelling, Sikkim. Secure Razorpay payment, instant confirmation, best-rate guarantee." />
-        <link rel="canonical" href="https://urbanehaauz.com/#/book" />
+        <link rel="canonical" href="https://urbanehaauz.com/book" />
         <meta property="og:title" content="Book Your Stay | Urbane Haauz Pelling" />
         <meta property="og:description" content="Direct booking. Best rate guaranteed. Instant confirmation." />
         <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
-        <meta property="og:url" content="https://urbanehaauz.com/#/book" />
+        <meta property="og:url" content="https://urbanehaauz.com/book" />
       </Helmet>
       <div className="max-w-6xl mx-auto px-4">
 

@@ -735,12 +735,19 @@ const RegistrationSection: React.FC = () => {
     if (!email) return;
     try {
       const { supabase } = await import('../lib/supabase');
-      await supabase.from('rangotsav_notify').insert({ email });
-    } catch { /* silent */ }
+      const { error } = await supabase
+        .from('rangotsav_notify')
+        .upsert({ email }, { onConflict: 'email', ignoreDuplicates: true });
+      if (error) console.error('rangotsav_notify upsert failed:', error);
+    } catch (e) {
+      console.error('rangotsav_notify exception:', e);
+    }
     try {
       const { sendRangotsavNotifyConfirmation } = await import('../lib/email/emailService');
       await sendRangotsavNotifyConfirmation(email);
-    } catch { /* silent */ }
+    } catch (e) {
+      console.error('sendRangotsavNotifyConfirmation exception:', e);
+    }
     setNotifyDone(true);
   };
 

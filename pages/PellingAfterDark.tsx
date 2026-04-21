@@ -1404,63 +1404,6 @@ const ProgrammeBlueprintSection: React.FC = () => (
           </div>
         </div>
       </Reveal>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Budget-Friendly Setup */}
-        <Reveal delay={100}>
-          <div className="bg-white rounded-2xl border border-[#1C1C1C]/10 p-6 md:p-8 h-full">
-            <h3 className="font-serif text-xl md:text-2xl text-[#1C1C1C] mb-5">Budget-Friendly Setup</h3>
-            <div className="space-y-4">
-              <div>
-                <div className="text-xs uppercase tracking-[0.2em] text-[#4A7C59] mb-2">Infrastructure (one-time)</div>
-                <p className="text-sm text-[#1C1C1C]/70">Open ground/hall, basic stage, chairs, warm lighting</p>
-                <p className="font-serif text-2xl text-[#4A7C59] mt-1">₹50K – ₹1.5L</p>
-              </div>
-              <div className="border-t border-[#1C1C1C]/10 pt-4">
-                <div className="text-xs uppercase tracking-[0.2em] text-[#C84B0F] mb-2">Daily Operating Cost</div>
-                <ul className="text-sm text-[#1C1C1C]/70 space-y-1">
-                  <li>Performers: ₹8K–₹15K</li>
-                  <li>Musicians: ₹3K–₹6K</li>
-                  <li>Staff: ₹2K–₹5K</li>
-                </ul>
-                <p className="font-serif text-2xl text-[#C84B0F] mt-2">₹15K – ₹25K/night</p>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* Revenue Potential */}
-        <Reveal delay={200}>
-          <div className="bg-white rounded-2xl border border-[#1C1C1C]/10 p-6 md:p-8 h-full">
-            <h3 className="font-serif text-xl md:text-2xl text-[#1C1C1C] mb-5">Revenue Potential</h3>
-            <div className="space-y-4">
-              <div>
-                <div className="text-xs uppercase tracking-[0.2em] text-[#D4A574] mb-2">Pricing</div>
-                <ul className="text-sm text-[#1C1C1C]/70 space-y-1">
-                  <li>Entry: ₹300–₹500/person</li>
-                  <li>Food combos: ₹300–₹600</li>
-                </ul>
-              </div>
-              <div className="border-t border-[#1C1C1C]/10 pt-4">
-                <div className="text-xs uppercase tracking-[0.2em] text-[#2C5F7C] mb-2">Projections</div>
-                <p className="text-sm text-[#1C1C1C]/70">Visitors: 40–100 people/night initially</p>
-                <p className="font-serif text-2xl text-[#2C5F7C] mt-1">₹20K – ₹80K/night</p>
-                <p className="text-xs text-[#4A7C59] mt-2 font-semibold">Break-even achievable early</p>
-              </div>
-              <div className="border-t border-[#1C1C1C]/10 pt-4">
-                <div className="text-xs uppercase tracking-[0.2em] text-[#2D1B69] mb-2">Scale Path</div>
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="bg-[#2D1B69]/10 text-[#2D1B69] px-2 py-1 rounded">Phase 1: 50/night</span>
-                  <ArrowRight className="w-3 h-3 text-[#1C1C1C]/30 self-center" />
-                  <span className="bg-[#2D1B69]/10 text-[#2D1B69] px-2 py-1 rounded">Phase 2: 150/night</span>
-                  <ArrowRight className="w-3 h-3 text-[#1C1C1C]/30 self-center" />
-                  <span className="bg-[#2D1B69]/10 text-[#2D1B69] px-2 py-1 rounded">Phase 3: Premium packages</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </div>
     </div>
   </section>
 );

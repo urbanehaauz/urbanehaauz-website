@@ -383,6 +383,127 @@ export async function sendBookingCancellation(data: BookingEmailData): Promise<b
   return result.success;
 }
 
+export async function sendRangotsavNotifyConfirmation(email: string): Promise<boolean> {
+  const subject = "You're on the list — Rangotsav 2026, Pelling";
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rangotsav — You're on the list</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Georgia, 'Times New Roman', serif; background-color: #1C1C1C;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #1C1C1C; padding: 24px 12px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1C1C1C; border: 1px solid rgba(212,165,116,0.2); border-radius: 4px; overflow: hidden;">
+
+          <!-- Header -->
+          <tr>
+            <td style="padding: 48px 40px 32px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.15);">
+              <p style="color: #D4A574; margin: 0 0 18px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">A Cultural Conglomerate</p>
+              <h1 style="color: #FAF7F2; margin: 0; font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;">Rangotsav</h1>
+              <p style="color: #D4A574; margin: 18px 0 0; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; The Tale Of Two States &mdash;</p>
+            </td>
+          </tr>
+
+          <!-- Confirmation -->
+          <tr>
+            <td style="padding: 40px 40px 8px; text-align: center;">
+              <p style="color: #D4A574; margin: 0 0 18px; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-family: Arial, sans-serif;">You're on the list</p>
+              <h2 style="color: #FAF7F2; margin: 0 0 20px; font-size: 28px; font-weight: 400; font-style: italic; line-height: 1.3;">
+                We'll tell you first, when the doors open.
+              </h2>
+              <p style="color: rgba(250,247,242,0.65); margin: 0; font-size: 15px; line-height: 1.7; font-family: Georgia, serif;">
+                Art is in the Air. Music is in the Mist. Flavours on your Plate.<br>
+                From Bengal's soul to Sikkim's spirit &mdash; a cultural confluence in the mountains.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Event card -->
+          <tr>
+            <td style="padding: 32px 40px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color: rgba(212,165,116,0.05); border: 1px solid rgba(212,165,116,0.25); border-radius: 12px;">
+                <tr>
+                  <td style="padding: 28px 28px 12px; text-align: center;">
+                    <p style="color: #D4A574; margin: 0 0 8px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">Save the Date</p>
+                    <p style="color: #FAF7F2; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 0.05em;">25 MAY 2026</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 0 28px 28px; text-align: center;">
+                    <p style="color: rgba(250,247,242,0.6); margin: 0; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; font-family: Arial, sans-serif;">Pelling &middot; West Sikkim</p>
+                    <p style="color: rgba(250,247,242,0.4); margin: 10px 0 0; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; font-family: Arial, sans-serif;">Hosted by Urbane Haauz</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- What's next -->
+          <tr>
+            <td style="padding: 8px 40px 32px;">
+              <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">What happens next</h3>
+              <p style="color: rgba(250,247,242,0.75); margin: 0 0 12px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+                When registration opens, you'll be the first to know &mdash; a single email to this address, with the link to book your tier.
+              </p>
+              <p style="color: rgba(250,247,242,0.55); margin: 0; font-size: 13px; line-height: 1.7; font-family: Georgia, serif; font-style: italic;">
+                No spam. No physical tickets. Email confirmation only.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Divider + sign-off -->
+          <tr>
+            <td style="padding: 0 40px 32px; text-align: center;">
+              <div style="height: 1px; background-color: rgba(212,165,116,0.2); margin: 0 auto 24px;"></div>
+              <p style="color: rgba(250,247,242,0.6); margin: 0; font-size: 13px; line-height: 1.8; font-family: Georgia, serif; font-style: italic;">
+                Until then, we're building something we can't wait for you to walk into.
+              </p>
+              <p style="color: #D4A574; margin: 14px 0 0; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; Team Urbane Haauz</p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #141414; padding: 24px 40px; text-align: center; border-top: 1px solid rgba(212,165,116,0.1);">
+              <p style="color: rgba(250,247,242,0.4); margin: 0 0 6px; font-size: 11px; font-family: Arial, sans-serif;">
+                Urbane Haauz &middot; SH-510, Pelling, West Sikkim 737113
+              </p>
+              <p style="color: rgba(250,247,242,0.35); margin: 0; font-size: 11px; font-family: Arial, sans-serif;">
+                <a href="tel:+919136032524" style="color: #D4A574; text-decoration: none;">+91 91360 32524</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://urbanehaauz.com" style="color: #D4A574; text-decoration: none;">urbanehaauz.com</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+
+  const result = await sendEmail({ to: email, subject, html });
+
+  await logEmail(
+    email,
+    '',
+    'rangotsav_notify',
+    subject,
+    null,
+    result.success ? 'sent' : 'failed',
+    result.id,
+    result.error
+  );
+
+  return result.success;
+}
+
 export async function sendContactInquiryNotification(inquiry: {
   name: string;
   email: string;

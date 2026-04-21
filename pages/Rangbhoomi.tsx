@@ -731,10 +731,15 @@ const RegistrationSection: React.FC = () => {
 
   const handleNotify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!notifyEmail.trim()) return;
+    const email = notifyEmail.trim();
+    if (!email) return;
     try {
       const { supabase } = await import('../lib/supabase');
-      await supabase.from('rangotsav_notify').insert({ email: notifyEmail.trim() });
+      await supabase.from('rangotsav_notify').insert({ email });
+    } catch { /* silent */ }
+    try {
+      const { sendRangotsavNotifyConfirmation } = await import('../lib/email/emailService');
+      await sendRangotsavNotifyConfirmation(email);
     } catch { /* silent */ }
     setNotifyDone(true);
   };

@@ -363,9 +363,6 @@ const StandaloneHeader: React.FC<{ onDark?: boolean }> = ({ onDark = true }) => 
         Pelling Cultural Initiative
       </span>
     </Link>
-    <span className="hidden md:inline-block text-xs uppercase tracking-[0.3em] opacity-60">
-      Policy Brief · For the Tourism Board of Sikkim
-    </span>
   </header>
 );
 

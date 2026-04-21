@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { RANGOTSAV_BREADCRUMB_JSONLD, RANGOTSAV_EVENT_JSONLD } from '../lib/seo/schemas';
 
 const useInView = (threshold = 0.15) => {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -1394,6 +1395,8 @@ const Rangbhoomi: React.FC = () => (
       />
       <meta property="og:type" content="event" />
       <link rel="canonical" href="https://urbanehaauz.com/rangotsav" />
+      <script type="application/ld+json">{JSON.stringify(RANGOTSAV_EVENT_JSONLD)}</script>
+      <script type="application/ld+json">{JSON.stringify(RANGOTSAV_BREADCRUMB_JSONLD)}</script>
     </Helmet>
 
     <div className="bg-[#FAF7F2] text-[#1C1C1C]">

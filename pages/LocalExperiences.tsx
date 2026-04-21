@@ -78,6 +78,15 @@ const experiences: Experience[] = [
   }
 ];
 
+const EXPERIENCES_BREADCRUMB_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://urbanehaauz.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Experiences', item: 'https://urbanehaauz.com/experiences' },
+  ],
+};
+
 const LocalExperiences: React.FC = () => {
   return (
     <div className="flex flex-col w-full font-sans">
@@ -90,6 +99,7 @@ const LocalExperiences: React.FC = () => {
         <meta property="og:description" content="Monasteries, waterfalls, skywalks and trails around Upper Pelling." />
         <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
         <meta property="og:url" content="https://urbanehaauz.com/experiences" />
+        <script type="application/ld+json">{JSON.stringify(EXPERIENCES_BREADCRUMB_JSONLD)}</script>
       </Helmet>
       <section className="relative h-[40vh] w-full overflow-hidden bg-gradient-to-br from-urbane-darkGreen via-urbane-green to-urbane-darkGreen">
         <div className="absolute inset-0 opacity-10">

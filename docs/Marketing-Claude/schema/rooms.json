@@ -2,7 +2,7 @@
   {
     "@context": "https://schema.org",
     "@type": "HotelRoom",
-    "@id": "https://urbanehaauz.com/#room-standard",
+    "@id": "https://urbanehaauz.com/rooms#standard",
     "name": "Standard Room",
     "description": "Comfortable standard room at Urbane Haauz, Upper Pelling, with garden or courtyard view and access to Kanchenjunga-facing common areas. Features attached bathroom with 24-hour hot water, free WiFi, and daily housekeeping.",
     "occupancy": {
@@ -30,7 +30,7 @@
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-04-01",
         "validThrough": "2026-06-30",
-        "url": "https://urbanehaauz.com/#/book"
+        "url": "https://urbanehaauz.com/book"
       },
       {
         "@type": "Offer",
@@ -40,14 +40,14 @@
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-07-01",
         "validThrough": "2026-09-30",
-        "url": "https://urbanehaauz.com/#/book"
+        "url": "https://urbanehaauz.com/book"
       }
     ]
   },
   {
     "@context": "https://schema.org",
     "@type": "HotelRoom",
-    "@id": "https://urbanehaauz.com/#room-deluxe",
+    "@id": "https://urbanehaauz.com/rooms#deluxe",
     "name": "Deluxe Room",
     "description": "Spacious deluxe room at Urbane Haauz with partial Kanchenjunga mountain view, larger windows, and upgraded furnishings. Includes attached bathroom, free WiFi, and seating area.",
     "occupancy": {
@@ -75,7 +75,7 @@
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-04-01",
         "validThrough": "2026-06-30",
-        "url": "https://urbanehaauz.com/#/book"
+        "url": "https://urbanehaauz.com/book"
       },
       {
         "@type": "Offer",
@@ -85,14 +85,14 @@
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-07-01",
         "validThrough": "2026-09-30",
-        "url": "https://urbanehaauz.com/#/book"
+        "url": "https://urbanehaauz.com/book"
       }
     ]
   },
   {
     "@context": "https://schema.org",
     "@type": "HotelRoom",
-    "@id": "https://urbanehaauz.com/#room-premium",
+    "@id": "https://urbanehaauz.com/rooms#premium",
     "name": "Premium Room",
     "description": "Premium room at Urbane Haauz with direct, unobstructed Kanchenjunga view from a private balcony. The best rooms in the property for sunrise over the Kanchenjunga range. Includes king bed, seating area, and upgraded bath.",
     "occupancy": {
@@ -120,7 +120,7 @@
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-04-01",
         "validThrough": "2026-06-30",
-        "url": "https://urbanehaauz.com/#/book"
+        "url": "https://urbanehaauz.com/book"
       },
       {
         "@type": "Offer",
@@ -130,14 +130,14 @@
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-07-01",
         "validThrough": "2026-09-30",
-        "url": "https://urbanehaauz.com/#/book"
+        "url": "https://urbanehaauz.com/book"
       }
     ]
   },
   {
     "@context": "https://schema.org",
     "@type": "Accommodation",
-    "@id": "https://urbanehaauz.com/#room-dorm",
+    "@id": "https://urbanehaauz.com/rooms#dorm",
     "name": "Dormitory Bed",
     "description": "Shared dormitory accommodation at Urbane Haauz, Upper Pelling — the only boutique hotel in Pelling offering dorm beds. Features lockers, shared bathroom, free WiFi, and access to the same Kanchenjunga-view common areas as private rooms. Ideal for solo travellers, backpackers, and budget-conscious groups.",
     "occupancy": {
@@ -165,7 +165,7 @@
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-04-01",
         "validThrough": "2026-06-30",
-        "url": "https://urbanehaauz.com/#/book"
+        "url": "https://urbanehaauz.com/book"
       },
       {
         "@type": "Offer",
@@ -175,7 +175,7 @@
         "availability": "https://schema.org/InStock",
         "validFrom": "2026-07-01",
         "validThrough": "2026-09-30",
-        "url": "https://urbanehaauz.com/#/book"
+        "url": "https://urbanehaauz.com/book"
       }
     ]
   }

@@ -13,6 +13,72 @@ interface ContactFormData {
   inquiryType: 'booking' | 'general' | 'feedback' | 'partnership';
 }
 
+const CONTACT_BREADCRUMB_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://urbanehaauz.com/' },
+    { '@type': 'ListItem', position: 2, name: 'Contact', item: 'https://urbanehaauz.com/contact' },
+  ],
+};
+
+// FAQPage schema specific to /contact — contact-flavoured questions
+const CONTACT_FAQ_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': 'https://urbanehaauz.com/contact#faq',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do I contact Urbane Haauz directly?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Call or WhatsApp +91 9136032524, email urbanehaauz@gmail.com, or submit the contact form at urbanehaauz.com/contact. WhatsApp is the fastest channel — responses usually within a few hours during business hours (9:00–21:00 IST).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the address of Urbane Haauz?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Urbane Haauz is at SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113, India. We are a 10-minute walk from the Pelling Skywalk and a short drive from Pemayangtse Monastery and Rabdentse Ruins.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are the check-in and check-out times?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Standard check-in is 1:00 PM IST and check-out is 11:00 AM IST. Early check-in and late check-out are available on request, subject to room availability on the day.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can you arrange airport or railway station pickup?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. We arrange private taxi pickup from Bagdogra Airport (IXB) or NJP railway station to Upper Pelling — a 4.5–5 hour scenic drive of approximately 140 km. Please request transfers at least 24 hours in advance so we can lock in the vehicle and rate.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you accept group or corporate bookings?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. For groups of 4+ rooms, family retreats, small weddings, or corporate offsites, WhatsApp us at +91 9136032524 or email urbanehaauz@gmail.com for custom pricing and meal plans. We can reserve the full 8-room property for exclusive use on request.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What languages do you speak?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Staff and founders at Urbane Haauz speak English, Hindi, Bengali, and Nepali. WhatsApp support is available in all four languages during business hours — useful for Bengali families travelling from Kolkata.',
+      },
+    },
+  ],
+};
+
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
@@ -92,272 +158,254 @@ const Contact: React.FC = () => {
         <meta property="og:description" content="Get in touch with Urbane Haauz in Upper Pelling, Sikkim." />
         <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
         <meta property="og:url" content="https://urbanehaauz.com/contact" />
+        <script type="application/ld+json">{JSON.stringify(CONTACT_BREADCRUMB_JSONLD)}</script>
+        <script type="application/ld+json">{JSON.stringify(CONTACT_FAQ_JSONLD)}</script>
       </Helmet>
       {/* Hero Section */}
       <section className="relative h-64 bg-gradient-to-r from-urbane-darkGreen to-urbane-green overflow-hidden">
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative h-full flex items-center justify-center">
           <div className="text-center text-white">
-            <p className="text-urbane-gold tracking-[0.3em] uppercase text-sm mb-2">Get in Touch</p>
-            <h1 className="font-serif text-5xl font-bold">Contact Us</h1>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-3">Contact Us</h1>
+            <p className="text-green-100 max-w-xl mx-auto">
+              Questions, bookings, or just saying hello — we'd love to hear from you.
+            </p>
           </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid lg:grid-cols-3 gap-12">
-          {/* Contact Information */}
-          <div className="lg:col-span-1 space-y-8">
-            <div>
-              <h2 className="font-serif text-2xl font-bold text-urbane-charcoal mb-6">
-                We'd Love to Hear From You
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                Whether you have questions about bookings, special requests, or partnership opportunities,
-                our team is here to help.
-              </p>
-            </div>
+      {/* Content */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Contact Info */}
+            <div className="lg:col-span-1 space-y-6">
+              <div className="bg-white rounded-xl shadow-md p-6">
+                <h2 className="font-serif text-2xl font-bold text-urbane-green mb-6">Get in Touch</h2>
 
-            {/* Contact Cards */}
-            <div className="space-y-4">
-              <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-urbane-gold/10 p-3 rounded-lg">
-                    <MapPin className="text-urbane-gold" size={24} />
+                <div className="space-y-5">
+                  <div className="flex items-start">
+                    <div className="bg-urbane-green/10 p-3 rounded-lg mr-4">
+                      <MapPin className="h-5 w-5 text-urbane-green" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">Address</p>
+                      <p className="text-gray-600 text-sm">
+                        {HOTEL_CONTACT.address}<br />
+                        {HOTEL_CONTACT.city}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-urbane-charcoal">Location</h3>
-                    <p className="text-gray-600 text-sm mt-1">
-                      {HOTEL_CONTACT.address}<br />
-                      {HOTEL_CONTACT.city}
-                    </p>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-urbane-gold/10 p-3 rounded-lg">
-                    <Phone className="text-urbane-gold" size={24} />
+                  <div className="flex items-start">
+                    <div className="bg-urbane-green/10 p-3 rounded-lg mr-4">
+                      <Phone className="h-5 w-5 text-urbane-green" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">Phone</p>
+                      <a
+                        href={`tel:${HOTEL_CONTACT.phoneClean}`}
+                        className="text-gray-600 text-sm hover:text-urbane-gold transition-colors"
+                      >
+                        {HOTEL_CONTACT.phone}
+                      </a>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-urbane-charcoal">Phone</h3>
-                    <a href={`tel:${HOTEL_CONTACT.phoneClean}`} className="text-gray-600 text-sm mt-1 hover:text-urbane-gold">
-                      {HOTEL_CONTACT.phone}
-                    </a>
-                  </div>
-                </div>
-              </div>
 
-              <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-urbane-gold/10 p-3 rounded-lg">
-                    <Mail className="text-urbane-gold" size={24} />
+                  <div className="flex items-start">
+                    <div className="bg-urbane-green/10 p-3 rounded-lg mr-4">
+                      <Mail className="h-5 w-5 text-urbane-green" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">Email</p>
+                      <a
+                        href={`mailto:${HOTEL_CONTACT.email}`}
+                        className="text-gray-600 text-sm hover:text-urbane-gold transition-colors break-all"
+                      >
+                        {HOTEL_CONTACT.email}
+                      </a>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-urbane-charcoal">Email</h3>
-                    <a href={`mailto:${HOTEL_CONTACT.email}`} className="text-gray-600 text-sm mt-1 hover:text-urbane-gold">
-                      {HOTEL_CONTACT.email}
-                    </a>
-                  </div>
-                </div>
-              </div>
 
-              <a
-                href={`https://wa.me/${HOTEL_CONTACT.whatsapp}?text=Hi! I have a question about Urbane Haauz.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block bg-green-500 p-6 rounded-xl shadow-md hover:shadow-lg hover:bg-green-600 transition-all"
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="bg-white/20 p-3 rounded-lg">
-                    <MessageCircle className="text-white" size={24} />
+                  <div className="flex items-start">
+                    <div className="bg-urbane-green/10 p-3 rounded-lg mr-4">
+                      <MessageCircle className="h-5 w-5 text-urbane-green" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">WhatsApp</p>
+                      <a
+                        href={`https://wa.me/${HOTEL_CONTACT.whatsapp}?text=Hi! I'd like to ask about a stay at Urbane Haauz.`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-600 text-sm hover:text-urbane-gold transition-colors"
+                      >
+                        Chat with us on WhatsApp
+                      </a>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-white">WhatsApp</h3>
-                    <p className="text-green-100 text-sm mt-1">
-                      Quick response • Click to chat
-                    </p>
-                  </div>
-                </div>
-              </a>
 
-              <div className="bg-white p-6 rounded-xl shadow-md">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-urbane-gold/10 p-3 rounded-lg">
-                    <Clock className="text-urbane-gold" size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-urbane-charcoal">Hours</h3>
-                    <p className="text-gray-600 text-sm mt-1">
-                      Front Desk: 24/7<br />
-                      Check-in: 2:00 PM<br />
-                      Check-out: 11:00 AM
-                    </p>
+                  <div className="flex items-start">
+                    <div className="bg-urbane-green/10 p-3 rounded-lg mr-4">
+                      <Clock className="h-5 w-5 text-urbane-green" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800 mb-1">Reception</p>
+                      <p className="text-gray-600 text-sm">Open 24 hours, all 7 days</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Contact Form */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-xl p-8">
-              <h2 className="font-serif text-2xl font-bold text-urbane-charcoal mb-6">
-                Send Us a Message
-              </h2>
+            {/* Form */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-xl shadow-md p-6 md:p-8">
+                <h2 className="font-serif text-2xl font-bold text-urbane-green mb-6">Send Us a Message</h2>
 
-              {success && (
-                <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3">
-                  <CheckCircle className="text-green-500" size={24} />
-                  <div>
-                    <p className="font-medium text-green-800">Message sent successfully!</p>
-                    <p className="text-sm text-green-600">We'll get back to you within 24 hours.</p>
+                {success && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-start">
+                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-green-800">Message sent successfully!</p>
+                      <p className="text-green-700 text-sm">We'll get back to you within 24 hours.</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {error && (
-                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-red-700">{error}</p>
-                </div>
-              )}
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <p className="text-red-700 text-sm">{error}</p>
+                  </div>
+                )}
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                        Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-green focus:border-transparent"
+                        placeholder="Your full name"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                        Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-green focus:border-transparent"
+                        placeholder="you@example.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-green focus:border-transparent"
+                        placeholder="+91 XXXXXXXXXX"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="inquiryType" className="block text-sm font-medium text-gray-700 mb-2">
+                        Inquiry Type
+                      </label>
+                      <select
+                        id="inquiryType"
+                        name="inquiryType"
+                        value={formData.inquiryType}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-green focus:border-transparent bg-white"
+                      >
+                        <option value="general">General Inquiry</option>
+                        <option value="booking">Booking</option>
+                        <option value="feedback">Feedback</option>
+                        <option value="partnership">Partnership</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name *
+                    <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                      Subject <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
+                      id="subject"
+                      name="subject"
                       required
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-gold focus:border-urbane-gold outline-none transition-all"
-                      placeholder="Your name"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-green focus:border-transparent"
+                      placeholder="What is this about?"
                     />
                   </div>
+
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address *
+                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                      Message <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
+                    <textarea
+                      id="message"
+                      name="message"
                       required
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-gold focus:border-urbane-gold outline-none transition-all"
-                      placeholder="your@email.com"
+                      rows={5}
+                      value={formData.message}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-green focus:border-transparent"
+                      placeholder="Tell us how we can help..."
                     />
                   </div>
-                </div>
 
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-gold focus:border-urbane-gold outline-none transition-all"
-                      placeholder="+91 XXXXX XXXXX"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Inquiry Type
-                    </label>
-                    <select
-                      name="inquiryType"
-                      value={formData.inquiryType}
-                      onChange={handleChange}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-gold focus:border-urbane-gold outline-none transition-all bg-white"
-                    >
-                      <option value="booking">Booking Inquiry</option>
-                      <option value="general">General Question</option>
-                      <option value="feedback">Feedback</option>
-                      <option value="partnership">Partnership</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Subject *
-                  </label>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-gold focus:border-urbane-gold outline-none transition-all"
-                    placeholder="What is your inquiry about?"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Message *
-                  </label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-urbane-gold focus:border-urbane-gold outline-none transition-all resize-none"
-                    placeholder="Tell us how we can help..."
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-urbane-green to-urbane-darkGreen text-white py-4 rounded-lg font-bold tracking-wider uppercase hover:shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                >
-                  {loading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
-                      <span>Sending...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send size={20} />
-                      <span>Send Message</span>
-                    </>
-                  )}
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex items-center justify-center bg-urbane-green text-white px-6 py-3 rounded-lg font-semibold hover:bg-urbane-lightGreen transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <Send size={16} className="mr-2" />
+                    {loading ? 'Sending…' : 'Send Message'}
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Map Section */}
-        <div className="mt-16">
-          <h2 className="font-serif text-2xl font-bold text-urbane-charcoal mb-6 text-center">
-            Find Us
-          </h2>
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Map */}
+          <div className="mt-12 bg-white rounded-xl shadow-md overflow-hidden">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3547.1234567890!2d88.2374!3d27.3081!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjfCsDE4JzI5LjIiTiA4OMKwMTQnMTQuNiJF!5e0!3m2!1sen!2sin!4v1234567890"
+              title="Urbane Haauz location on Google Maps"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3547.1234567890!2d88.2575!3d27.2995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjfCsDE3JzU4LjIiTiA4OMKwMTUnMjcuMCJF!5e0!3m2!1sen!2sin!4v1234567890"
               width="100%"
               height="400"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="Urbane Haauz Location"
             />
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

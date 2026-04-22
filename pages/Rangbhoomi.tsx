@@ -131,7 +131,7 @@ const StandaloneHeader: React.FC = () => (
       to="/"
       className="group flex items-center gap-2 text-[#FAF7F2]/90 hover:text-[#D4A574] transition-colors"
     >
-      <img src="/logo-uh.png" alt="Urbane Haauz logo" width={48} height={48} decoding="async" className="w-12 h-12 rounded-full" />
+      <img src="/logo-uh.png" alt="Urbane Haauz logo" width={48} height={48} decoding="async" className="w-12 h-12 rounded-full bg-white object-contain p-1" />
       <span className="text-xs uppercase tracking-[0.2em] opacity-70 group-hover:opacity-100">
         Pelling Cultural Initiative
       </span>

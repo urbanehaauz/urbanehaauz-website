@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
               width={40}
               height={40}
               decoding="async"
-              className="h-10 w-10 rounded-full ring-1 ring-white/20 group-hover:ring-urbane-gold transition-all"
+              className="h-10 w-10 rounded-full bg-white object-contain p-1 ring-1 ring-white/20 group-hover:ring-urbane-gold transition-all"
             />
             <div className="hidden xl:flex flex-col">
                 <span className="font-serif text-xl font-bold text-white tracking-wider leading-none whitespace-nowrap">

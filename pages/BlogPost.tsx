@@ -53,7 +53,7 @@ const BlogPost: React.FC = () => {
       name: 'Urbane Haauz',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://urbanehaauz.com/uh-badge.png',
+        url: 'https://urbanehaauz.com/logo-uh.png',
       },
     },
   };

@@ -90,7 +90,7 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
         currency: 'INR',
         name: 'Urbane Haauz',
         description: `Room Booking - ${roomType}`,
-        image: '/logo.png',
+        image: '/logo-uh.png',
         order_id: orderData.order_id,
         handler: function (response: any) {
           console.log('Payment successful:', response);

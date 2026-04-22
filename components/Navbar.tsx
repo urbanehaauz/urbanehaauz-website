@@ -40,7 +40,7 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between items-center h-16 gap-4">
           <Link to="/" className="flex items-center space-x-3 group flex-shrink-0">
             <img
-              src="/uh-badge.png"
+              src="/logo-uh.png"
               alt="Urbane Haauz logo"
               width={40}
               height={40}

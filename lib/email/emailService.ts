@@ -111,7 +111,7 @@ function getBookingConfirmationHTML(data: BookingEmailData): string {
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #1a4d1a 0%, #2d5a2d 100%); padding: 30px; text-align: center;">
-              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="72" height="72" style="display: inline-block; width: 72px; height: 72px; background-color: #ffffff; border-radius: 50%; padding: 6px; border: 0; outline: none; text-decoration: none; margin-bottom: 14px;">
+              <img src="https://urbanehaauz.com/logo-uh.png" alt="Urbane Haauz" width="72" height="72" style="display: inline-block; width: 72px; height: 72px; background-color: #ffffff; border-radius: 50%; padding: 6px; border: 0; outline: none; text-decoration: none; margin-bottom: 14px;">
               <h1 style="color: #c9a84c; margin: 0; font-size: 28px; font-weight: bold;">URBANE HAAUZ</h1>
               <p style="color: #ffffff; margin: 8px 0 0; font-size: 14px; letter-spacing: 2px;">PELLING, SIKKIM</p>
             </td>
@@ -254,7 +254,7 @@ function getBookingCancellationHTML(data: BookingEmailData): string {
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #1a4d1a 0%, #2d5a2d 100%); padding: 30px; text-align: center;">
-              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="72" height="72" style="display: inline-block; width: 72px; height: 72px; background-color: #ffffff; border-radius: 50%; padding: 6px; border: 0; outline: none; text-decoration: none; margin-bottom: 14px;">
+              <img src="https://urbanehaauz.com/logo-uh.png" alt="Urbane Haauz" width="72" height="72" style="display: inline-block; width: 72px; height: 72px; background-color: #ffffff; border-radius: 50%; padding: 6px; border: 0; outline: none; text-decoration: none; margin-bottom: 14px;">
               <h1 style="color: #c9a84c; margin: 0; font-size: 28px; font-weight: bold;">URBANE HAAUZ</h1>
               <p style="color: #ffffff; margin: 8px 0 0; font-size: 14px; letter-spacing: 2px;">PELLING, SIKKIM</p>
             </td>
@@ -391,7 +391,7 @@ export async function sendRangotsavNotifyConfirmation(email: string): Promise<bo
           <!-- Brand bar -->
           <tr>
             <td style="background-color: #FAF7F2; padding: 28px 40px 10px; text-align: center;">
-              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
+              <img src="https://urbanehaauz.com/logo-uh.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
               <p style="color: #1C1C1C; margin: 10px 0 0; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Urbane Haauz &middot; Pelling, Sikkim</p>
             </td>
           </tr>
@@ -544,7 +544,7 @@ export async function sendRangotsavVendorWelcome(data: {
           <!-- Brand bar -->
           <tr>
             <td style="background-color: #FAF7F2; padding: 28px 40px 10px; text-align: center;">
-              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
+              <img src="https://urbanehaauz.com/logo-uh.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
               <p style="color: #1C1C1C; margin: 10px 0 0; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Urbane Haauz &middot; Pelling, Sikkim</p>
             </td>
           </tr>
@@ -704,7 +704,7 @@ function rangotsavShellHtml(args: {
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #1C1C1C; border: 1px solid rgba(212,165,116,0.2); border-radius: 4px; overflow: hidden;">
           <tr>
             <td style="background-color: #FAF7F2; padding: 28px 40px 10px; text-align: center;">
-              <img src="https://urbanehaauz.com/uh-badge.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
+              <img src="https://urbanehaauz.com/logo-uh.png" alt="Urbane Haauz" width="56" height="56" style="display: inline-block; width: 56px; height: 56px; border: 0; outline: none; text-decoration: none;">
               <p style="color: #1C1C1C; margin: 10px 0 0; font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700;">Urbane Haauz &middot; Pelling, Sikkim</p>
             </td>
           </tr>

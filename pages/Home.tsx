@@ -257,7 +257,7 @@ const Home: React.FC = () => {
             {rooms.filter(r => r.available).slice(0, 2).map((room) => (
               <div key={room.id} className="group relative overflow-hidden shadow-2xl h-[500px] cursor-pointer">
                  <div className="absolute inset-0">
-                  <img src={room.image} alt={room.name} width={800} height={500} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="w-full h-full bg-gradient-to-br from-urbane-darkGreen to-urbane-charcoal" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-90" />
                 </div>
                 <div className="absolute bottom-0 left-0 p-10 text-white w-full">

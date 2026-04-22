@@ -5,6 +5,66 @@ import { Cloud, Sun, Wifi, Coffee, ChevronRight, Star } from 'lucide-react';
 import { TESTIMONIALS } from '../lib/mockData';
 import { useApp } from '../context/AppContext';
 
+// Home-page FAQPage. Lived in index.html previously, but a site-wide block was
+// colliding with page-specific FAQs on /rooms and /contact (Google flags
+// multiple FAQPage items on one URL as invalid rich-results candidates).
+// Keeping it here scopes the schema to the homepage only.
+const HOME_FAQ_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': 'https://urbanehaauz.com/#faq',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: "What's the phone number to book Urbane Haauz directly?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Call or WhatsApp us at +91 9136032524, or email urbanehaauz@gmail.com. You can also book direct at urbanehaauz.com with best-rate guarantee and instant Razorpay confirmation.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Urbane Haauz have Kanchenjunga view rooms?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "Yes — our property in Upper Pelling has direct Kanchenjunga views from the upper-floor balconies and common areas. On clear mornings you'll see Kanchenjunga lit in gold at sunrise. Premium rooms have private balconies facing the range.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you have dormitory beds for backpackers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — Urbane Haauz is the only property in Upper Pelling offering both private hotel rooms and dorm beds. Dorm beds come with lockers, shared hot-water bathrooms, and the same Kanchenjunga-view balcony access as other guests.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How far is Urbane Haauz from Pelling Skywalk?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: "10-minute walk. We're on Skywalk Road in Upper Pelling, close to Pemayangtse Monastery (5 min drive), Rabdentse Ruins, Sangachoeling, and Khecheopalri Lake.",
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Do you serve food? Any Bengali or vegetarian options?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes — in-house restaurant with CP (breakfast included) and MAP (breakfast + dinner) meal plans. Our kitchen does Bengali, North Indian, Sikkimese, and continental. Pure veg and Jain-friendly options available on request.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How do I reach Pelling from NJP or Bagdogra?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'NJP station or Bagdogra airport to Pelling is approximately 140 km / 4.5–5 hours by shared or private cab via Siliguri–Jorethang–Legship. We can arrange pickup — call +91 9136032524 at least 24 hours in advance.',
+      },
+    },
+  ],
+};
+
 const Home: React.FC = () => {
   const { homeHeroImage, rooms } = useApp();
 
@@ -18,6 +78,7 @@ const Home: React.FC = () => {
         <meta property="og:description" content="Direct Kanchenjunga views, CP/MAP meal plans, dorm beds. Book direct for best rates." />
         <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
         <meta property="og:url" content="https://urbanehaauz.com/" />
+        <script type="application/ld+json">{JSON.stringify(HOME_FAQ_JSONLD)}</script>
       </Helmet>
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">

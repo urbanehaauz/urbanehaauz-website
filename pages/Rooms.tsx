@@ -1,89 +1,95 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Users, Wifi, Square, Check } from 'lucide-react';
-import { useApp } from '../context/AppContext';
-import { RoomCategory } from '../types';
+import { Users, Check, Mountain, Sparkles, Bed } from 'lucide-react';
 
 /**
- * JSON-LD: HotelRoom array (Standard / Super Deluxe / Premium / Dorm).
+ * Urbane Haauz offers three accommodation types:
+ *   - Premium Room (direct Kanchenjunga view, private balcony)
+ *   - Super Deluxe Room (partial mountain view)
+ *   - Dormitory Bed (shared, only boutique hotel in Upper Pelling with this option)
  *
- * Static schema — prices, occupancy, and amenities are hardcoded with reasonable
- * defaults derived from docs/Marketing-Claude/schema/rooms.json. The live Supabase
- * `rooms` table is the source of truth for UI but is intentionally NOT used here
- * because schema must be deterministic for crawlers and should not flap with
- * availability changes. When founders confirm exact price ranges, update the
- * `price` / `priceSpecification` values below.
- *
- * Assumptions flagged for founder verification:
- *   - Peak-season prices from audit + CLAUDE.md (₹1,800–3,900 peak, ₹1,200–3,100 off)
- *   - Super Deluxe = "Deluxe" in schema vocab (existing AppContext uses Super Deluxe label)
- *   - Max occupancy: Standard 2, Super Deluxe 3, Premium 3, Dorm 1 per bed
- *   - Bed type: Double (Standard), King (Super Deluxe / Premium), Bunk (Dorm)
+ * The page is intentionally text-only (no pictures, no prices).
+ * Pricing is handled at /book where live availability + seasonal rates apply.
  */
+
+type RoomType = {
+  id: 'premium' | 'super-deluxe' | 'dorm';
+  name: string;
+  tagline: string;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
+  description: string;
+  maxOccupancy: string;
+  amenities: string[];
+  view: string;
+};
+
+const ROOM_TYPES: RoomType[] = [
+  {
+    id: 'premium',
+    name: 'Premium Room',
+    tagline: 'Direct Kanchenjunga view from your own balcony',
+    icon: Mountain,
+    description:
+      "Our signature rooms, north-west facing, with a private balcony that looks directly onto the Kanchenjunga range. These are the best sunrise rooms in the property — clearest views October through March.",
+    maxOccupancy: 'Up to 3 guests',
+    view: 'Direct, from private balcony',
+    amenities: [
+      'Private Kanchenjunga-view balcony',
+      'King bed + seating area',
+      'Attached bathroom, 24-hour hot water',
+      'Free WiFi + power backup',
+      'Daily housekeeping',
+      'Room service',
+    ],
+  },
+  {
+    id: 'super-deluxe',
+    name: 'Super Deluxe Room',
+    tagline: 'Spacious, light-filled, partial mountain view',
+    icon: Sparkles,
+    description:
+      "Larger than our standard category, with upgraded furnishings and partial Kanchenjunga view from the room window. A comfortable mid-tier choice for families and longer stays.",
+    maxOccupancy: 'Up to 3 guests',
+    view: 'Partial, from room window',
+    amenities: [
+      'Partial Kanchenjunga view',
+      'King bed + seating area',
+      'Attached bathroom, 24-hour hot water',
+      'Free WiFi + power backup',
+      'Daily housekeeping',
+      'Room service',
+    ],
+  },
+  {
+    id: 'dorm',
+    name: 'Dormitory Bed',
+    tagline: 'The only boutique hotel in Upper Pelling offering dorm beds',
+    icon: Bed,
+    description:
+      "Shared dormitory accommodation for solo travellers, backpackers, and budget-conscious groups. Every dorm guest gets full access to the same Kanchenjunga-view common areas as private-room guests.",
+    maxOccupancy: '1 per bed',
+    view: 'From shared common areas',
+    amenities: [
+      'Private locker',
+      'Shared bathroom, 24-hour hot water',
+      'Free WiFi + power backup',
+      'Access to Kanchenjunga-view common lounge',
+      'Bunk bed with linen',
+      'Luggage storage',
+    ],
+  },
+];
+
 const ROOMS_JSONLD = {
   '@context': 'https://schema.org',
   '@graph': [
     {
       '@type': 'HotelRoom',
-      '@id': 'https://urbanehaauz.com/rooms#standard',
-      name: 'Standard Room',
-      description:
-        'Comfortable standard room at Urbane Haauz, Upper Pelling, with garden or courtyard view and access to Kanchenjunga-facing common areas. Attached bathroom with 24-hour hot water, free WiFi, and daily housekeeping.',
-      occupancy: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 2 },
-      bed: { '@type': 'BedDetails', numberOfBeds: 1, typeOfBed: 'Double bed' },
-      amenityFeature: [
-        { '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Attached Bathroom', value: true },
-        { '@type': 'LocationFeatureSpecification', name: '24-hour Hot Water', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Room Service', value: true },
-      ],
-      offers: {
-        '@type': 'Offer',
-        priceCurrency: 'INR',
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          minPrice: 1200,
-          maxPrice: 2400,
-          priceCurrency: 'INR',
-        },
-        availability: 'https://schema.org/InStock',
-        url: 'https://urbanehaauz.com/book',
-      },
-    },
-    {
-      '@type': 'HotelRoom',
-      '@id': 'https://urbanehaauz.com/rooms#super-deluxe',
-      name: 'Super Deluxe Room',
-      description:
-        'Spacious Super Deluxe room at Urbane Haauz with partial Kanchenjunga mountain view, larger windows, and upgraded furnishings. Attached bathroom, free WiFi, and seating area.',
-      occupancy: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 3 },
-      bed: { '@type': 'BedDetails', numberOfBeds: 1, typeOfBed: 'King bed' },
-      amenityFeature: [
-        { '@type': 'LocationFeatureSpecification', name: 'Partial Kanchenjunga View', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Seating Area', value: true },
-        { '@type': 'LocationFeatureSpecification', name: 'Room Service', value: true },
-      ],
-      offers: {
-        '@type': 'Offer',
-        priceCurrency: 'INR',
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          minPrice: 1900,
-          maxPrice: 3200,
-          priceCurrency: 'INR',
-        },
-        availability: 'https://schema.org/InStock',
-        url: 'https://urbanehaauz.com/book',
-      },
-    },
-    {
-      '@type': 'HotelRoom',
       '@id': 'https://urbanehaauz.com/rooms#premium',
       name: 'Premium Room',
       description:
-        'Premium room at Urbane Haauz with direct, unobstructed Kanchenjunga view from a private balcony. The best rooms in the property for sunrise over the Kanchenjunga range. Includes king bed, seating area, and upgraded bath.',
+        'Premium room at Urbane Haauz with direct, unobstructed Kanchenjunga view from a private balcony. The best sunrise rooms in the property. King bed, seating area, upgraded bath.',
       occupancy: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 3 },
       bed: { '@type': 'BedDetails', numberOfBeds: 1, typeOfBed: 'King bed' },
       amenityFeature: [
@@ -92,25 +98,30 @@ const ROOMS_JSONLD = {
         { '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
         { '@type': 'LocationFeatureSpecification', name: 'Room Service', value: true },
       ],
-      offers: {
-        '@type': 'Offer',
-        priceCurrency: 'INR',
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          minPrice: 3100,
-          maxPrice: 3900,
-          priceCurrency: 'INR',
-        },
-        availability: 'https://schema.org/InStock',
-        url: 'https://urbanehaauz.com/book',
-      },
+      url: 'https://urbanehaauz.com/book',
+    },
+    {
+      '@type': 'HotelRoom',
+      '@id': 'https://urbanehaauz.com/rooms#super-deluxe',
+      name: 'Super Deluxe Room',
+      description:
+        'Spacious Super Deluxe room at Urbane Haauz with partial Kanchenjunga mountain view, larger windows, and upgraded furnishings. Attached bathroom, free WiFi, seating area.',
+      occupancy: { '@type': 'QuantitativeValue', minValue: 1, maxValue: 3 },
+      bed: { '@type': 'BedDetails', numberOfBeds: 1, typeOfBed: 'King bed' },
+      amenityFeature: [
+        { '@type': 'LocationFeatureSpecification', name: 'Partial Kanchenjunga View', value: true },
+        { '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
+        { '@type': 'LocationFeatureSpecification', name: 'Seating Area', value: true },
+        { '@type': 'LocationFeatureSpecification', name: 'Room Service', value: true },
+      ],
+      url: 'https://urbanehaauz.com/book',
     },
     {
       '@type': 'Accommodation',
       '@id': 'https://urbanehaauz.com/rooms#dorm',
       name: 'Dormitory Bed',
       description:
-        'Shared dormitory accommodation at Urbane Haauz, Upper Pelling — the only boutique hotel in Pelling offering dorm beds. Features lockers, shared bathroom, free WiFi, and access to the same Kanchenjunga-view common areas as private rooms. Ideal for solo travellers, backpackers, and budget-conscious groups.',
+        'Shared dormitory accommodation at Urbane Haauz, Upper Pelling — the only boutique hotel in Pelling offering dorm beds. Lockers, shared bathroom, free WiFi, and access to the same Kanchenjunga-view common areas as private rooms.',
       occupancy: { '@type': 'QuantitativeValue', value: 1 },
       bed: { '@type': 'BedDetails', numberOfBeds: 1, typeOfBed: 'Dorm bunk bed' },
       amenityFeature: [
@@ -120,18 +131,7 @@ const ROOMS_JSONLD = {
         { '@type': 'LocationFeatureSpecification', name: '24-hour Hot Water', value: true },
         { '@type': 'LocationFeatureSpecification', name: 'Common Area with Kanchenjunga View', value: true },
       ],
-      offers: {
-        '@type': 'Offer',
-        priceCurrency: 'INR',
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          minPrice: 400,
-          maxPrice: 900,
-          priceCurrency: 'INR',
-        },
-        availability: 'https://schema.org/InStock',
-        url: 'https://urbanehaauz.com/book',
-      },
+      url: 'https://urbanehaauz.com/book',
     },
   ],
 };
@@ -145,7 +145,6 @@ const ROOMS_BREADCRUMB_JSONLD = {
   ],
 };
 
-// FAQPage schema specific to /rooms — different question set than global FAQ
 const ROOMS_FAQ_JSONLD = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -153,10 +152,10 @@ const ROOMS_FAQ_JSONLD = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'How many rooms does Urbane Haauz have?',
+      name: 'What room types does Urbane Haauz offer?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Urbane Haauz has 8 private rooms across Standard, Super Deluxe and Premium categories, plus a shared dormitory for backpackers. Every room has access to Kanchenjunga-facing common areas, and Premium rooms have private balconies directly facing the Kanchenjunga range.',
+        text: 'Urbane Haauz offers three accommodation types: Premium rooms (direct Kanchenjunga view from a private balcony), Super Deluxe rooms (partial mountain view), and dormitory beds (shared, with access to the same Kanchenjunga-view common areas as private-room guests).',
       },
     },
     {
@@ -164,7 +163,7 @@ const ROOMS_FAQ_JSONLD = {
       name: 'Which room at Urbane Haauz has the best Kanchenjunga view?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Premium rooms have direct, unobstructed Kanchenjunga views from a private balcony — the best sunrise rooms in the property. Super Deluxe rooms have partial mountain views. Standard rooms open onto the garden/courtyard with view access from the shared balcony and common areas.',
+        text: 'Premium rooms have direct, unobstructed Kanchenjunga views from a private balcony — the best sunrise rooms in the property. Super Deluxe rooms have partial mountain views from the room window. Dorm guests access the shared Kanchenjunga-view common areas.',
       },
     },
     {
@@ -172,68 +171,67 @@ const ROOMS_FAQ_JSONLD = {
       name: 'Are dorm beds available at Urbane Haauz?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Urbane Haauz is the only boutique property in Upper Pelling offering dorm beds alongside private hotel rooms. Dorm beds include lockers, a shared hot-water bathroom, free WiFi, and access to the same Kanchenjunga-view common areas as private-room guests. Priced ₹400–900 per night depending on season.',
+        text: 'Yes. Urbane Haauz is the only boutique property in Upper Pelling offering dorm beds alongside private hotel rooms. Dorm beds include lockers, a shared hot-water bathroom, free WiFi, and access to the same Kanchenjunga-view common areas as private-room guests.',
       },
     },
     {
       '@type': 'Question',
-      name: 'What is included in the room price?',
+      name: 'What is included in the room rate?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'All room rates include free WiFi, 24-hour hot water, daily housekeeping, and power backup. Guests can upgrade to CP (breakfast included) or MAP (breakfast + dinner) meal plans at the time of booking. Airport / station pickup is available on request for an additional charge.',
+        text: 'All stays include free WiFi, 24-hour hot water, daily housekeeping, and power backup. Guests can upgrade to CP (breakfast included) or MAP (breakfast + dinner) meal plans at booking. Airport / station pickup is available on request for an additional charge.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Can I book a specific room category directly?',
+      name: 'How do I book a room at Urbane Haauz?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Book any category — Standard, Super Deluxe, Premium, or Dorm bed — directly at urbanehaauz.com/book with instant Razorpay confirmation and best-rate guarantee (no OTA commission). For multi-room family bookings or groups, WhatsApp +91 9136032524.',
+        text: 'Book any category — Premium, Super Deluxe, or Dorm bed — directly at urbanehaauz.com/book with instant Razorpay confirmation and best-rate guarantee (no OTA commission). For multi-room family bookings or groups, WhatsApp +91 9136032524.',
       },
     },
   ],
 };
 
 const Rooms: React.FC = () => {
-  const { rooms, loading } = useApp();
-  const [filterCategory, setFilterCategory] = useState<string>('All');
-
-  const filteredRooms = filterCategory === 'All'
-    ? rooms
-    : rooms.filter(room => room.category === filterCategory);
-
-  const categories = ['All', ...Object.values(RoomCategory)];
-
   return (
     <div className="pt-24 pb-20 min-h-screen bg-urbane-mist">
       <Helmet>
         <title>Rooms & Dorms | Urbane Haauz Pelling — Kanchenjunga View Hotel</title>
-        <meta name="description" content="Standard, Deluxe and Premium rooms plus dormitory beds at Urbane Haauz in Upper Pelling. 8 rooms, Kanchenjunga views, CP/MAP meal plans." />
+        <meta
+          name="description"
+          content="Premium, Super Deluxe and Dormitory accommodation at Urbane Haauz in Upper Pelling. Direct Kanchenjunga views, CP/MAP meal plans, free WiFi, 24-hour hot water."
+        />
         <link rel="canonical" href="https://urbanehaauz.com/rooms" />
         <meta property="og:title" content="Rooms & Dorms | Urbane Haauz Pelling" />
-        <meta property="og:description" content="From backpacker dorms to premium Kanchenjunga-view suites." />
+        <meta property="og:description" content="Premium, Super Deluxe and Dorm accommodation in Upper Pelling with Kanchenjunga views." />
         <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
         <meta property="og:url" content="https://urbanehaauz.com/rooms" />
         <script type="application/ld+json">{JSON.stringify(ROOMS_JSONLD)}</script>
         <script type="application/ld+json">{JSON.stringify(ROOMS_BREADCRUMB_JSONLD)}</script>
         <script type="application/ld+json">{JSON.stringify(ROOMS_FAQ_JSONLD)}</script>
       </Helmet>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="font-serif text-4xl md:text-5xl text-urbane-green font-bold mb-4">Our Accommodation</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            From cozy backpacker dorms to luxurious suites with Kanchenjunga views, we have a space for every traveler.
+        <div className="text-center mb-14">
+          <span className="text-urbane-gold uppercase tracking-[0.3em] text-xs font-semibold">Accommodation</span>
+          <h1 className="font-serif text-4xl md:text-5xl text-urbane-green font-bold mt-3 mb-4">
+            Three ways to stay
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            From backpacker dorms to premium suites with direct Kanchenjunga views. Pick the stay that fits —
+            and book with confirmed availability and best-rate guarantee.
           </p>
         </div>
 
-        {/* Room Types at a Glance — GEO optimization: direct-answer facts for AI engines */}
-        <section aria-labelledby="rooms-glance-heading" className="bg-white border-l-4 border-urbane-gold shadow-soft p-8 mb-12">
-          <h2 id="rooms-glance-heading" className="font-serif text-2xl md:text-3xl text-urbane-charcoal font-bold mb-2">
+        {/* Room Types at a Glance — GEO block for AI engines, pictures & prices intentionally omitted */}
+        <section
+          aria-labelledby="rooms-glance-heading"
+          className="bg-white border-l-4 border-urbane-gold shadow-soft p-6 md:p-8 mb-14"
+        >
+          <h2 id="rooms-glance-heading" className="font-serif text-2xl md:text-3xl text-urbane-charcoal font-bold mb-5">
             Room Types at a Glance
           </h2>
-          <p className="text-gray-500 text-sm mb-6">
-            All prices in INR per night. Peak-season rates shown; off-season (June–September) discounts apply automatically at checkout.
-          </p>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
@@ -241,149 +239,132 @@ const Rooms: React.FC = () => {
                   <th className="py-3 pr-4 font-bold uppercase tracking-wider text-xs">Room Type</th>
                   <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Max Occupancy</th>
                   <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Kanchenjunga View</th>
-                  <th className="py-3 px-4 font-bold uppercase tracking-wider text-xs">Bed</th>
-                  <th className="py-3 pl-4 font-bold uppercase tracking-wider text-xs">Price Range</th>
+                  <th className="py-3 pl-4 font-bold uppercase tracking-wider text-xs">Bed</th>
                 </tr>
               </thead>
               <tbody className="text-gray-700">
                 <tr className="border-b border-gray-100">
-                  <td className="py-3 pr-4 font-semibold">Standard Room</td>
-                  <td className="py-3 px-4">2 guests</td>
-                  <td className="py-3 px-4">Shared rooftop deck</td>
-                  <td className="py-3 px-4">Double</td>
-                  <td className="py-3 pl-4">₹1,200–₹2,400</td>
+                  <td className="py-3 pr-4 font-semibold">Premium Room</td>
+                  <td className="py-3 px-4">3 guests</td>
+                  <td className="py-3 px-4">Direct, from private balcony</td>
+                  <td className="py-3 pl-4">King</td>
                 </tr>
                 <tr className="border-b border-gray-100">
                   <td className="py-3 pr-4 font-semibold">Super Deluxe</td>
                   <td className="py-3 px-4">3 guests</td>
                   <td className="py-3 px-4">Partial, from room window</td>
-                  <td className="py-3 px-4">King</td>
-                  <td className="py-3 pl-4">₹1,900–₹3,200</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 pr-4 font-semibold">Premium Room</td>
-                  <td className="py-3 px-4">3 guests</td>
-                  <td className="py-3 px-4">Direct, from private balcony</td>
-                  <td className="py-3 px-4">King</td>
-                  <td className="py-3 pl-4">₹3,100–₹3,900</td>
+                  <td className="py-3 pl-4">King</td>
                 </tr>
                 <tr>
                   <td className="py-3 pr-4 font-semibold">Dormitory Bed</td>
                   <td className="py-3 px-4">1 per bed</td>
                   <td className="py-3 px-4">From shared common areas</td>
-                  <td className="py-3 px-4">Bunk</td>
-                  <td className="py-3 pl-4">₹400–₹900</td>
+                  <td className="py-3 pl-4">Bunk</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <ul className="mt-6 space-y-2 text-gray-600 text-sm">
-            <li><strong className="text-urbane-charcoal">Total private rooms:</strong> 8 (Standard, Super Deluxe, Premium categories).</li>
-            <li><strong className="text-urbane-charcoal">Dorm beds:</strong> Yes — the only boutique hotel in Upper Pelling offering shared dormitory accommodation alongside private rooms.</li>
-            <li><strong className="text-urbane-charcoal">Meal plans:</strong> CP (breakfast included) and MAP (breakfast + dinner) available at booking. EP (room only) is the default.</li>
-            <li><strong className="text-urbane-charcoal">Best view rooms:</strong> Premium category — private north-west-facing balcony with direct Kanchenjunga view at sunrise (clearest October–March).</li>
-            <li><strong className="text-urbane-charcoal">Direct booking:</strong> Instant Razorpay confirmation at urbanehaauz.com/book — no OTA markup, best-rate guaranteed.</li>
+            <li>
+              <strong className="text-urbane-charcoal">Dorm beds:</strong> the only boutique hotel in Upper Pelling
+              offering shared dormitory accommodation alongside private rooms.
+            </li>
+            <li>
+              <strong className="text-urbane-charcoal">Meal plans:</strong> CP (breakfast included) and MAP (breakfast +
+              dinner) available at booking. EP (room only) is the default.
+            </li>
+            <li>
+              <strong className="text-urbane-charcoal">Best view rooms:</strong> Premium category — private north-west-facing
+              balcony with direct Kanchenjunga view at sunrise (clearest October–March).
+            </li>
+            <li>
+              <strong className="text-urbane-charcoal">Direct booking:</strong> Instant confirmation at{' '}
+              <Link to="/book" className="text-urbane-green font-semibold underline-offset-4 hover:underline">
+                urbanehaauz.com/book
+              </Link>{' '}
+              — no OTA markup, best-rate guaranteed.
+            </li>
           </ul>
         </section>
 
-        {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilterCategory(cat)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-colors ${
-                filterCategory === cat
-                  ? 'bg-urbane-green text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Room Grid */}
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-urbane-green mx-auto mb-4"></div>
-            <p className="text-gray-500">Loading rooms...</p>
-            <p className="text-gray-400 text-xs mt-2">Check console (F12) for details</p>
-          </div>
-        ) : filteredRooms.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No rooms available at the moment.</p>
-            <p className="text-gray-400 text-sm mt-2">Please check back later or contact us.</p>
-            <p className="text-gray-400 text-xs mt-4">Debug: Check browser console (F12) for loading logs</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredRooms.map((room) => (
-              <div key={room.id} className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col">
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={room.image}
-                    alt={room.name}
-                    width={600}
-                    height={400}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                  />
-                  {!room.available && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                      <span className="bg-red-500 text-white px-4 py-2 font-bold rounded transform -rotate-12">
-                        SOLD OUT
-                      </span>
+        {/* 3-up text cards, no imagery, no prices */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {ROOM_TYPES.map((type) => {
+            const Icon = type.icon;
+            return (
+              <article
+                key={type.id}
+                className="bg-white rounded-xl border border-gray-100 shadow-soft hover:shadow-xl transition-shadow duration-300 flex flex-col"
+              >
+                <div className="px-7 pt-7 pb-5 border-b border-gray-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-urbane-gold/10 flex items-center justify-center">
+                      <Icon className="text-urbane-gold" size={20} />
                     </div>
-                  )}
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded text-xs font-bold text-urbane-green uppercase tracking-wide">
-                    {room.category}
+                    <span className="text-[10px] uppercase tracking-[0.25em] font-bold text-urbane-gold">
+                      {type.id === 'dorm' ? 'Shared' : 'Private'}
+                    </span>
                   </div>
+                  <h2 className="font-serif text-2xl text-urbane-charcoal font-bold leading-tight">{type.name}</h2>
+                  <p className="text-gray-500 text-sm italic mt-2">{type.tagline}</p>
                 </div>
 
-                <div className="p-6 flex-grow flex flex-col">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-serif text-xl font-bold text-gray-900">{room.name}</h3>
-                  </div>
+                <div className="px-7 py-5 flex-grow flex flex-col">
+                  <p className="text-gray-600 text-sm leading-relaxed mb-5">{type.description}</p>
 
-                  <div className="mb-4" />
-
-                  <p className="text-gray-600 text-sm mb-6 line-clamp-3">
-                    {room.description}
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-2 mb-6">
-                    {room.amenities.slice(0, 4).map((amenity, idx) => (
-                      <div key={idx} className="flex items-center text-xs text-gray-500">
-                        <Check size={12} className="text-urbane-gold mr-1.5" />
-                        {amenity}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
-                    <div className="flex items-center text-gray-500 text-sm">
-                      <Users size={16} className="mr-1.5" />
-                      <span>Up to {room.maxOccupancy} Guests</span>
+                  <dl className="text-sm text-gray-600 mb-5 space-y-2">
+                    <div className="flex items-baseline gap-2">
+                      <dt className="text-[10px] uppercase tracking-widest font-bold text-gray-400 w-20 shrink-0">View</dt>
+                      <dd>{type.view}</dd>
                     </div>
+                    <div className="flex items-baseline gap-2">
+                      <dt className="text-[10px] uppercase tracking-widest font-bold text-gray-400 w-20 shrink-0">Sleeps</dt>
+                      <dd>{type.maxOccupancy}</dd>
+                    </div>
+                  </dl>
+
+                  <ul className="text-sm text-gray-600 space-y-1.5 mb-6">
+                    {type.amenities.map((a, i) => (
+                      <li key={i} className="flex items-start">
+                        <Check size={14} className="text-urbane-gold mr-2 mt-0.5 shrink-0" />
+                        <span>{a}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-auto">
                     <Link
-                      to={`/book?room=${room.id}`}
-                      className={`px-4 py-2 rounded font-semibold text-sm transition-colors ${
-                        room.available
-                          ? 'bg-urbane-green text-white hover:bg-urbane-lightGreen'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
-                      onClick={(e) => !room.available && e.preventDefault()}
+                      to="/book"
+                      className="inline-flex items-center justify-center w-full px-4 py-3 rounded bg-urbane-green text-white font-semibold text-sm uppercase tracking-wider hover:bg-urbane-lightGreen transition-colors"
                     >
-                      {room.available ? 'Book Now' : 'Unavailable'}
+                      Check availability
                     </Link>
                   </div>
                 </div>
-              </div>
-            ))}
+              </article>
+            );
+          })}
+        </div>
+
+        {/* Bottom-of-page supporting copy */}
+        <div className="mt-16 max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 text-urbane-gold mb-4">
+            <Users size={18} />
+            <span className="text-xs uppercase tracking-[0.3em] font-bold">Plan your stay</span>
           </div>
-        )}
+          <p className="text-gray-600 leading-relaxed">
+            Travelling as a family, hosting a small gathering, or booking for a larger group? We can reserve the full
+            property on request. Call or WhatsApp{' '}
+            <a href="tel:+919136032524" className="text-urbane-green font-semibold">
+              +91 9136032524
+            </a>{' '}
+            — or visit{' '}
+            <Link to="/contact" className="text-urbane-green font-semibold underline-offset-4 hover:underline">
+              /contact
+            </Link>
+            .
+          </p>
+        </div>
       </div>
     </div>
   );

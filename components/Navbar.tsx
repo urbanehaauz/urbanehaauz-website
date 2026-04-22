@@ -37,8 +37,8 @@ const Navbar: React.FC = () => {
   return (
     <nav className={navClass}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-3 group">
+        <div className="flex justify-between items-center h-16 gap-4">
+          <Link to="/" className="flex items-center space-x-3 group flex-shrink-0">
             <img
               src="/uh-badge.png"
               alt="Urbane Haauz logo"
@@ -47,15 +47,15 @@ const Navbar: React.FC = () => {
               decoding="async"
               className="h-10 w-10 rounded-full ring-1 ring-white/20 group-hover:ring-urbane-gold transition-all"
             />
-            <div className="flex flex-col">
-                <span className="font-serif text-xl md:text-2xl font-bold text-white tracking-wider leading-none">
+            <div className="hidden xl:flex flex-col">
+                <span className="font-serif text-xl font-bold text-white tracking-wider leading-none whitespace-nowrap">
                 URBANE HAAUZ
                 </span>
-                <span className="text-[0.6rem] text-gray-300 tracking-[0.3em] uppercase">Pelling, Sikkim</span>
+                <span className="text-[0.6rem] text-gray-300 tracking-[0.3em] uppercase whitespace-nowrap">Pelling, Sikkim</span>
             </div>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-5 xl:space-x-6">
             <Link to="/" className="text-sm uppercase tracking-widest font-medium text-white hover:text-urbane-gold transition-colors relative group">
                 {t.home}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-urbane-gold transition-all group-hover:w-full"></span>

@@ -27,11 +27,10 @@ export const RANGOTSAV_BREADCRUMB_JSONLD = {
 
 /**
  * Assumptions flagged for founder verification:
- *  - Single-day event 2026-05-25, 10:00–22:00 IST (timing approximate)
+ *  - Two-day event 2026-05-25 → 2026-05-26, 10:00–22:00 IST each day (timing approximate)
  *  - Location address mirrors hotel NAP (SH-510, Skywalk Road, Upper Pelling)
  *  - eventStatus: EventScheduled (update to EventPostponed/Cancelled if needed)
- *  - offers.price / availability: set to "0" / InStock since registration is
- *    currently free / notify-me. Update when ticketing goes live.
+ *  - offers: ₹100 per Festival Pass, 300-ticket capacity
  */
 export const RANGOTSAV_EVENT_JSONLD = {
   '@context': 'https://schema.org',
@@ -42,7 +41,7 @@ export const RANGOTSAV_EVENT_JSONLD = {
   description:
     "A Bengal-Sikkim cultural conglomerate with art, music, cuisine, and folk performances. Hosted by Urbane Haauz in Upper Pelling, West Sikkim.",
   startDate: '2026-05-25T10:00:00+05:30',
-  endDate: '2026-05-25T22:00:00+05:30',
+  endDate: '2026-05-26T22:00:00+05:30',
   eventStatus: 'https://schema.org/EventScheduled',
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   location: {
@@ -58,8 +57,8 @@ export const RANGOTSAV_EVENT_JSONLD = {
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: '27.2995',
-      longitude: '88.2575',
+      latitude: '27.2988033',
+      longitude: '88.2271633',
     },
   },
   image: [
@@ -78,10 +77,16 @@ export const RANGOTSAV_EVENT_JSONLD = {
   },
   offers: {
     '@type': 'Offer',
-    url: 'https://urbanehaauz.com/rangotsav',
-    price: '0',
+    url: 'https://urbanehaauz.com/rangotsav#register',
+    name: 'Rangotsav Festival Pass',
+    price: '100',
     priceCurrency: 'INR',
     availability: 'https://schema.org/InStock',
     validFrom: '2026-04-01T00:00:00+05:30',
+    validThrough: '2026-05-26T22:00:00+05:30',
+    inventoryLevel: {
+      '@type': 'QuantitativeValue',
+      value: 300,
+    },
   },
 };

@@ -20,6 +20,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { RANGOTSAV_BREADCRUMB_JSONLD, RANGOTSAV_EVENT_JSONLD } from '../lib/seo/schemas';
+import TicketsSection from '../components/rangotsav/TicketsSection';
 
 const useInView = (threshold = 0.15) => {
   const ref = useRef<HTMLDivElement | null>(null);
@@ -205,7 +206,7 @@ const HeroSection: React.FC = () => (
       <div className="mt-10 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 animate-fade-in-up">
         <div className="inline-flex items-center gap-2 text-[#FAF7F2] bg-[#1C1C1C]/30 backdrop-blur-sm px-5 py-2.5 rounded-full border border-[#FAF7F2]/20">
           <Calendar className="w-4 h-4 text-[#D4A574]" />
-          <span className="uppercase text-xs tracking-[0.3em]">25 May 2026</span>
+          <span className="uppercase text-xs tracking-[0.3em]">25–26 May, 2026</span>
         </div>
         <div className="inline-flex items-center gap-2 text-[#FAF7F2] bg-[#1C1C1C]/30 backdrop-blur-sm px-5 py-2.5 rounded-full border border-[#FAF7F2]/20">
           <MapPin className="w-4 h-4 text-[#D4A574]" />
@@ -214,11 +215,11 @@ const HeroSection: React.FC = () => (
       </div>
 
       <a
-        href="#"
-      onClick={(e: React.MouseEvent) => { e.preventDefault(); document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' }); }}
+        href="#tickets"
+      onClick={(e: React.MouseEvent) => { e.preventDefault(); document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' }); }}
         className="group mt-12 inline-flex items-center gap-3 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-9 py-4 rounded-full transition-all shadow-2xl shadow-[#C84B0F]/30 hover:shadow-[#D4A574]/50 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-sm animate-fade-in-up"
       >
-        Register Interest
+        Get Your Pass · ₹100
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </a>
 
@@ -919,11 +920,12 @@ const TIERS = [
     free: true,
   },
   {
-    name: 'Cultural Pass',
-    sub: 'Full festival',
-    body: 'All performances across three days. Entry to art exhibition and food stalls.',
+    name: 'Festival Pass',
+    sub: 'Two days · all access',
+    body: 'Entry across both festival days — art, performances, food stalls, and the full Rangotsav programme.',
     accent: '#D4A574',
     featured: true,
+    price: '₹100 per person',
   },
   {
     name: 'Participants',
@@ -934,8 +936,6 @@ const TIERS = [
 ];
 
 const RegistrationSection: React.FC = () => {
-  const [notifyEmail, setNotifyEmail] = useState('');
-  const [notifyDone, setNotifyDone] = useState(false);
   const [vendorName, setVendorName] = useState('');
   const [vendorEmail, setVendorEmail] = useState('');
   const [vendorSelling, setVendorSelling] = useState('');
@@ -945,32 +945,7 @@ const RegistrationSection: React.FC = () => {
   const [volPhone, setVolPhone] = useState('');
   const [volSkills, setVolSkills] = useState('');
   const [volDone, setVolDone] = useState(false);
-  const [activeTab, setActiveTab] = useState<'tickets' | 'vendors' | 'volunteers'>('tickets');
-
-  const handleNotify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const email = notifyEmail.trim();
-    if (!email) return;
-    try {
-      const { supabase } = await import('../lib/supabase');
-      const { error } = await supabase
-        .from('rangotsav_registrations')
-        .upsert(
-          { type: 'notify', email },
-          { onConflict: 'type,email', ignoreDuplicates: true },
-        );
-      if (error) console.error('rangotsav_registrations notify upsert failed:', error);
-    } catch (e) {
-      console.error('rangotsav_registrations notify exception:', e);
-    }
-    try {
-      const { sendRangotsavNotifyConfirmation } = await import('../lib/email/emailService');
-      await sendRangotsavNotifyConfirmation(email);
-    } catch (e) {
-      console.error('sendRangotsavNotifyConfirmation exception:', e);
-    }
-    setNotifyDone(true);
-  };
+  const [activeTab, setActiveTab] = useState<'vendors' | 'volunteers'>('vendors');
 
   const handleVendor = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1046,54 +1021,69 @@ const RegistrationSection: React.FC = () => {
       <div className="relative z-10 max-w-5xl mx-auto">
         <Reveal>
           <div className="text-center mb-16">
-            <span className="text-xs uppercase tracking-[0.5em] text-[#D4A574]">Registration</span>
+            <span className="text-xs uppercase tracking-[0.5em] text-[#D4A574]">Beyond the audience</span>
             <h2 className="mt-4 font-serif text-4xl md:text-6xl leading-tight">
               Be Part of Rangotsav
             </h2>
+            <p className="mt-5 text-[#FAF7F2]/55 text-base max-w-xl mx-auto">
+              Three ways to join the festival — pick the one that fits.
+            </p>
           </div>
         </Reveal>
 
         {/* Tier cards */}
         <div className="grid md:grid-cols-3 gap-6">
-          {TIERS.map((tier, i) => (
-            <Reveal key={tier.name} delay={i * 100}>
+          {TIERS.map((tier, i) => {
+            const isFestivalPass = (tier as any).price;
+            const cardInner = (
               <div
                 className={`h-full rounded-2xl p-8 border transition-all ${
                   tier.featured
-                    ? 'border-[#D4A574] bg-[#D4A574]/5 scale-[1.02]'
+                    ? 'border-[#D4A574] bg-[#D4A574]/5 scale-[1.02] hover:bg-[#D4A574]/10'
                     : 'border-[#FAF7F2]/10 bg-[#FAF7F2]/[0.03]'
-                }`}
+                } ${isFestivalPass ? 'cursor-pointer hover:shadow-2xl hover:shadow-[#D4A574]/20' : ''}`}
               >
                 <div className="h-1 w-12 mb-6 rounded-full" style={{ background: tier.accent }} />
                 <h3 className="font-serif text-2xl mb-1">{tier.name}</h3>
                 <p className="text-xs uppercase tracking-[0.22em] text-[#D4A574] mb-5">{tier.sub}</p>
                 <p className="text-[#FAF7F2]/70 leading-relaxed text-sm">{tier.body}</p>
-                <p className={`mt-8 text-xs uppercase tracking-[0.2em] ${(tier as any).free ? 'text-[#4A7C59] font-bold' : 'text-[#FAF7F2]/40'}`}>
-                  {(tier as any).free ? 'Free' : 'Pricing TBD'}
-                </p>
+                <div className="mt-8 flex items-center justify-between">
+                  <p className={`text-xs uppercase tracking-[0.2em] ${(tier as any).free ? 'text-[#4A7C59] font-bold' : isFestivalPass ? 'text-[#D4A574] font-bold' : 'text-[#FAF7F2]/40'}`}>
+                    {(tier as any).free ? 'Free' : isFestivalPass ? (tier as any).price : 'On invitation'}
+                  </p>
+                  {isFestivalPass && (
+                    <span className="text-[#D4A574] text-xs uppercase tracking-[0.2em] font-semibold inline-flex items-center gap-1">
+                      Buy now <ArrowRight className="w-3 h-3" />
+                    </span>
+                  )}
+                </div>
               </div>
-            </Reveal>
-          ))}
+            );
+            return (
+              <Reveal key={tier.name} delay={i * 100}>
+                {isFestivalPass ? (
+                  <a
+                    href="#tickets"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="block h-full"
+                  >
+                    {cardInner}
+                  </a>
+                ) : (
+                  cardInner
+                )}
+              </Reveal>
+            );
+          })}
         </div>
-
-        <p className="text-center text-[#FAF7F2]/40 text-xs mt-6 tracking-wide">
-          No physical tickets. All confirmations via email after registration.
-        </p>
 
         {/* Tab switcher: Tickets / Vendors / Volunteers */}
         <Reveal delay={200}>
           <div className="mt-16 max-w-2xl mx-auto">
             <div className="flex flex-wrap justify-center gap-2 mb-8">
-              <button
-                onClick={() => setActiveTab('tickets')}
-                className={`px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
-                  activeTab === 'tickets'
-                    ? 'bg-[#D4A574] text-[#1C1C1C]'
-                    : 'border border-[#FAF7F2]/20 text-[#FAF7F2]/60 hover:border-[#D4A574]/40'
-                }`}
-              >
-                Notify Me
-              </button>
               <button
                 onClick={() => setActiveTab('vendors')}
                 className={`px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold transition-all ${
@@ -1116,43 +1106,6 @@ const RegistrationSection: React.FC = () => {
               </button>
             </div>
 
-            {/* Notify Me (Tickets) */}
-            {activeTab === 'tickets' && (
-              <div>
-                <div className="text-center mb-6">
-                  <h4 className="font-serif text-2xl mb-2">Be the first to know when tickets open</h4>
-                  <p className="text-[#FAF7F2]/60 text-sm">
-                    We'll email you the moment registration goes live. No spam. No physical tickets — email confirmation only.
-                  </p>
-                </div>
-                {notifyDone ? (
-                  <div className="text-center bg-[#4A7C59]/30 border border-[#4A7C59] rounded-2xl px-6 py-5 text-[#D4A574]">
-                    <p className="font-semibold">Thank you &mdash; you're on the list.</p>
-                    <p className="text-[#FAF7F2]/80 text-sm mt-2">
-                      A confirmation has been sent to your inbox. We'll email you the moment tickets go live. (Check your spam folder if you don't see it in a few minutes.)
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleNotify} className="flex flex-col md:flex-row gap-3">
-                    <input
-                      type="email"
-                      required
-                      value={notifyEmail}
-                      onChange={(e) => setNotifyEmail(e.target.value)}
-                      placeholder="your@email.com"
-                      style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
-                      className="flex-1 border border-[#FAF7F2]/20 rounded-full px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none"
-                    />
-                    <button
-                      type="submit"
-                      className="bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-8 py-3.5 rounded-full uppercase tracking-[0.15em] text-sm transition"
-                    >
-                      Notify Me
-                    </button>
-                  </form>
-                )}
-              </div>
-            )}
 
             {/* Vendor Application */}
             {activeTab === 'vendors' && (
@@ -1391,9 +1344,14 @@ const Rangbhoomi: React.FC = () => (
       <meta property="og:title" content="Rangotsav · The Tale Of Two States" />
       <meta
         property="og:description"
-        content="Art is in the Air; Music is in the Mist and Flavours on your Plate. 25 May 2026, Pelling, Sikkim."
+        content="Art is in the Air; Music is in the Mist and Flavours on your Plate. 25–26 May 2026, Pelling, Sikkim."
       />
       <meta property="og:type" content="event" />
+      <meta property="og:image" content="https://urbanehaauz.com/rangotsav-ganesh.jpeg" />
+      <meta property="og:url" content="https://urbanehaauz.com/rangotsav" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Rangotsav · The Tale Of Two States" />
+      <meta name="twitter:image" content="https://urbanehaauz.com/rangotsav-ganesh.jpeg" />
       <link rel="canonical" href="https://urbanehaauz.com/rangotsav" />
       <script type="application/ld+json">{JSON.stringify(RANGOTSAV_EVENT_JSONLD)}</script>
       <script type="application/ld+json">{JSON.stringify(RANGOTSAV_BREADCRUMB_JSONLD)}</script>
@@ -1406,6 +1364,7 @@ const Rangbhoomi: React.FC = () => (
       <CulturalConglomerateSection />
       <ArtistsSection />
       <FoodSection />
+      <TicketsSection />
       <RegistrationSection />
       <FooterCTA />
     </div>

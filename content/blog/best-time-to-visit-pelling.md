@@ -5,7 +5,7 @@ slug: best-time-to-visit-pelling
 publishedAt: 2026-04-21
 updatedAt: 2026-04-21
 keywords: ["best time to visit pelling", "best time to visit pelling for kanchenjunga view", "pelling snowfall time", "pelling in december", "pelling in october", "pelling in may", "pelling weather", "pelling in monsoon", "rhododendron season pelling"]
-image: /lib/hero-image.png
+image: /lib/hero-image.jpg
 ---
 
 # Best Time to Visit Pelling, Sikkim — Month-by-Month 2026 Guide
@@ -78,7 +78,7 @@ Pelling sits at 2,150 metres. The main weather drivers are:
 - **Weather:** Warmest before monsoon. Pre-monsoon clouds and occasional showers.
 - **Kanchenjunga visibility:** Low-medium (25–40%)
 - **Crowd level:** Peak — Bengali summer holidays
-- **Our take:** Book early or expect fully sold out. **Rangotsav cultural festival on 25 May 2026** makes this month especially interesting for culturally curious travellers.
+- **Our take:** Book early or expect fully sold out. **Rangotsav cultural festival on 25–26 May 2026** makes this month especially interesting for culturally curious travellers.
 
 ### Pelling in June
 - **Temperature:** 13°C to 23°C
@@ -181,7 +181,7 @@ Yes. Cold, often clear, occasional snow. Book ahead for Christmas and New Year w
 Most likely late December to mid-February. Pelling town gets light snow; higher altitudes nearby get heavier snow more reliably.
 
 **Is Pelling worth visiting in May?**
-Yes for Bengali families on summer break — accept the haze. Views are softer but weather is pleasant. The Rangotsav festival on 25 May 2026 is a bonus.
+Yes for Bengali families on summer break — accept the haze. Views are softer but weather is pleasant. The Rangotsav festival on 25–26 May 2026 is a bonus.
 
 **Should I avoid Pelling in monsoon?**
 Avoid if the Kanchenjunga view is the point. Otherwise, monsoon can be beautiful and cheap.

@@ -441,7 +441,7 @@ export async function sendRangotsavNotifyConfirmation(email: string): Promise<bo
                 <tr>
                   <td style="padding: 28px 28px 12px; text-align: center;">
                     <p style="color: #D4A574; margin: 0 0 8px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">Save the Date</p>
-                    <p style="color: #FAF7F2; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 0.05em;">25 MAY 2026</p>
+                    <p style="color: #FAF7F2; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 0.05em;">25&ndash;26 MAY 2026</p>
                   </td>
                 </tr>
                 <tr>
@@ -569,7 +569,7 @@ export async function sendRangotsavVendorWelcome(data: {
             <td style="padding: 48px 40px 32px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.15);">
               <p style="color: #D4A574; margin: 0 0 18px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">A Cultural Conglomerate</p>
               <h1 style="color: #FAF7F2; margin: 0; font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;">Rangotsav</h1>
-              <p style="color: #D4A574; margin: 18px 0 0; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; 25 May 2026 &middot; Pelling &mdash;</p>
+              <p style="color: #D4A574; margin: 18px 0 0; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; 25&ndash;26 May 2026 &middot; Pelling &mdash;</p>
             </td>
           </tr>
 
@@ -725,7 +725,7 @@ function rangotsavShellHtml(args: {
             <td style="padding: 48px 40px 32px; text-align: center; border-bottom: 1px solid rgba(212,165,116,0.15);">
               <p style="color: #D4A574; margin: 0 0 18px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">A Cultural Conglomerate</p>
               <h1 style="color: #FAF7F2; margin: 0; font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1;">Rangotsav</h1>
-              <p style="color: #D4A574; margin: 18px 0 0; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; 25 May 2026 &middot; Pelling &mdash;</p>
+              <p style="color: #D4A574; margin: 18px 0 0; font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">&mdash; 25&ndash;26 May 2026 &middot; Pelling &mdash;</p>
             </td>
           </tr>
           <tr>
@@ -934,6 +934,126 @@ export async function sendRangotsavVendorRejected(data: {
   const result = await sendEmail({ to: data.email, subject, html });
   await logEmail(
     data.email, data.name, 'rangotsav_vendor_rejected', subject, null,
+    result.success ? 'sent' : 'failed', result.id, result.error,
+  );
+  return result.success;
+}
+
+export async function sendRangotsavTicketConfirmation(data: {
+  ticketCode: string;
+  buyerName: string;
+  buyerEmail: string;
+  quantity: number;
+  unitPrice: number;
+  totalAmount: number;
+}): Promise<boolean> {
+  const name = escHtml(data.buyerName);
+  const code = escHtml(data.ticketCode);
+  const subject = `Your Rangotsav 2026 Pass — ${data.ticketCode}`;
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data=${encodeURIComponent(
+    data.ticketCode,
+  )}`;
+
+  const waMessage = encodeURIComponent(
+    `My Rangotsav 2026 Pass — Code: ${data.ticketCode} (${data.quantity} ${data.quantity > 1 ? 'admits' : 'admit'}). Pelling, 25–26 May 2026.`,
+  );
+
+  const calendarUrl =
+    'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text=' + encodeURIComponent('Rangotsav 2026 — Urbane Haauz, Pelling') +
+    '&dates=20260525T043000Z/20260526T163000Z' +
+    '&details=' + encodeURIComponent(
+      `A Bengal–Sikkim cultural conglomerate. Your ticket code: ${data.ticketCode}. Show this code (or QR) at the entrance.`,
+    ) +
+    '&location=' + encodeURIComponent('Urbane Haauz, SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113');
+
+  const bodyBlocks = `
+    <tr>
+      <td style="padding: 32px 40px;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: rgba(212,165,116,0.05); border: 1px solid rgba(212,165,116,0.25); border-radius: 12px;">
+          <tr>
+            <td style="padding: 28px 28px 8px; text-align: center;">
+              <p style="color: #D4A574; margin: 0 0 14px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">Show this at entry</p>
+              <img src="${qrUrl}" alt="Rangotsav ticket QR — ${code}" width="200" height="200" style="display: block; width: 200px; height: 200px; margin: 0 auto; background-color: #FAF7F2; border: 6px solid #FAF7F2; border-radius: 8px; outline: none; text-decoration: none;">
+              <p style="color: #FAF7F2; margin: 18px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.18em; font-family: 'Courier New', Courier, monospace;">${code}</p>
+              <p style="color: rgba(250,247,242,0.55); margin: 0; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-family: Arial, sans-serif;">Your unique pass code</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 0 28px 24px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px; border-top: 1px solid rgba(212,165,116,0.2); padding-top: 20px;">
+                <tr>
+                  <td style="padding: 6px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Pass Holder</td>
+                  <td style="padding: 6px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">${name}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Admits</td>
+                  <td style="padding: 6px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">${data.quantity} ${data.quantity > 1 ? 'persons' : 'person'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Paid</td>
+                  <td style="padding: 6px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">&#8377;${data.totalAmount.toLocaleString('en-IN')} <span style="color: rgba(250,247,242,0.45); font-size: 11px;">(&#8377;${data.unitPrice.toLocaleString('en-IN')} &times; ${data.quantity})</span></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="padding: 8px 40px 0; text-align: center;">
+        <a href="https://wa.me/?text=${waMessage}" style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700; margin: 0 6px 12px;">Save to WhatsApp</a>
+        <a href="${calendarUrl}" style="display: inline-block; background-color: rgba(212,165,116,0.12); color: #D4A574; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700; border: 1px solid rgba(212,165,116,0.4); margin: 0 6px 12px;">Add to Calendar</a>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="padding: 32px 40px 0;">
+        <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">When &amp; Where</h3>
+        <p style="color: rgba(250,247,242,0.75); margin: 0 0 8px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          <strong style="color: #FAF7F2;">25–26 May 2026</strong> &middot; Two days of art, music, and food.
+        </p>
+        <p style="color: rgba(250,247,242,0.75); margin: 0; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
+          Urbane Haauz, SH-510 Skywalk Road, Upper Pelling, West Sikkim 737113.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="padding: 24px 40px 0;">
+        <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">At the gate</h3>
+        <ul style="color: rgba(250,247,242,0.75); margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.85; font-family: Georgia, serif;">
+          <li>Show this email (or just the QR / code <strong style="color: #FAF7F2;">${code}</strong>) at the entrance.</li>
+          <li>Carry a government photo ID matching the pass holder name.</li>
+          <li>One pass admits ${data.quantity} ${data.quantity > 1 ? 'people' : 'person'}. Children under 5 enter free.</li>
+          <li>This pass is non-transferable and refunds are not available once issued.</li>
+        </ul>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="padding: 24px 40px 0;">
+        <p style="color: rgba(250,247,242,0.55); margin: 0; font-size: 13px; line-height: 1.7; font-family: Georgia, serif; font-style: italic;">
+          Lost the email? Reply with your pass code and we'll resend it.
+        </p>
+      </td>
+    </tr>
+  `;
+
+  const html = rangotsavShellHtml({
+    title: 'Rangotsav — Your Pass',
+    eyebrow: 'Pass Confirmed',
+    heading: `You're in, ${name}.`,
+    lead: 'Your Rangotsav 2026 pass is below. Save it, screenshot it, or just keep this email handy on festival day.',
+    bodyBlocks,
+    signOff: "See you in the mountains. The festival begins the moment you arrive.",
+  });
+
+  const result = await sendEmail({ to: data.buyerEmail, subject, html });
+  await logEmail(
+    data.buyerEmail, data.buyerName, 'rangotsav_ticket_confirmation', subject, null,
     result.success ? 'sent' : 'failed', result.id, result.error,
   );
   return result.success;

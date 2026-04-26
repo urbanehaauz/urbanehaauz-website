@@ -21,6 +21,7 @@ import LanguageSwitcher from './components/LanguageSwitcher';
 const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const AdminLogin = React.lazy(() => import('./pages/AdminLogin'));
 const AuthCallback = React.lazy(() => import('./pages/AuthCallback'));
+const RangotsavAdmin = React.lazy(() => import('./pages/RangotsavAdmin'));
 
 // Standalone campaign/presentation pages — heavy SVGs + recharts, lazy-load so they don't bloat initial bundle.
 const Rangbhoomi = React.lazy(() => import('./pages/Rangbhoomi'));
@@ -80,6 +81,7 @@ const App: React.FC = () => {
                     <Route path="/blog/:slug" element={<BlogPost />} />
                     <Route path="/my-bookings" element={<MyBookings />} />
                     <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin/rangotsav" element={<RangotsavAdmin />} />
                     <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/auth/callback" element={<AuthCallback />} />
                     <Route path="/rangotsav" element={<Rangbhoomi />} />

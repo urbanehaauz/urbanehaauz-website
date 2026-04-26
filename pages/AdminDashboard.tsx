@@ -1244,7 +1244,7 @@ const AdminDashboard: React.FC = () => {
           <div className="animate-fade-in max-w-6xl mx-auto space-y-8">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="font-serif text-2xl font-bold text-gray-800">Rangotsav · 25 May 2026</h2>
+                <h2 className="font-serif text-2xl font-bold text-gray-800">Rangotsav · 25–26 May, 2026</h2>
                 <p className="text-gray-500 text-sm">Vendor applications, ticket notifications & event management</p>
               </div>
               <button onClick={loadRangotsavData} className="bg-urbane-gold text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-opacity-90 flex items-center gap-2">

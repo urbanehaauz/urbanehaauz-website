@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
+    "build:vite-only": "vite build",
+    "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview",
     "remotion:studio": "remotion studio videos/src/index.ts",
     "remotion:render:hero": "remotion render videos/src/index.ts HeroVideo out/HeroVideo.mp4",

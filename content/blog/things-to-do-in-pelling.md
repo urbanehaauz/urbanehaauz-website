@@ -5,7 +5,7 @@ slug: things-to-do-in-pelling
 publishedAt: 2026-04-21
 updatedAt: 2026-04-21
 keywords: ["things to do in pelling", "places to visit in pelling", "pelling tourist places", "pelling skywalk entry fee 2026", "chenrezig statue pelling", "pemayangtse monastery timings", "rabdentse ruins pelling", "khecheopalri lake from pelling", "offbeat places near pelling"]
-image: /lib/hero-image.png
+image: /lib/hero-image.jpg
 ---
 
 # Things to Do in Pelling, Sikkim — The 2026 Local Guide

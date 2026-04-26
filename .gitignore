@@ -33,3 +33,14 @@ nginx-logs/
 
 # Local image backups from optimization pass (not tracked)
 .backup-images/
+
+# Environment variables (never committed)
+.env
+.env.local
+.env.production.local
+
+# Local-only tool / cache state
+out/
+.playwright-mcp/
+.claude/agent-memory/
+supabase/.temp/

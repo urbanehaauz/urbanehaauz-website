@@ -1746,10 +1746,10 @@ const TheAskSection: React.FC = () => (
             <div>
               <span className="text-[#1C1C1C]/50">Contact: </span>
               <a
-                href="mailto:urbanehaauz@gmail.com"
+                href="mailto:info@urbanehaauz.com"
                 className="text-[#2C5F7C] hover:text-[#D4A574] font-semibold"
               >
-                urbanehaauz@gmail.com
+                info@urbanehaauz.com
               </a>
             </div>
             <div>
@@ -1829,6 +1829,12 @@ const PellingAfterDark: React.FC = () => (
       />
       <meta property="og:title" content="Pelling 2.0 · Pelling's evenings, reimagined." />
       <meta property="og:description" content="A structured vision for nightly cultural programming, tourist-attraction events, and a sustained evening economy in West Sikkim." />
+      <meta property="og:image" content="https://urbanehaauz.com/og-image.jpg" />
+      <meta property="og:url" content="https://urbanehaauz.com/pelling-2.0" />
+      <meta property="og:type" content="article" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Pelling 2.0 · Pelling's evenings, reimagined." />
+      <meta name="twitter:image" content="https://urbanehaauz.com/og-image.jpg" />
       <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://urbanehaauz.com/pelling-2.0" />
     </Helmet>

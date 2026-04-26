@@ -48,7 +48,7 @@ export const BRAND_GUIDELINES = {
     website: 'https://urbanehaauz.com',
     bookingUrl: 'https://urbanehaauz.runhotel.site/en/',
     phone: '+91 91360 32524',
-    email: 'urbanehaauz@gmail.com',
+    email: 'info@urbanehaauz.com',
     instagram: '@urbanehaauz',
     gstin: '11AXUPB9728M1ZY',
   },

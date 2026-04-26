@@ -19,7 +19,7 @@ const HOME_FAQ_JSONLD = {
       name: "What's the phone number to book Urbane Haauz directly?",
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Call or WhatsApp us at +91 9136032524, or email urbanehaauz@gmail.com. You can also book direct at urbanehaauz.com with best-rate guarantee and instant Razorpay confirmation.',
+        text: 'Call or WhatsApp us at +91 9136032524, or email info@urbanehaauz.com. You can also book direct at urbanehaauz.com with best-rate guarantee and instant Razorpay confirmation.',
       },
     },
     {
@@ -62,6 +62,14 @@ const HOME_FAQ_JSONLD = {
         text: 'NJP station or Bagdogra airport to Pelling is approximately 140 km / 4.5–5 hours by shared or private cab via Siliguri–Jorethang–Legship. We can arrange pickup — call +91 9136032524 at least 24 hours in advance.',
       },
     },
+    {
+      '@type': 'Question',
+      name: 'Are there power or hot water issues at Urbane Haauz?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. While the wider Pelling grid can experience occasional dips during heavy monsoon storms (common across the Sikkim hill belt), Urbane Haauz runs 24/7 inverter backup on every room and a dedicated solar-assisted hot-water system, so power and hot water remain available throughout your stay. Older online reviews referencing power or hot-water issues predate our current backup setup.',
+      },
+    },
   ],
 };
 
@@ -101,7 +109,8 @@ const Home: React.FC = () => {
             The Himalayas Await
           </span>
           <h1 className="font-serif text-5xl md:text-8xl text-white font-normal mb-6 max-w-5xl leading-none text-shadow drop-shadow-xl">
-            Urbane <span className="text-white italic font-light">Haauz</span>
+            <span aria-hidden="true">Urbane <span className="text-white italic font-light">Haauz</span></span>
+            <span className="sr-only">Urbane Haauz — Boutique Hotel in Upper Pelling, Sikkim with Kanchenjunga Views</span>
           </h1>
           <p className="font-serif text-white/90 text-base md:text-xl mb-12 max-w-2xl italic tracking-wide leading-relaxed drop-shadow-md">
             - Where luxury meets the clouds.

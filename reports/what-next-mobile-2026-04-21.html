@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a4d1a">
+<title>What's Next — Urbane Haauz SEO + GEO</title>
+<style>
+  :root {
+    --bg: #0f1510;
+    --card: #18201a;
+    --card-2: #1f2820;
+    --ink: #f1ece0;
+    --ink-dim: #bdb4a3;
+    --ink-faint: #7f7a6f;
+    --gold: #D4A574;
+    --green: #4A7C59;
+    --red: #c25a3f;
+    --amber: #d49c41;
+    --grey: #7a8186;
+    --rule: rgba(212,165,116,0.15);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: var(--gold); text-decoration: none; border-bottom: 1px dashed rgba(212,165,116,0.4); }
+  main { max-width: 680px; margin: 0 auto; padding: 28px 20px 80px; }
+  header {
+    padding: 36px 20px 28px;
+    text-align: center;
+    background: linear-gradient(180deg, #1a2a1d 0%, #0f1510 100%);
+    border-bottom: 1px solid var(--rule);
+  }
+  header .eyebrow {
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 0;
+  }
+  header h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 32px;
+    line-height: 1.15;
+    margin: 14px 0 8px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  header .sub {
+    color: var(--ink-dim);
+    font-size: 14px;
+    margin: 0;
+  }
+  h2 {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    line-height: 1.2;
+    margin: 36px 0 10px;
+    letter-spacing: -0.005em;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  h2 .idx {
+    color: var(--gold);
+    font-family: -apple-system, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 22px 0 6px;
+    color: var(--ink);
+    font-weight: 600;
+  }
+  p { margin: 0 0 14px; }
+  .moat {
+    background: linear-gradient(180deg, rgba(212,165,116,0.08) 0%, rgba(74,124,89,0.08) 100%);
+    border: 1px solid rgba(212,165,116,0.3);
+    border-radius: 14px;
+    padding: 22px 20px;
+    margin: 28px 0 8px;
+  }
+  .moat .label {
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  .moat h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+  }
+  .moat p {
+    color: var(--ink-dim);
+  }
+  .moat strong { color: var(--ink); }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 18px 18px 6px;
+    margin: 14px 0;
+  }
+  .card h3 {
+    margin: 0 0 6px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .card p, .card ul { color: var(--ink-dim); font-size: 15px; }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+  .tag.p0 { background: var(--red); color: #fff; }
+  .tag.p1 { background: var(--amber); color: #1a1208; }
+  .tag.p2 { background: var(--grey); color: #fff; }
+  .tag.win { background: var(--green); color: #fff; }
+  .meta {
+    color: var(--ink-faint);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  ul { padding-left: 20px; margin: 0 0 14px; }
+  li { margin: 6px 0; }
+  .timeline {
+    margin: 18px 0 8px;
+    padding: 0;
+    list-style: none;
+  }
+  .timeline li {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--rule);
+    align-items: flex-start;
+  }
+  .timeline li:last-child { border-bottom: 0; }
+  .timeline .date {
+    flex: 0 0 92px;
+    color: var(--gold);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding-top: 3px;
+  }
+  .timeline .what { color: var(--ink); font-size: 15px; }
+  .timeline .what small { display: block; color: var(--ink-faint); font-size: 12px; margin-top: 3px; }
+  .callout {
+    background: rgba(194,90,63,0.1);
+    border-left: 3px solid var(--red);
+    padding: 14px 16px;
+    border-radius: 6px;
+    margin: 14px 0;
+    font-size: 15px;
+  }
+  .callout strong { color: var(--ink); }
+  .callout-gold {
+    background: rgba(212,165,116,0.08);
+    border-left: 3px solid var(--gold);
+    padding: 14px 16px;
+    border-radius: 6px;
+    margin: 14px 0;
+    font-size: 15px;
+  }
+  .why {
+    background: var(--card-2);
+    border-radius: 14px;
+    padding: 22px 20px;
+    margin: 28px 0 20px;
+    border: 1px solid var(--rule);
+  }
+  .why ol {
+    padding-left: 22px;
+    margin: 10px 0 0;
+  }
+  .why ol li {
+    margin: 10px 0;
+    font-size: 15px;
+    color: var(--ink-dim);
+  }
+  .why ol li strong { color: var(--gold); }
+  .footer-note {
+    text-align: center;
+    margin: 32px 0 0;
+    color: var(--ink-faint);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    background: rgba(212,165,116,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--gold);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Battle Plan · 21 April 2026</p>
+  <h1>What's Next<br>for Urbane Haauz</h1>
+  <p class="sub">SEO + GEO roadmap, synthesised from three agent runs</p>
+</header>
+
+<main>
+
+  <section class="moat">
+    <p class="label">Your Unfair Advantage</p>
+    <h2>You have real reviews. That's the moat.</h2>
+    <p>No other boutique hotel in Pelling carries your average rating. Review count and average star rating are the <strong>single strongest signal</strong> for the Google Map Pack, for AI-engine citations (ChatGPT, Perplexity, Claude all weight user-generated reviews heavily), and for conversion once a traveller lands on your page.</p>
+    <p>Every item in this plan — schema, citations, content, GBP posts — exists to put your rating in front of more eyes. You don't need to out-spend. You need to out-surface.</p>
+  </section>
+
+  <h2><span class="idx">Phase 1</span> Do Today</h2>
+  <p class="meta">Under 30 minutes. Every one of these is a P0.</p>
+
+  <div class="card">
+    <h3>Paste the GBP description <span class="tag p0">P0</span></h3>
+    <p>The only item from the original PDF plan you haven't done. Copy the <strong>742-char primary version</strong> from <code>docs/urbanehaauz-seo-agents/gbp-description.md</code> into Google Business Profile → Info → About. Five minutes.</p>
+  </div>
+
+  <div class="card">
+    <h3>Sync email addresses <span class="tag p0">P0</span></h3>
+    <p>Footer, Contact FAQ and Hotel schema still say <code>urbanehaauz@gmail.com</code>, but Resend now sends from <code>info@urbanehaauz.com</code>. Google will penalise the contradiction. Pick one canonical — <strong>recommend <code>info@</code></strong> — keep gmail only as reply-to.</p>
+  </div>
+
+  <div class="card">
+    <h3>Launch the review funnel <span class="tag win">MOAT</span></h3>
+    <p>Pull the Google Place ID, generate a short review URL, make a QR code, print 10 cards, drop one in each room + reception + bar. <strong>Target: 15 new reviews by 21 May.</strong> This single motion moves map-pack ranking more than any on-site fix.</p>
+  </div>
+
+  <div class="card">
+    <h3>Fix blog OG images <span class="tag p0">P0</span></h3>
+    <p>All 6 posts in <code>content/blog/*.md</code> reference a <strong>1 MB PNG</strong> as their social card. A 153 KB JPG sits right next to it. Every Perplexity / Google AIO citation preview is pulling the huge file. Swap <code>.png</code> → <code>.jpg</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3>Add <code>aggregateRating</code> to schema <span class="tag win">MOAT</span></h3>
+    <p>Your Hotel schema has no <code>aggregateRating</code> block. That means your star rating doesn't show in Google rich results. Put the review count + average there and Google can render stars in the SERP. This is the #1 underused schema field on the site.</p>
+  </div>
+
+  <h2><span class="idx">Phase 2</span> This Week (7 Days)</h2>
+
+  <div class="card">
+    <h3>Ship <code>/public/llms.txt</code> <span class="tag p1">P1</span></h3>
+    <p>A canonical facts file that ChatGPT, Perplexity, Claude, and Gemini pull when they index your site. Teaches them who you are, Rangotsav, dorm+hotel combo, Kanchenjunga view. One hour of writing, permanent AI-engine attribution payoff. Draft is in <code>reports/what-next-geo-2026-04-21.md</code>.</p>
+  </div>
+
+  <div class="card">
+    <h3>Submit 3 free high-leverage citations <span class="tag p1">P1</span></h3>
+    <ul>
+      <li><strong>Bing Places</strong> — unlocks Bing AI + Copilot</li>
+      <li><strong>Apple Business Connect</strong> — unlocks Apple Maps + Siri</li>
+      <li><strong>Wikivoyage Pelling</strong> — "Sleep" section, strongest free editorial link in the travel space</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>First GBP post <span class="tag p1">P1</span></h3>
+    <p>Kanchenjunga sunrise photo, 1-sentence caption, CTA to direct-book. This is week 1 of a weekly cadence.</p>
+  </div>
+
+  <div class="card">
+    <h3>Tighten Rangotsav schema <span class="tag p1">P1</span></h3>
+    <p>Rename Event schema <code>name</code> to <strong>"Rangotsav 2026 at Urbane Haauz"</strong> (the generic "Rangotsav" collides with Holi / Ministry of Culture use). Fix the geo coord drift (Event schema points 2 km off from Hotel schema). Add <code>og:image</code> + <code>og:url</code> to the Rangotsav and Pelling 2.0 Helmets — currently missing, so WhatsApp previews fall back to the favicon.</p>
+  </div>
+
+  <h2><span class="idx">Phase 3</span> Next 14 Days</h2>
+
+  <div class="card">
+    <h3>List Rangotsav as an event <span class="tag p1">P1</span></h3>
+    <ul>
+      <li>BookMyShow</li>
+      <li>Insider.in</li>
+      <li>Eventbrite</li>
+    </ul>
+    <p>Each creates an independent citation with your hotel as the venue. These are the URLs AI engines fetch when someone asks "what's happening in Pelling May 2026".</p>
+  </div>
+
+  <div class="card">
+    <h3>Seed Reddit, Quora, TripAdvisor, Hostelworld <span class="tag p1">P1</span></h3>
+    <p>AI engines refuse to cite single-source commercial claims — they need <strong>second-party signals</strong>. Five helpful Reddit answers (r/IndiaTravel, r/Sikkim), three substantive Quora answers on existing "Pelling hotel" threads, a claimed TripAdvisor listing, a Hostelworld dorm listing. The Hostelworld listing alone unlocks every "cheap dorm beds Pelling" AI query.</p>
+  </div>
+
+  <div class="card">
+    <h3>Self-publish a Tripoto story <span class="tag p1">P1</span></h3>
+    <p>Title: <em>"8 Upper Pelling boutique hotels worth the stay"</em>. Urbane Haauz at #1. Tripoto stories rank fast and feed AI engines a listicle they'll happily cite.</p>
+  </div>
+
+  <div class="card">
+    <h3>Ship post-stay review-request email <span class="tag win">MOAT</span></h3>
+    <p>New Supabase Edge Function, triggered on checkout. Personalised email with 1-click Google review link. This moves your review count from <strong>organic trickle</strong> to <strong>compound growth</strong>.</p>
+  </div>
+
+  <h2><span class="idx">Phase 4</span> Next 30–90 Days</h2>
+
+  <div class="card">
+    <h3>Wikipedia / Wikidata entity <span class="tag p2">P2</span></h3>
+    <p>A Wikidata entry for Urbane Haauz + Rangotsav. This is the single source AI engines trust most — once you exist as a Wikidata entity, you stop being "a hotel someone built" and start being "a thing that exists in the world's knowledge graph".</p>
+  </div>
+
+  <div class="card">
+    <h3>Pillar post: Bengal–Sikkim cultural exchange <span class="tag p2">P2</span></h3>
+    <p>Tagore's visits, Bengali migration, shared cuisine, Rangotsav. <strong>Nobody owns this keyword cluster.</strong> Write it, and it's yours by default.</p>
+  </div>
+
+  <div class="card">
+    <h3>Press pitch: Anandabazar Patrika + Telegraph t2 <span class="tag p2">P2</span></h3>
+    <p>Angle: Kolkata-born founders building a Kanchenjunga-facing boutique hotel, hosting Bengal–Sikkim cultural festival. Warm regional coverage → high-authority backlinks → Google Knowledge Panel momentum.</p>
+  </div>
+
+  <div class="card">
+    <h3>Post-festival Rangotsav recap <span class="tag p2">P2</span></h3>
+    <p>Published by 30 May. Becomes the permanent canonical citation for Rangotsav Year 2 and unlocks evergreen "cultural festivals in Sikkim" AI citations.</p>
+  </div>
+
+  <h2><span class="idx">When</span> The Ranking Timeline</h2>
+
+  <ul class="timeline">
+    <li>
+      <div class="date">21 Apr</div>
+      <div class="what">GBP description live, review funnel launched
+        <small>Clock starts on the 15-review target</small>
+      </div>
+    </li>
+    <li>
+      <div class="date">15 May</div>
+      <div class="what">Map-pack entry for "kanchenjunga view hotel pelling" + "boutique hotels pelling"
+        <small>Assuming review count ≥ 25</small>
+      </div>
+    </li>
+    <li>
+      <div class="date">25 May</div>
+      <div class="what">Rangotsav — festival day, peak press + social window
+        <small>Recap published 30 May</small>
+      </div>
+    </li>
+    <li>
+      <div class="date">1 Jun</div>
+      <div class="what">Map-pack entry for "upper pelling hotels"
+        <small>Review count target: 35</small>
+      </div>
+    </li>
+    <li>
+      <div class="date">Mid Jul</div>
+      <div class="what">Map-pack entry for "hotels in pelling" (the headline query)
+        <small>Gated on review count ≥ 40 at 4.5+ stars</small>
+      </div>
+    </li>
+    <li>
+      <div class="date">30 May</div>
+      <div class="what">AI engine citation count up from 5–15 / 150 to 30+ / 150
+        <small>Cycle 2 baseline measurement</small>
+      </div>
+    </li>
+  </ul>
+
+  <section class="why">
+    <h2 style="margin-top:0">Why You Win This Market</h2>
+    <ol>
+      <li><strong>Real reviews, real ratings</strong> — higher than any direct competitor in Pelling.</li>
+      <li><strong>Only property in Pelling</strong> offering both private hotel rooms AND dormitory beds — captures two distinct traveller segments from one listing.</li>
+      <li><strong>Direct Kanchenjunga view from rooms</strong> — not a rooftop detour, from the bed.</li>
+      <li><strong>Bengali-speaking staff</strong> — 40%+ of Pelling's inbound tourism is Bengali; nobody else serves them in their language.</li>
+      <li><strong>Rangotsav festival</strong> — no other hotel in Pelling hosts a cultural festival. Every piece of press, every AI citation, every social share about Rangotsav mentions Urbane Haauz by default.</li>
+    </ol>
+  </section>
+
+  <div class="callout-gold">
+    <strong>One-sentence verdict.</strong> You are roughly <strong>one 40-minute cleanup PR</strong> + <strong>one review funnel launch</strong> away from dominating the "Upper Pelling" long-tail by end of May, and the headline "Pelling hotels" query by mid-July.
+  </div>
+
+  <p class="footer-note">Urbane Haauz · Pelling, Sikkim · Battle Plan 2026-04-21</p>
+
+</main>
+
+</body>
+</html>

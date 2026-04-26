@@ -3,9 +3,9 @@ title: Kanchenjunga View Hotels in Pelling — The Complete 2026 Guide
 description: Kanchenjunga view hotels in Pelling — month-by-month visibility, the best viewing hours, balcony vs rooftop angles, and how to pick a room that actually sees the peak.
 slug: kanchenjunga-view-hotels-pelling
 publishedAt: 2026-04-21
-updatedAt: 2026-04-21
-keywords: ["kanchenjunga view hotel pelling", "kanchenjunga view from balcony pelling", "when to see kanchenjunga from pelling", "can you see kanchenjunga from pelling", "pelling hotel with mountain view", "kanchenjunga clear view months pelling", "pelling vs gangtok kanchenjunga view"]
-image: /lib/hero-image.png
+updatedAt: 2026-04-25
+keywords: ["kanchenjunga view hotel pelling", "kanchenjunga view from balcony pelling", "when to see kanchenjunga from pelling", "can you see kanchenjunga from pelling", "pelling hotel with mountain view", "kanchenjunga clear view months pelling", "pelling vs gangtok kanchenjunga view", "kanchenjunga view rooms pelling", "which rooms have kanchenjunga view"]
+image: /lib/hero-image.jpg
 ---
 
 # Kanchenjunga View Hotels in Pelling — The Complete Guide
@@ -72,6 +72,24 @@ At **Urbane Haauz**, our Deluxe and Premium front-facing rooms have private balc
 This is covered in more depth in our [where to stay in Upper Pelling guide](/blog/where-to-stay-in-upper-pelling), but the short answer: **Upper Pelling**, near the helipad and Skywalk, is the right side of the ridge. Lower Pelling hotels mostly look into the pine slope above them and need a ridge-walk to see the peak.
 
 A useful detail: the **Pelling Skywalk itself** is considered one of the best public Kanchenjunga viewing platforms in Sikkim. If your hotel is walking distance to the Skywalk (under 500 metres), you effectively have a second viewing deck for free.
+
+## Room-by-Room: Which Urbane Haauz Rooms See Kanchenjunga
+
+If you are choosing a Kanchenjunga view room specifically at Urbane Haauz, this is the honest breakdown — written so it's clear before you book.
+
+| Room type | Kanchenjunga view | Where you watch from | Best months for sunrise |
+|---|---|---|---|
+| **Premium Room** (front-facing) | Direct, unobstructed | Private north-west-facing balcony — open it from bed | October, November, December, January |
+| **Super Deluxe Room** (front-facing) | Direct, unobstructed | Private north-west-facing balcony — same line of sight as Premium, slightly smaller balcony | October, November, December, January |
+| **Standard Room** | Partial (room window) + full from rooftop | Shared rooftop viewing deck (one floor up, 30-second walk) | Same — view itself is identical from the rooftop |
+| **Dorm Bed** | Same shared rooftop access as Standard guests | Shared rooftop viewing deck | Same |
+
+**Two practical notes** that make the difference between a great Kanchenjunga morning and a disappointing one:
+
+1. **If you want the 5:30 AM "gold of Kanchenjunga" without leaving bed**, book a Premium or Super Deluxe front-facing room. The balcony door slides open, you stand in slippers with chai, and the peak turns pink in front of you.
+2. **If you don't mind a 30-second walk upstairs at sunrise**, the rooftop view from a Standard room or dorm bed is identical to the balcony view — the building is north-west-aligned end-to-end. You save 35–40% on the room rate.
+
+We deliberately do not slap a generic "mountain view" label on every room. If you book Standard, expect a partial window view + full rooftop access. If you book Premium or Super Deluxe (front-facing), expect to watch sunrise in pyjamas. Live room-type availability and current rates are on the [rooms page](/rooms).
 
 ## Pelling vs Gangtok vs Darjeeling — Which Has the Better View?
 

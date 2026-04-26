@@ -33,7 +33,7 @@ const CONTACT_FAQ_JSONLD = {
       name: 'How do I contact Urbane Haauz directly?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Call or WhatsApp +91 9136032524, email urbanehaauz@gmail.com, or submit the contact form at urbanehaauz.com/contact. WhatsApp is the fastest channel — responses usually within a few hours during business hours (9:00–21:00 IST).',
+        text: 'Call or WhatsApp +91 9136032524, email info@urbanehaauz.com, or submit the contact form at urbanehaauz.com/contact. WhatsApp is the fastest channel — responses usually within a few hours during business hours (9:00–21:00 IST).',
       },
     },
     {
@@ -65,7 +65,7 @@ const CONTACT_FAQ_JSONLD = {
       name: 'Do you accept group or corporate bookings?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. For groups of 4+ rooms, family retreats, small weddings, or corporate offsites, WhatsApp us at +91 9136032524 or email urbanehaauz@gmail.com for custom pricing and meal plans. We can reserve the full 8-room property for exclusive use on request.',
+        text: 'Yes. For groups of 4+ rooms, family retreats, small weddings, or corporate offsites, WhatsApp us at +91 9136032524 or email info@urbanehaauz.com for custom pricing and meal plans. We can reserve the full 8-room property for exclusive use on request.',
       },
     },
     {
@@ -152,7 +152,7 @@ const Contact: React.FC = () => {
     <div className="min-h-screen bg-urbane-mist">
       <Helmet>
         <title>Contact Urbane Haauz | Boutique Hotel in Upper Pelling, Sikkim</title>
-        <meta name="description" content="Contact Urbane Haauz in Upper Pelling: +91 9136032524, urbanehaauz@gmail.com. SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113." />
+        <meta name="description" content="Contact Urbane Haauz in Upper Pelling: +91 9136032524, info@urbanehaauz.com. SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113." />
         <link rel="canonical" href="https://urbanehaauz.com/contact" />
         <meta property="og:title" content="Contact Urbane Haauz" />
         <meta property="og:description" content="Get in touch with Urbane Haauz in Upper Pelling, Sikkim." />
@@ -166,7 +166,7 @@ const Contact: React.FC = () => {
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative h-full flex items-center justify-center">
           <div className="text-center text-white">
-            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-3">Contact Us</h1>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold mb-3">Contact Urbane Haauz — Pelling, Sikkim</h1>
             <p className="text-green-100 max-w-xl mx-auto">
               Questions, bookings, or just saying hello — we'd love to hear from you.
             </p>
@@ -395,7 +395,7 @@ const Contact: React.FC = () => {
           <div className="mt-12 bg-white rounded-xl shadow-md overflow-hidden">
             <iframe
               title="Urbane Haauz location on Google Maps"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3547.1234567890!2d88.2575!3d27.2995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjfCsDE3JzU4LjIiTiA4OMKwMTUnMjcuMCJF!5e0!3m2!1sen!2sin!4v1234567890"
+              src="https://maps.google.com/maps?q=place_id:ChIJ64XS8CiH5jkRhVPjjCbPA_0&z=17&output=embed"
               width="100%"
               height="400"
               style={{ border: 0 }}

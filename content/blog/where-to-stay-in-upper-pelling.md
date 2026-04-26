@@ -5,7 +5,7 @@ slug: where-to-stay-in-upper-pelling
 publishedAt: 2026-04-21
 updatedAt: 2026-04-21
 keywords: ["upper pelling hotels", "upper pelling vs lower pelling", "where to stay in pelling", "best area to stay in pelling", "hotels in upper pelling sikkim", "family friendly hotel upper pelling", "pelling hotel away from market noise"]
-image: /lib/hero-image.png
+image: /lib/hero-image.jpg
 ---
 
 # Where to Stay in Upper Pelling — A Neighborhood Guide

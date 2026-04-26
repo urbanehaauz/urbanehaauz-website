@@ -5,7 +5,7 @@ slug: pelling-2-day-itinerary
 publishedAt: 2026-04-21
 updatedAt: 2026-04-21
 keywords: ["pelling itinerary 2 days", "pelling 2 day trip plan", "pelling weekend trip", "pelling family itinerary", "things to do in pelling in 2 days", "pelling sightseeing tour package", "pelling trip cost"]
-image: /lib/hero-image.png
+image: /lib/hero-image.jpg
 ---
 
 # Pelling 2-Day Itinerary — The Perfect Weekend Trip Plan

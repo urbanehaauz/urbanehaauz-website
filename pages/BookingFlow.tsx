@@ -360,6 +360,7 @@ const BookingFlow: React.FC = () => {
         <script type="application/ld+json">{JSON.stringify(BOOK_BREADCRUMB_JSONLD)}</script>
       </Helmet>
       <div className="max-w-6xl mx-auto px-4">
+        <h1 className="sr-only">Book Your Stay at Urbane Haauz — Boutique Hotel in Upper Pelling, Sikkim</h1>
 
         {/* Supabase outage fallback banner */}
         {supabaseStatus === 'error' && (

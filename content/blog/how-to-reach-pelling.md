@@ -5,7 +5,7 @@ slug: how-to-reach-pelling
 publishedAt: 2026-04-21
 updatedAt: 2026-04-21
 keywords: ["how to reach pelling", "njp to pelling distance", "njp to pelling taxi fare 2026", "bagdogra to pelling", "kolkata to pelling train", "siliguri to pelling shared jeep", "gangtok to pelling distance", "darjeeling to pelling", "inner line permit pelling"]
-image: /lib/hero-image.png
+image: /lib/hero-image.jpg
 ---
 
 # How to Reach Pelling from NJP, Bagdogra, and Kolkata — 2026 Guide

@@ -23,9 +23,20 @@ const BlogPost: React.FC = () => {
 
   const relatedPosts = useMemo(() => {
     if (!post) return [];
-    return getAllPosts()
-      .filter((p) => p.slug !== post.slug)
-      .slice(0, 3);
+    const siblings = getAllPosts().filter((p) => p.slug !== post.slug);
+    const myKeywords = new Set(post.keywords.map((k) => k.toLowerCase()));
+    const scored = siblings.map((p) => {
+      const overlap = p.keywords.reduce(
+        (acc, k) => (myKeywords.has(k.toLowerCase()) ? acc + 1 : acc),
+        0,
+      );
+      return { post: p, overlap };
+    });
+    scored.sort((a, b) => {
+      if (b.overlap !== a.overlap) return b.overlap - a.overlap;
+      return a.post.publishedAt < b.post.publishedAt ? 1 : -1;
+    });
+    return scored.slice(0, 3).map((s) => s.post);
   }, [post]);
 
   if (!post) {

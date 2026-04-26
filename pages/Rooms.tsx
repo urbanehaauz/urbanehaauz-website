@@ -190,6 +190,14 @@ const ROOMS_FAQ_JSONLD = {
         text: 'Book any category — Premium, Super Deluxe, or Dorm bed — directly at urbanehaauz.com/book with instant Razorpay confirmation and best-rate guarantee (no OTA commission). For multi-room family bookings or groups, WhatsApp +91 9136032524.',
       },
     },
+    {
+      '@type': 'Question',
+      name: 'Do the rooms have reliable power and hot water?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Every room at Urbane Haauz runs on 24/7 inverter backup with a dedicated solar-assisted hot-water system, so power and hot water remain available even during the monsoon storms that occasionally affect the wider Pelling grid. Older online reviews mentioning power or hot-water issues predate our current backup setup.',
+      },
+    },
   ],
 };
 
@@ -197,7 +205,7 @@ const Rooms: React.FC = () => {
   return (
     <div className="pt-24 pb-20 min-h-screen bg-urbane-mist">
       <Helmet>
-        <title>Rooms & Dorms | Urbane Haauz Pelling — Kanchenjunga View Hotel</title>
+        <title>Rooms & Dorms in Pelling | Urbane Haauz Boutique Hotel</title>
         <meta
           name="description"
           content="Premium, Super Deluxe and Dormitory accommodation at Urbane Haauz in Upper Pelling. Direct Kanchenjunga views, CP/MAP meal plans, free WiFi, 24-hour hot water."
@@ -216,7 +224,8 @@ const Rooms: React.FC = () => {
         <div className="text-center mb-14">
           <span className="text-urbane-gold uppercase tracking-[0.3em] text-xs font-semibold">Accommodation</span>
           <h1 className="font-serif text-4xl md:text-5xl text-urbane-green font-bold mt-3 mb-4">
-            Three ways to stay
+            <span aria-hidden="true">Three ways to stay</span>
+            <span className="sr-only">Rooms & Dorms in Pelling, Sikkim — Kanchenjunga View Stays at Urbane Haauz</span>
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
             From backpacker dorms to premium suites with direct Kanchenjunga views. Pick the stay that fits —

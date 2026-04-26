@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 export const HOTEL_CONTACT = {
   phone: '+91 9136032524',
   phoneClean: '+919136032524',
-  email: 'urbanehaauz@gmail.com',
+  email: 'info@urbanehaauz.com',
   whatsapp: '+919136032524',
   address: 'SH-510, Skywalk Road, Upper Pelling',
   city: 'West Sikkim, India 737113',
@@ -92,6 +92,20 @@ const Footer: React.FC = () => {
               <p className="text-sm text-gray-400">GSTIN: {HOTEL_CONTACT.gstin}</p>
             </div>
           </div>
+        </div>
+
+        <div className="border-t border-white/10 pt-8 mb-8">
+          <h3 className="font-serif text-lg font-semibold text-urbane-gold mb-4">Pelling & Sikkim Guides</h3>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-2 text-gray-300 text-sm">
+            <li><Link to="/blog/kanchenjunga-view-hotels-pelling" className="hover:text-urbane-gold transition-colors">Kanchenjunga View Hotels</Link></li>
+            <li><Link to="/blog/pelling-boutique-hotels-kanchenjunga-comparison" className="hover:text-urbane-gold transition-colors">Pelling Boutique Hotels Compared</Link></li>
+            <li><Link to="/blog/intimate-boutique-pelling-personalized-service" className="hover:text-urbane-gold transition-colors">What Boutique Means in Pelling</Link></li>
+            <li><Link to="/blog/where-to-stay-in-upper-pelling" className="hover:text-urbane-gold transition-colors">Where to Stay in Upper Pelling</Link></li>
+            <li><Link to="/blog/best-time-to-visit-pelling" className="hover:text-urbane-gold transition-colors">Best Time to Visit Pelling</Link></li>
+            <li><Link to="/blog/things-to-do-in-pelling" className="hover:text-urbane-gold transition-colors">Things to Do in Pelling</Link></li>
+            <li><Link to="/blog/how-to-reach-pelling" className="hover:text-urbane-gold transition-colors">How to Reach Pelling</Link></li>
+            <li><Link to="/blog/pelling-2-day-itinerary" className="hover:text-urbane-gold transition-colors">Pelling 2-Day Itinerary</Link></li>
+          </ul>
         </div>
 
         <div className="border-t border-white/10 pt-8 text-center text-gray-400 text-sm">

@@ -123,7 +123,7 @@ const Home: React.FC = () => {
                 rel="noopener noreferrer"
                 className="group bg-white text-urbane-green px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg hover:bg-urbane-gold hover:text-white hover:shadow-xl hover:-translate-y-1"
               >
-                Check Availability
+                Book Now
               </a>
               <Link
                 to="/rangotsav"

@@ -244,13 +244,15 @@ const MyBookings: React.FC = () => {
                 ? "You haven't made any reservations with us yet."
                 : `You don't have any ${filter} bookings.`}
             </p>
-            <Link
-              to="/book"
+            <a
+              href="https://urbanehaauz.runhotel.site/en/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-urbane-gold text-white px-6 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all"
             >
               Book Now
               <ChevronRight size={18} />
-            </Link>
+            </a>
           </div>
         ) : (
           <div className="space-y-6">

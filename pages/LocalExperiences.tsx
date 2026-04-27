@@ -264,12 +264,14 @@ const LocalExperiences: React.FC = () => {
             Our concierge can arrange private tours, guides, and transportation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/book"
+            <a
+              href="https://urbanehaauz.runhotel.site/en/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-block bg-gradient-to-r from-urbane-green to-urbane-darkGreen text-white px-10 py-4 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 font-bold tracking-widest uppercase text-sm"
             >
-              Book Your Stay
-            </Link>
+              Book Now
+            </a>
             <a
               href={`tel:${HOTEL_CONTACT.phoneClean}`}
               className="inline-block border-2 border-urbane-charcoal text-urbane-charcoal px-10 py-4 hover:bg-urbane-charcoal hover:text-white transition-all duration-300 font-bold tracking-widest uppercase text-sm"

@@ -287,10 +287,15 @@ const Rooms: React.FC = () => {
               balcony with direct Kanchenjunga view at sunrise (clearest October–March).
             </li>
             <li>
-              <strong className="text-urbane-charcoal">Direct booking:</strong> Instant confirmation at{' '}
-              <Link to="/book" className="text-urbane-green font-semibold underline-offset-4 hover:underline">
-                urbanehaauz.com/book
-              </Link>{' '}
+              <strong className="text-urbane-charcoal">Direct booking:</strong> Instant confirmation on our{' '}
+              <a
+                href="https://urbanehaauz.runhotel.site/en/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-urbane-green font-semibold underline-offset-4 hover:underline"
+              >
+                official booking page
+              </a>{' '}
               — no OTA markup, best-rate guaranteed.
             </li>
           </ul>
@@ -342,12 +347,14 @@ const Rooms: React.FC = () => {
                   </ul>
 
                   <div className="mt-auto">
-                    <Link
-                      to="/book"
+                    <a
+                      href="https://urbanehaauz.runhotel.site/en/"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center justify-center w-full px-4 py-3 rounded bg-urbane-green text-white font-semibold text-sm uppercase tracking-wider hover:bg-urbane-lightGreen transition-colors"
                     >
-                      Check availability
-                    </Link>
+                      Book Now
+                    </a>
                   </div>
                 </div>
               </article>

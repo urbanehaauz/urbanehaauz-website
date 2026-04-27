@@ -138,12 +138,14 @@ const Blog: React.FC = () => {
             the best rate and a pre-arranged pickup from NJP or Bagdogra.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/book"
+            <a
+              href="https://urbanehaauz.runhotel.site/en/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-gradient-to-r from-urbane-gold to-urbane-goldLight text-urbane-darkGreen px-8 py-3 rounded-none font-bold hover:shadow-gold transition-all text-sm tracking-wide uppercase"
             >
-              Check availability
-            </Link>
+              Book Now
+            </a>
             <Link
               to="/contact"
               className="border-2 border-urbane-green text-urbane-green px-8 py-3 rounded-none font-bold hover:bg-urbane-green hover:text-white transition-all text-sm tracking-wide uppercase"

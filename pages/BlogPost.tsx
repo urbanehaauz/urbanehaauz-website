@@ -141,9 +141,14 @@ const BlogPost: React.FC = () => {
               Write to us
             </Link>{' '}
             or{' '}
-            <Link to="/book" className="text-urbane-green font-semibold hover:text-urbane-gold">
-              check live availability
-            </Link>
+            <a
+              href="https://urbanehaauz.runhotel.site/en/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-urbane-green font-semibold hover:text-urbane-gold"
+            >
+              book your stay
+            </a>
             .
           </p>
         </div>

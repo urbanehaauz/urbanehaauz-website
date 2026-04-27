@@ -46,25 +46,24 @@ const Reveal: React.FC<{ children: React.ReactNode; delay?: number; className?: 
 /*                            VISUAL PASS (LEFT)                              */
 /* -------------------------------------------------------------------------- */
 
+// SECTION_BG must match the parent <section> bg so the perforation notches
+// read as cutouts rather than dots.
+const SECTION_BG = '#FAF7F2';
+
 const PassVisual: React.FC = () => (
   <div className="relative">
-    {/* Soft gold glow behind the pass */}
+    {/* Soft gold glow behind the pass — stronger now since the section is light */}
     <div
       aria-hidden
-      className="absolute -inset-6 rounded-[28px] blur-3xl opacity-40 pointer-events-none"
+      className="absolute -inset-8 rounded-[28px] blur-3xl opacity-60 pointer-events-none"
       style={{
         background:
-          'radial-gradient(circle at 50% 40%, rgba(212,165,116,0.45), transparent 70%)',
+          'radial-gradient(circle at 50% 40%, rgba(212,165,116,0.35), transparent 70%)',
       }}
     />
 
     <div
-      className="relative bg-gradient-to-br from-[#FAF7F2] via-[#f5ecd9] to-[#ead8b6] text-[#1C1C1C] rounded-2xl border-2 border-[#D4A574] shadow-2xl shadow-black/30 overflow-hidden"
-      style={{
-        backgroundImage:
-          "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.74 0 0 0 0 0.62 0 0 0 0 0.38 0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-        backgroundBlendMode: 'multiply',
-      }}
+      className="relative bg-gradient-to-br from-[#fffaf0] via-[#f7ead0] to-[#e8d4a4] text-[#1C1C1C] rounded-2xl border border-[#D4A574]/70 shadow-[0_30px_60px_-15px_rgba(139,111,71,0.45)] overflow-hidden"
     >
       {/* Top stub — title block */}
       <div className="px-9 pt-10 pb-7 text-center">
@@ -91,11 +90,17 @@ const PassVisual: React.FC = () => (
         </div>
       </div>
 
-      {/* Perforation row with notches */}
+      {/* Perforation row with notches — notches match the section bg */}
       <div className="relative h-6">
         <div className="absolute inset-x-9 top-1/2 -translate-y-1/2 border-t-[1.5px] border-dashed border-[#A67833]/50" />
-        <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#1C1C1C]" />
-        <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#1C1C1C]" />
+        <div
+          className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full"
+          style={{ backgroundColor: SECTION_BG }}
+        />
+        <div
+          className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full"
+          style={{ backgroundColor: SECTION_BG }}
+        />
       </div>
 
       {/* Body — pass details */}
@@ -146,11 +151,11 @@ const TrustItem: React.FC<{
   body: string;
 }> = ({ icon, title, body }) => (
   <div className="text-center px-5">
-    <div className="w-12 h-12 rounded-full bg-[#D4A574]/15 border border-[#D4A574]/30 mx-auto flex items-center justify-center mb-4 text-[#D4A574]">
+    <div className="w-12 h-12 rounded-full bg-[#D4A574]/20 border border-[#D4A574]/40 mx-auto flex items-center justify-center mb-4 text-[#A67833]">
       {icon}
     </div>
-    <p className="font-serif text-lg text-[#FAF7F2] mb-1.5">{title}</p>
-    <p className="text-[#FAF7F2]/55 text-sm leading-relaxed">{body}</p>
+    <p className="font-serif text-lg text-[#1C1C1C] mb-1.5">{title}</p>
+    <p className="text-[#1C1C1C]/65 text-sm leading-relaxed">{body}</p>
   </div>
 );
 
@@ -161,15 +166,15 @@ const TrustItem: React.FC<{
 const TicketsSection: React.FC = () => (
   <section
     id="tickets"
-    className="relative py-28 md:py-36 px-6 md:px-12 bg-[#141414] text-[#FAF7F2] overflow-hidden"
+    className="relative py-28 md:py-36 px-6 md:px-12 bg-[#FAF7F2] text-[#1C1C1C] overflow-hidden"
   >
-    {/* warm radial spotlight */}
+    {/* Warm radial highlight + subtle bottom orange tint */}
     <div
       aria-hidden
       className="absolute inset-0 pointer-events-none"
       style={{
         background:
-          'radial-gradient(ellipse at 50% 0%, rgba(212,165,116,0.18), transparent 55%), radial-gradient(ellipse at 50% 100%, rgba(200,75,15,0.10), transparent 60%)',
+          'radial-gradient(ellipse at 50% 0%, rgba(212,165,116,0.22), transparent 55%), radial-gradient(ellipse at 50% 100%, rgba(200,75,15,0.06), transparent 60%)',
       }}
     />
 
@@ -178,18 +183,18 @@ const TicketsSection: React.FC = () => (
       <Reveal>
         <div className="text-center mb-16 md:mb-20">
           <div className="inline-flex items-center gap-2 mb-5">
-            <span className="h-px w-10 bg-[#D4A574]/60" />
-            <span className="text-[11px] uppercase tracking-[0.45em] text-[#D4A574] font-semibold">
+            <span className="h-px w-10 bg-[#A67833]/50" />
+            <span className="text-[11px] uppercase tracking-[0.45em] text-[#A67833] font-semibold">
               Entry · 25–26 May 2026
             </span>
-            <span className="h-px w-10 bg-[#D4A574]/60" />
+            <span className="h-px w-10 bg-[#A67833]/50" />
           </div>
-          <h2 className="font-serif text-4xl md:text-6xl leading-tight">
+          <h2 className="font-serif text-4xl md:text-6xl leading-tight text-[#1C1C1C]">
             Get your festival pass
           </h2>
-          <p className="mt-6 text-[#FAF7F2]/65 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-[#1C1C1C]/70 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
             One pass, two days. Both festival days, every performance, the art exhibition,
-            and access to the food stalls — all from <span className="text-[#D4A574] font-semibold">₹100 per person</span>.
+            and access to the food stalls — all from <span className="text-[#A67833] font-semibold">₹100 per person</span>.
           </p>
         </div>
       </Reveal>
@@ -201,7 +206,7 @@ const TicketsSection: React.FC = () => (
         </Reveal>
 
         <Reveal delay={150}>
-          <div className="bg-[#FAF7F2]/[0.04] border border-[#D4A574]/25 rounded-2xl p-7 md:p-9 backdrop-blur-sm">
+          <div className="bg-white border border-[#1C1C1C]/8 rounded-2xl p-7 md:p-9 shadow-[0_20px_50px_-20px_rgba(28,28,28,0.18)]">
             <TicketBuyForm />
           </div>
         </Reveal>
@@ -211,7 +216,7 @@ const TicketsSection: React.FC = () => (
       <Reveal delay={300}>
         <div className="mt-20 md:mt-24">
           <div className="text-center mb-10">
-            <span className="text-[10px] uppercase tracking-[0.4em] text-[#D4A574]/70">
+            <span className="text-[10px] uppercase tracking-[0.4em] text-[#A67833]/80 font-semibold">
               How it works
             </span>
           </div>
@@ -237,7 +242,7 @@ const TicketsSection: React.FC = () => (
 
       {/* Fine print */}
       <Reveal delay={400}>
-        <p className="mt-14 text-center text-[#FAF7F2]/35 text-xs tracking-wide max-w-xl mx-auto leading-relaxed">
+        <p className="mt-14 text-center text-[#1C1C1C]/45 text-xs tracking-wide max-w-xl mx-auto leading-relaxed">
           Capacity is capped at 300 across online and offline sales combined.
           Passes are non-transferable and refunds are not available once issued.
           Children under 5 enter free with a paying adult.

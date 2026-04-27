@@ -286,16 +286,22 @@ const TicketBuyForm: React.FC = () => {
 
   const isBusy = stage === 'paying' || stage === 'verifying';
 
+  // Light-themed input styling — sits on the white card from TicketsSection
+  const inputBase =
+    'w-full bg-[#FAF7F2] text-[#1C1C1C] border border-[#1C1C1C]/15 rounded-xl px-5 py-3.5 placeholder:text-[#1C1C1C]/35 focus:border-[#A67833] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#D4A574]/30 disabled:opacity-50 transition';
+  const labelBase =
+    'block text-[#A67833] text-[11px] uppercase tracking-[0.22em] mb-2 font-bold';
+
   return (
     <div>
       <div className="text-center mb-6">
-        <h4 className="font-serif text-2xl text-[#FAF7F2] mb-2">Buy your Rangotsav pass</h4>
-        <p className="text-[#FAF7F2]/60 text-sm">
+        <h4 className="font-serif text-2xl text-[#1C1C1C] mb-2">Buy your Rangotsav pass</h4>
+        <p className="text-[#1C1C1C]/60 text-sm">
           {unitPrice ? (
             <>
               ₹{unitPrice.toLocaleString('en-IN')} per person · 25–26 May 2026 · Pelling
               {remaining !== null && remaining < 50 && remaining > 0 && (
-                <span className="block text-[#C84B0F] mt-1 text-xs uppercase tracking-[0.2em]">
+                <span className="block text-[#C84B0F] mt-1 text-xs uppercase tracking-[0.2em] font-semibold">
                   Only {remaining} {remaining === 1 ? 'pass' : 'passes'} left
                 </span>
               )}
@@ -308,9 +314,7 @@ const TicketBuyForm: React.FC = () => {
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">
-            Full Name *
-          </label>
+          <label className={labelBase}>Full Name *</label>
           <input
             type="text"
             required
@@ -318,15 +322,12 @@ const TicketBuyForm: React.FC = () => {
             onChange={(e) => setName(e.target.value)}
             placeholder="Pass holder name (matches your ID)"
             disabled={isBusy}
-            style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
-            className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none disabled:opacity-50"
+            className={inputBase}
           />
         </div>
 
         <div>
-          <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">
-            Email Address *
-          </label>
+          <label className={labelBase}>Email Address *</label>
           <input
             type="email"
             required
@@ -334,15 +335,12 @@ const TicketBuyForm: React.FC = () => {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             disabled={isBusy}
-            style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
-            className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none disabled:opacity-50"
+            className={inputBase}
           />
         </div>
 
         <div>
-          <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">
-            Phone Number *
-          </label>
+          <label className={labelBase}>Phone Number *</label>
           <input
             type="tel"
             required
@@ -350,29 +348,23 @@ const TicketBuyForm: React.FC = () => {
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+91 ..."
             disabled={isBusy}
-            style={{ backgroundColor: '#2a2a2a', color: '#FAF7F2' }}
-            className="w-full border border-[#FAF7F2]/20 rounded-xl px-6 py-3.5 placeholder:text-[#FAF7F2]/40 focus:border-[#D4A574] focus:outline-none disabled:opacity-50"
+            className={inputBase}
           />
         </div>
 
         <div>
-          <label className="block text-[#D4A574] text-xs uppercase tracking-[0.2em] mb-2 font-semibold">
-            Number of passes
-          </label>
+          <label className={labelBase}>Number of passes</label>
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={decQty}
               disabled={isBusy || quantity <= 1}
               aria-label="Decrease quantity"
-              className="w-11 h-11 rounded-full border border-[#FAF7F2]/20 text-[#FAF7F2] hover:border-[#D4A574] disabled:opacity-30 disabled:cursor-not-allowed transition"
+              className="w-11 h-11 rounded-full border border-[#1C1C1C]/15 text-[#1C1C1C] hover:border-[#A67833] hover:text-[#A67833] disabled:opacity-30 disabled:cursor-not-allowed transition"
             >
               −
             </button>
-            <span
-              aria-live="polite"
-              className="text-[#FAF7F2] text-2xl font-serif w-10 text-center"
-            >
+            <span aria-live="polite" className="text-[#1C1C1C] text-2xl font-serif w-10 text-center">
               {quantity}
             </span>
             <button
@@ -380,27 +372,27 @@ const TicketBuyForm: React.FC = () => {
               onClick={incQty}
               disabled={isBusy || quantity >= maxQty}
               aria-label="Increase quantity"
-              className="w-11 h-11 rounded-full border border-[#FAF7F2]/20 text-[#FAF7F2] hover:border-[#D4A574] disabled:opacity-30 disabled:cursor-not-allowed transition"
+              className="w-11 h-11 rounded-full border border-[#1C1C1C]/15 text-[#1C1C1C] hover:border-[#A67833] hover:text-[#A67833] disabled:opacity-30 disabled:cursor-not-allowed transition"
             >
               +
             </button>
-            <span className="text-[#FAF7F2]/45 text-xs uppercase tracking-[0.15em] ml-2">
+            <span className="text-[#1C1C1C]/50 text-xs uppercase tracking-[0.15em] ml-2">
               Max 10 per buy
             </span>
           </div>
         </div>
 
         {unitPrice && (
-          <div className="border-t border-[#D4A574]/15 pt-5 flex items-baseline justify-between">
-            <span className="text-[#FAF7F2]/60 text-sm uppercase tracking-[0.15em]">Total</span>
-            <span className="text-[#FAF7F2] text-3xl font-serif">
+          <div className="border-t border-[#1C1C1C]/10 pt-5 flex items-baseline justify-between">
+            <span className="text-[#1C1C1C]/60 text-sm uppercase tracking-[0.15em] font-semibold">Total</span>
+            <span className="text-[#1C1C1C] text-3xl font-serif">
               ₹{totalAmount.toLocaleString('en-IN')}
             </span>
           </div>
         )}
 
         {error && (
-          <div className="bg-[#C84B0F]/15 border border-[#C84B0F]/50 rounded-xl px-4 py-3 text-sm text-[#FAF7F2]">
+          <div className="bg-[#C84B0F]/10 border border-[#C84B0F]/40 rounded-xl px-4 py-3 text-sm text-[#8a2f06]">
             {error}
           </div>
         )}
@@ -408,7 +400,7 @@ const TicketBuyForm: React.FC = () => {
         <button
           type="submit"
           disabled={isBusy || !unitPrice}
-          className="w-full bg-[#D4A574] hover:bg-[#e6bd8e] disabled:opacity-60 disabled:cursor-not-allowed text-[#1C1C1C] font-bold px-8 py-4 rounded-full uppercase tracking-[0.18em] text-sm transition"
+          className="w-full bg-gradient-to-r from-[#D4A574] to-[#c8985b] hover:from-[#e6bd8e] hover:to-[#d4a574] disabled:opacity-60 disabled:cursor-not-allowed text-[#1C1C1C] font-bold px-8 py-4 rounded-full uppercase tracking-[0.18em] text-sm transition shadow-lg shadow-[#D4A574]/30 hover:shadow-xl hover:shadow-[#D4A574]/40"
         >
           {stage === 'paying'
             ? 'Opening Payment…'
@@ -419,7 +411,7 @@ const TicketBuyForm: React.FC = () => {
             : 'Loading…'}
         </button>
 
-        <p className="text-[#FAF7F2]/45 text-[11px] text-center tracking-wide">
+        <p className="text-[#1C1C1C]/50 text-[11px] text-center tracking-wide">
           Secure payment via Razorpay · UPI / Cards / Net Banking. Email + WhatsApp confirmation. No physical tickets.
         </p>
       </form>

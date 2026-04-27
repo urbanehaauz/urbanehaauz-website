@@ -20,6 +20,7 @@
     "@remotion/player": "4.0.414",
     "@supabase/auth-helpers-react": "^0.5.0",
     "@supabase/supabase-js": "^2.86.0",
+    "html5-qrcode": "^2.3.8",
     "lucide-react": "^0.554.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

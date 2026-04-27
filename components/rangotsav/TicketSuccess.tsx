@@ -13,8 +13,12 @@ const TicketSuccess: React.FC<TicketSuccessProps> = ({
   quantity,
   totalAmount,
 }) => {
+  // QR encodes a deep link to the admin check-in page; staff phones scan it
+  // and land directly in the lookup with the code pre-filled.
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://urbanehaauz.com';
+  const checkInUrl = `${origin}/admin/rangotsav?code=${encodeURIComponent(ticketCode)}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data=${encodeURIComponent(
-    ticketCode,
+    checkInUrl,
   )}`;
 
   const waMessage = encodeURIComponent(

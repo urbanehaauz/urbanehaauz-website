@@ -951,8 +951,13 @@ export async function sendRangotsavTicketConfirmation(data: {
   const code = escHtml(data.ticketCode);
   const subject = `Your Rangotsav 2026 Pass — ${data.ticketCode}`;
 
+  // QR encodes a deep link to the admin check-in page so staff phones jump
+  // straight into the lookup with the code pre-filled. Hardcoded to the
+  // canonical production URL so screenshots/forwards from prod buyers always
+  // resolve correctly even if a future preview env sends emails.
+  const checkInUrl = `https://urbanehaauz.com/admin/rangotsav?code=${encodeURIComponent(data.ticketCode)}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data=${encodeURIComponent(
-    data.ticketCode,
+    checkInUrl,
   )}`;
 
   const waMessage = encodeURIComponent(

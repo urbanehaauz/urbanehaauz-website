@@ -1,10 +1,32 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { validateEmail, validateName, validatePhone } from '../lib/security/validation';
 
 type AdminTab = 'inventory' | 'sell' | 'checkin';
+
+const TICKET_CODE_RE = /^RANG-2026-[A-Z0-9]+$/i;
+
+// Accepts either a bare ticket code (RANG-2026-XXX) or a deep-link URL with
+// ?code=RANG-2026-XXX (what the email/on-screen QR encodes). Returns the
+// normalized uppercase code, or null if nothing valid is found.
+function extractTicketCode(scanned: string): string | null {
+  const trimmed = scanned.trim();
+  if (TICKET_CODE_RE.test(trimmed)) {
+    return trimmed.toUpperCase();
+  }
+  try {
+    const url = new URL(trimmed);
+    const code = url.searchParams.get('code');
+    if (code && TICKET_CODE_RE.test(code)) {
+      return code.toUpperCase();
+    }
+  } catch {
+    // not a URL; fall through
+  }
+  return null;
+}
 
 interface InventorySummary {
   total_capacity: number;
@@ -39,7 +61,17 @@ const RangotsavAdmin: React.FC = () => {
   const { isAdmin, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState<AdminTab>('inventory');
+  // Pull ?code= once on mount so a QR deep-link lands us in the check-in tab
+  // with the lookup pre-filled. Read synchronously so we don't get a flash
+  // of the inventory tab before the redirect.
+  const initialCode = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get('code');
+    return raw ? extractTicketCode(raw) : null;
+  }, []);
+
+  const [tab, setTab] = useState<AdminTab>(initialCode ? 'checkin' : 'inventory');
 
   const [summary, setSummary] = useState<InventorySummary | null>(null);
   const [recent, setRecent] = useState<TicketRow[]>([]);
@@ -53,6 +85,17 @@ const RangotsavAdmin: React.FC = () => {
       navigate('/admin/login');
     }
   }, [authLoading, isAdmin, navigate]);
+
+  // Once auth is settled and we honoured the deep link, strip ?code= from the
+  // URL so a manual refresh doesn't re-trigger the lookup or accidentally
+  // expose the code in browser history when the page is shared.
+  useEffect(() => {
+    if (initialCode && typeof window !== 'undefined' && isAdmin) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('code');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [initialCode, isAdmin]);
 
   const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
@@ -162,7 +205,7 @@ const RangotsavAdmin: React.FC = () => {
             remaining={summary ? summary.total_capacity - summary.sold_total - summary.pending_held : null}
           />
         )}
-        {tab === 'checkin' && <CheckInTab onRefresh={refresh} />}
+        {tab === 'checkin' && <CheckInTab onRefresh={refresh} initialCode={initialCode} />}
       </div>
     </div>
   );
@@ -594,38 +637,55 @@ const SellOfflineTab: React.FC<{
 /*                                Check-in                                    */
 /* -------------------------------------------------------------------------- */
 
-const CheckInTab: React.FC<{ onRefresh: () => void }> = ({ onRefresh }) => {
-  const [code, setCode] = useState('');
+const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }> = ({
+  onRefresh,
+  initialCode,
+}) => {
+  const [code, setCode] = useState(initialCode ?? '');
   const [ticket, setTicket] = useState<TicketRow | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [scannerActive, setScannerActive] = useState(false);
+  const [scannerError, setScannerError] = useState<string | null>(null);
+  const scannerRef = useRef<any>(null);
+  const scannerRegionId = 'rangotsav-qr-region';
 
-  const lookup = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Look up a code without requiring a form submit (used by deep link + scanner).
+  const lookupCode = useCallback(async (raw: string) => {
+    const normalized = raw.trim().toUpperCase();
+    if (!normalized) return;
     setError(null);
     setInfo(null);
     setTicket(null);
-    const trimmed = code.trim().toUpperCase();
-    if (!trimmed) return;
-
     setLoading(true);
     const { data, error: err } = await supabase
       .from('rangotsav_tickets')
       .select('*')
-      .eq('ticket_code', trimmed)
+      .eq('ticket_code', normalized)
       .maybeSingle();
     setLoading(false);
-
     if (err) {
       setError(err.message);
       return;
     }
     if (!data) {
-      setError('Ticket not found.');
+      setError(`Ticket not found: ${normalized}`);
       return;
     }
     setTicket(data as TicketRow);
+  }, []);
+
+  // Auto-look up if we landed here via a QR deep-link with ?code=.
+  useEffect(() => {
+    if (initialCode) {
+      lookupCode(initialCode);
+    }
+  }, [initialCode, lookupCode]);
+
+  const lookup = (e: React.FormEvent) => {
+    e.preventDefault();
+    lookupCode(code);
   };
 
   const remainingAdmits = ticket ? ticket.quantity - ticket.checked_in_count : 0;
@@ -661,16 +721,127 @@ const CheckInTab: React.FC<{ onRefresh: () => void }> = ({ onRefresh }) => {
     onRefresh();
   };
 
+  // Scanner lifecycle. We dynamic-import html5-qrcode so it's only pulled into
+  // the bundle when an admin actually opens the scanner. On a successful scan
+  // we extract the ticket code, stop the camera, and trigger the lookup.
+  const stopScanner = useCallback(async () => {
+    const inst = scannerRef.current;
+    scannerRef.current = null;
+    setScannerActive(false);
+    if (!inst) return;
+    try {
+      if (inst.isScanning) {
+        await inst.stop();
+      }
+      await inst.clear();
+    } catch (err) {
+      console.error('Failed to stop QR scanner:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!scannerActive) return;
+    let cancelled = false;
+    setScannerError(null);
+
+    (async () => {
+      try {
+        const { Html5Qrcode } = await import('html5-qrcode');
+        if (cancelled) return;
+
+        const inst = new Html5Qrcode(scannerRegionId, /* verbose */ false);
+        scannerRef.current = inst;
+
+        await inst.start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: { width: 240, height: 240 } },
+          async (decodedText: string) => {
+            const extracted = extractTicketCode(decodedText);
+            if (!extracted) {
+              // Wrong QR — keep scanning, just flash a hint
+              setScannerError('Not a Rangotsav pass — try again.');
+              return;
+            }
+            setCode(extracted);
+            setScannerError(null);
+            await stopScanner();
+            await lookupCode(extracted);
+          },
+          () => {
+            // Per-frame "no QR found" — ignore (very chatty)
+          },
+        );
+      } catch (err: any) {
+        console.error('QR scanner failed to start:', err);
+        if (!cancelled) {
+          setScannerError(
+            err?.message?.includes('Permission')
+              ? 'Camera permission denied. Allow camera access and try again.'
+              : 'Could not start the camera. Check permissions and try again.',
+          );
+          setScannerActive(false);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      // Best-effort cleanup if the tab/component unmounts mid-scan.
+      const inst = scannerRef.current;
+      scannerRef.current = null;
+      if (inst) {
+        Promise.resolve(inst.isScanning ? inst.stop() : null)
+          .then(() => inst.clear?.())
+          .catch(() => {});
+      }
+    };
+  }, [scannerActive, lookupCode, stopScanner]);
+
   return (
     <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-gray-200 max-w-2xl mx-auto">
-      <h3 className="font-serif text-xl font-bold text-gray-900 mb-1">Door check-in</h3>
+      <div className="flex items-start justify-between gap-3 mb-1">
+        <h3 className="font-serif text-xl font-bold text-gray-900">Door check-in</h3>
+        {!scannerActive ? (
+          <button
+            type="button"
+            onClick={() => setScannerActive(true)}
+            className="bg-urbane-gold text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-opacity-90 inline-flex items-center gap-2 shrink-0"
+            aria-label="Open camera QR scanner"
+          >
+            📷 Scan QR
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => stopScanner()}
+            className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-300 inline-flex items-center gap-2 shrink-0"
+          >
+            ✕ Stop scanner
+          </button>
+        )}
+      </div>
       <p className="text-sm text-gray-500 mb-5">
-        Paste or type the ticket code (e.g. <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">RANG-2026-A4F2K9</code>).
+        Scan a guest's QR with the camera, or paste / type the code (e.g.{' '}
+        <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">RANG-2026-A4F2K9</code>).
       </p>
+
+      {scannerActive && (
+        <div className="mb-5 rounded-xl border border-gray-200 overflow-hidden bg-black">
+          <div id={scannerRegionId} className="w-full max-w-md mx-auto" />
+          <p className="text-center text-xs text-gray-400 py-2 bg-gray-900">
+            Hold the QR steady inside the frame
+          </p>
+        </div>
+      )}
+      {scannerError && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-lg px-4 py-3 text-sm mb-4">
+          {scannerError}
+        </div>
+      )}
 
       <form onSubmit={lookup} className="flex gap-2 mb-6">
         <input
-          autoFocus
+          autoFocus={!initialCode}
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="RANG-2026-…"

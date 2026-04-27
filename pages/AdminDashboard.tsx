@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, Legend } from 'recharts';
-import { DollarSign, Calendar, Users, TrendingUp, TrendingDown, Plus, X, LogOut, Briefcase, UserCheck, LayoutDashboard, BedDouble, CreditCard, Image as ImageIcon, Check, Lock, RotateCcw, Search, Filter, Settings, Upload, CheckCircle } from 'lucide-react';
+import { DollarSign, Calendar, Users, TrendingUp, TrendingDown, Plus, X, LogOut, Briefcase, UserCheck, LayoutDashboard, BedDouble, CreditCard, Image as ImageIcon, Check, Lock, RotateCcw, Search, Filter, Settings, Upload, CheckCircle, Ticket, ArrowRight } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import DatePicker from '../components/DatePicker';
 import SheetFinancials from '../components/SheetFinancials';
@@ -52,6 +52,15 @@ const AdminDashboard: React.FC = () => {
   const [rangotsavNotify, setRangotsavNotify] = useState<any[]>([]);
   const [rangotsavVolunteers, setRangotsavVolunteers] = useState<any[]>([]);
   const [rangotsavLoading, setRangotsavLoading] = useState(false);
+  const [ticketSummary, setTicketSummary] = useState<{
+    total_capacity: number;
+    sold_online: number;
+    sold_offline: number;
+    sold_total: number;
+    pending_held: number;
+    revenue_collected: number;
+  } | null>(null);
+  const [recentTickets, setRecentTickets] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRoomModalOpen, setIsRoomModalOpen] = useState(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
@@ -139,18 +148,31 @@ const AdminDashboard: React.FC = () => {
   };
 
   // Rangotsav data loading — single unified table, split client-side by type.
+  // Also pulls live ticket-sales data so admins see real counts here, not
+  // just the legacy notify/vendor/volunteer lists.
   const loadRangotsavData = async () => {
     setRangotsavLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('rangotsav_registrations')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) {
-        console.error('rangotsav_registrations load failed:', error);
+      const [
+        { data: regRows, error: regErr },
+        { data: ticketSummaryRow },
+        { data: ticketRecent },
+      ] = await Promise.all([
+        supabase.from('rangotsav_registrations').select('*').order('created_at', { ascending: false }),
+        supabase.from('rangotsav_inventory_summary').select('*').single(),
+        supabase
+          .from('rangotsav_tickets')
+          .select(
+            'id, ticket_code, buyer_name, buyer_email, quantity, total_amount, source, payment_status, payment_method, checked_in_count, created_at',
+          )
+          .order('created_at', { ascending: false })
+          .limit(10),
+      ]);
+
+      if (regErr) {
+        console.error('rangotsav_registrations load failed:', regErr);
       }
-      const rows = data || [];
-      // Reshape vendor rows so downstream UI can still read v.what_selling.
+      const rows = regRows || [];
       setRangotsavVendors(
         rows
           .filter((r) => r.type === 'vendor')
@@ -162,6 +184,18 @@ const AdminDashboard: React.FC = () => {
           .map((r) => ({ ...r, skills: r.details?.skills ?? '' })),
       );
       setRangotsavNotify(rows.filter((r) => r.type === 'notify'));
+
+      if (ticketSummaryRow) {
+        setTicketSummary({
+          total_capacity: Number(ticketSummaryRow.total_capacity ?? 300),
+          sold_online: Number(ticketSummaryRow.sold_online ?? 0),
+          sold_offline: Number(ticketSummaryRow.sold_offline ?? 0),
+          sold_total: Number(ticketSummaryRow.sold_total ?? 0),
+          pending_held: Number(ticketSummaryRow.pending_held ?? 0),
+          revenue_collected: Number(ticketSummaryRow.revenue_collected ?? 0),
+        });
+      }
+      setRecentTickets(ticketRecent || []);
     } catch (e) { console.error(e); }
     setRangotsavLoading(false);
   };
@@ -1245,14 +1279,131 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="font-serif text-2xl font-bold text-gray-800">Rangotsav · 25–26 May, 2026</h2>
-                <p className="text-gray-500 text-sm">Vendor applications, ticket notifications & event management</p>
+                <p className="text-gray-500 text-sm">Live ticket inventory, vendor applications & event management</p>
               </div>
               <button onClick={loadRangotsavData} className="bg-urbane-gold text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-opacity-90 flex items-center gap-2">
                 <RotateCcw size={14} className={rangotsavLoading ? 'animate-spin' : ''} /> Refresh
               </button>
             </div>
 
-            {/* Stats */}
+            {/* TICKET SALES — primary KPI block */}
+            <div className="bg-gradient-to-br from-urbane-darkGreen to-[#0f3621] rounded-xl p-6 md:p-8 text-white shadow-lg">
+              <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-urbane-gold font-bold mb-1">Ticket Sales</p>
+                  <h3 className="font-serif text-2xl md:text-3xl font-bold">
+                    {ticketSummary ? `${ticketSummary.sold_total} / ${ticketSummary.total_capacity} sold` : '— / 300 sold'}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => navigate('/admin/rangotsav')}
+                  className="bg-urbane-gold text-urbane-darkGreen px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-opacity-90 flex items-center gap-2 transition"
+                >
+                  <Ticket size={16} /> Manage tickets, offline sales, check-in <ArrowRight size={14} />
+                </button>
+              </div>
+
+              {/* Progress bar */}
+              <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden mb-6">
+                <div
+                  className="h-full bg-urbane-gold transition-all"
+                  style={{
+                    width: ticketSummary && ticketSummary.total_capacity > 0
+                      ? `${Math.min(100, (ticketSummary.sold_total / ticketSummary.total_capacity) * 100)}%`
+                      : '0%',
+                  }}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="bg-white/[0.07] rounded-lg p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Sold Online</p>
+                  <p className="text-2xl font-bold text-white mt-1">{ticketSummary?.sold_online ?? '—'}</p>
+                </div>
+                <div className="bg-white/[0.07] rounded-lg p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Sold Offline</p>
+                  <p className="text-2xl font-bold text-amber-300 mt-1">{ticketSummary?.sold_offline ?? '—'}</p>
+                </div>
+                <div className="bg-white/[0.07] rounded-lg p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Pending (15-min hold)</p>
+                  <p className="text-2xl font-bold text-yellow-300 mt-1">{ticketSummary?.pending_held ?? '—'}</p>
+                </div>
+                <div className="bg-white/[0.07] rounded-lg p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Remaining</p>
+                  <p className="text-2xl font-bold text-white mt-1">
+                    {ticketSummary
+                      ? Math.max(ticketSummary.total_capacity - ticketSummary.sold_total - ticketSummary.pending_held, 0)
+                      : '—'}
+                  </p>
+                </div>
+                <div className="bg-white/[0.07] rounded-lg p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Revenue</p>
+                  <p className="text-2xl font-bold text-urbane-gold mt-1">
+                    {ticketSummary ? `₹${ticketSummary.revenue_collected.toLocaleString('en-IN')}` : '—'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Recent ticket sales */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+              <div className="p-5 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
+                <h3 className="font-bold text-gray-700">Recent Ticket Sales</h3>
+                <span className="text-xs text-gray-400">Last 10 · all sources</span>
+              </div>
+              {recentTickets.length === 0 ? (
+                <div className="p-8 text-center text-gray-400">No tickets sold yet.</div>
+              ) : (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="text-xs text-gray-400 uppercase border-b border-gray-100">
+                      <th className="px-5 py-3 font-bold tracking-wider">Code</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Buyer</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Qty</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Amount</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Source</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Status</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">When</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {recentTickets.map((t) => (
+                      <tr key={t.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                        <td className="px-5 py-3 font-mono text-xs text-gray-700">{t.ticket_code}</td>
+                        <td className="px-5 py-3">
+                          <div className="font-semibold text-gray-800">{t.buyer_name}</div>
+                          <div className="text-xs text-gray-500">{t.buyer_email}</div>
+                        </td>
+                        <td className="px-5 py-3 text-gray-700">{t.quantity}</td>
+                        <td className="px-5 py-3 text-gray-700">₹{Number(t.total_amount).toLocaleString('en-IN')}</td>
+                        <td className="px-5 py-3">
+                          <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
+                            t.source === 'offline' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {t.source}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3">
+                          <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
+                            t.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                            t.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                            t.payment_status === 'failed' ? 'bg-red-100 text-red-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {t.payment_status}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3 text-gray-400 text-xs">
+                          {new Date(t.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            {/* Community KPI strip — vendors / volunteers / notify (legacy notify-me list) */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
                 <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Total Vendors</p>
@@ -1271,7 +1422,7 @@ const AdminDashboard: React.FC = () => {
                 <p className="text-2xl font-bold text-orange-600 mt-1">{rangotsavVolunteers.length}</p>
               </div>
               <div className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm">
-                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Notify Signups</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wider font-bold">Pre-launch Notify</p>
                 <p className="text-2xl font-bold text-blue-600 mt-1">{rangotsavNotify.length}</p>
               </div>
             </div>

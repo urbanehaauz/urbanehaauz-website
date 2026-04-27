@@ -172,19 +172,46 @@ const SheetOverview: React.FC = () => {
   const [data, setData] = useState<SheetPayload | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [authIssue, setAuthIssue] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setAuthIssue(false);
     try {
       const { data: res, error: fnErr } = await supabase.functions.invoke('read-financial-sheet');
-      if (fnErr) throw fnErr;
+      if (fnErr) {
+        const ctxResp = (fnErr as any)?.context?.response;
+        const status: number | undefined = ctxResp?.status;
+        let serverMsg = (fnErr as Error).message;
+        try {
+          const body = await ctxResp?.json?.();
+          if (body?.error) serverMsg = body.error;
+        } catch { /* ignore */ }
+
+        if (status === 401) {
+          setAuthIssue(true);
+          throw new Error('Your admin session has expired or is invalid. Please sign in again.');
+        }
+        if (status === 403) {
+          setAuthIssue(true);
+          throw new Error('This account is not authorized as an admin.');
+        }
+        throw new Error(serverMsg || (fnErr as Error).message);
+      }
       if (res?.error) throw new Error(res.error);
       setData(res as SheetPayload);
     } catch (e) {
       setError((e as Error)?.message ?? 'Failed to load sheet');
     } finally {
       setLoading(false);
+    }
+  }, []);
+
+  const handleReauth = useCallback(async () => {
+    try { await supabase.auth.signOut(); } catch { /* ignore */ }
+    if (typeof window !== 'undefined') {
+      window.location.href = '/admin/login';
     }
   }, []);
 
@@ -731,15 +758,26 @@ const SheetOverview: React.FC = () => {
       <div className="glassmorphism-strong rounded-2xl p-8 border border-red-500/40">
         <div className="flex items-start space-x-3">
           <AlertCircle className="text-red-400 flex-shrink-0 mt-0.5" size={24} />
-          <div>
-            <p className="text-red-300 font-semibold text-lg">Unable to load overview</p>
+          <div className="flex-1">
+            <p className="text-red-300 font-semibold text-lg">
+              {authIssue ? 'Sign-in required' : 'Unable to load overview'}
+            </p>
             <p className="text-warm-ivory text-opacity-70 text-sm mt-1">{error}</p>
-            <button
-              onClick={load}
-              className="mt-3 bg-copper hover:bg-opacity-90 text-warm-ivory px-4 py-2 rounded-lg font-medium text-sm"
-            >
-              Retry
-            </button>
+            {authIssue ? (
+              <button
+                onClick={handleReauth}
+                className="mt-3 bg-copper hover:bg-opacity-90 text-warm-ivory px-4 py-2 rounded-lg font-medium text-sm"
+              >
+                Sign in again
+              </button>
+            ) : (
+              <button
+                onClick={load}
+                className="mt-3 bg-copper hover:bg-opacity-90 text-warm-ivory px-4 py-2 rounded-lg font-medium text-sm"
+              >
+                Retry
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Cloud, Sun, Wifi, Coffee, ChevronRight, Star } from 'lucide-react';
+import { Cloud, Sun, Wifi, Coffee, ChevronRight, Star, BedDouble, Users, Mountain } from 'lucide-react';
 import { TESTIMONIALS } from '../lib/mockData';
 import { useApp } from '../context/AppContext';
 
@@ -263,27 +263,80 @@ const Home: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {rooms.filter(r => r.available).slice(0, 2).map((room) => (
-              <div key={room.id} className="group relative overflow-hidden shadow-2xl h-[500px] cursor-pointer">
-                 <div className="absolute inset-0">
-                  <div className="w-full h-full bg-gradient-to-br from-urbane-darkGreen to-urbane-charcoal" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-90" />
-                </div>
-                <div className="absolute bottom-0 left-0 p-10 text-white w-full">
-                  <div className="flex justify-between items-end border-b border-white/20 pb-6 mb-6">
-                      <div>
-                        <p className="text-urbane-gold text-xs uppercase tracking-widest font-bold mb-2">{room.category}</p>
-                        <h3 className="font-serif text-3xl font-bold">{room.name}</h3>
+            {rooms.filter(r => r.available).slice(0, 2).map((room) => {
+              const cat = room.category?.toLowerCase() ?? '';
+              const RoomIcon = cat.includes('dorm') ? Users : cat.includes('premium') ? Mountain : BedDouble;
+              const hasPhoto = !!room.image && !room.image.includes('unsplash.com');
+              return (
+                <div
+                  key={room.id}
+                  className="group relative overflow-hidden shadow-2xl h-[500px] cursor-pointer"
+                >
+                  {hasPhoto ? (
+                    <>
+                      <img
+                        src={room.image}
+                        alt={room.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                    </>
+                  ) : (
+                    // No photo yet — clean text-driven placeholder. Admin can upload one
+                    // from /admin → Settings → Room Photos.
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-br from-urbane-darkGreen via-[#1f4d33] to-urbane-charcoal" />
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none"
+                        style={{
+                          backgroundImage:
+                            'radial-gradient(circle at 25% 20%, rgba(212,165,116,0.5), transparent 55%), radial-gradient(circle at 80% 90%, rgba(255,255,255,0.18), transparent 50%)',
+                        }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-28 h-28 rounded-full border border-urbane-gold/40 flex items-center justify-center backdrop-blur-sm bg-white/[0.03]">
+                          <RoomIcon className="w-12 h-12 text-urbane-gold/85" strokeWidth={1.25} />
+                        </div>
                       </div>
-                  </div>
-                  <div className="flex justify-end items-center">
-                      <a href="https://urbanehaauz.runhotel.site/en/" target="_blank" rel="noopener noreferrer" className="bg-white text-urbane-charcoal px-6 py-3 font-bold text-xs uppercase tracking-widest hover:bg-urbane-gold hover:text-white transition-colors">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
+                    </>
+                  )}
+
+                  <div className="absolute bottom-0 left-0 p-10 text-white w-full">
+                    <div className="border-b border-white/20 pb-6 mb-6">
+                      <p className="text-urbane-gold text-xs uppercase tracking-widest font-bold mb-2">
+                        {room.category}
+                      </p>
+                      <h3 className="font-serif text-3xl font-bold leading-tight">{room.name}</h3>
+                      {room.description && (
+                        <p className="text-white/75 text-sm mt-3 leading-relaxed line-clamp-2">
+                          {room.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex justify-between items-center gap-3">
+                      <Link
+                        to="/rooms"
+                        className="text-white/80 hover:text-urbane-gold text-xs uppercase tracking-widest font-bold transition-colors"
+                      >
+                        View details →
+                      </Link>
+                      <a
+                        href="https://urbanehaauz.runhotel.site/en/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-white text-urbane-charcoal px-6 py-3 font-bold text-xs uppercase tracking-widest hover:bg-urbane-gold hover:text-white transition-colors"
+                      >
                         Book Now
                       </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -294,8 +347,11 @@ const Home: React.FC = () => {
            <div className="text-center mb-16">
                 <Star className="h-8 w-8 text-urbane-gold mx-auto mb-4 fill-current" />
                 <h2 className="font-serif text-4xl font-bold mb-4">Guest Stories</h2>
+                <p className="text-white/65 text-sm max-w-md mx-auto">
+                  A few words from guests who've stayed with us — straight from Google reviews.
+                </p>
            </div>
-           
+
            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {TESTIMONIALS.map((t) => (
                 <div key={t.id} className="bg-white/5 p-8 border border-white/10 hover:bg-white/10 transition-colors duration-300">
@@ -315,6 +371,26 @@ const Home: React.FC = () => {
                   </div>
                 </div>
               ))}
+           </div>
+
+           {/* Google review CTAs */}
+           <div className="mt-14 flex flex-col sm:flex-row justify-center items-center gap-4">
+              <a
+                href="https://search.google.com/local/reviews?placeid=ChIJ64XS8CiH5jkRhVPjjCbPA_0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-white text-urbane-darkGreen px-7 py-3.5 font-bold text-xs uppercase tracking-widest hover:bg-urbane-gold hover:text-white transition-colors"
+              >
+                <Star size={14} fill="currentColor" /> Read all reviews on Google
+              </a>
+              <a
+                href="https://search.google.com/local/writereview?placeid=ChIJ64XS8CiH5jkRhVPjjCbPA_0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 border border-white/30 text-white px-7 py-3.5 font-bold text-xs uppercase tracking-widest hover:border-urbane-gold hover:text-urbane-gold transition-colors"
+              >
+                Write a review
+              </a>
            </div>
          </div>
       </section>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mountain, MapPin, Phone, Mail, Instagram, Facebook, MessageCircle } from 'lucide-react';
+import { Mountain, MapPin, Phone, Mail, Instagram, Facebook, MessageCircle, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Hotel contact information - centralized for easy updates
@@ -88,6 +88,27 @@ const Footer: React.FC = () => {
                 <MessageCircle size={20} />
               </a>
             </div>
+
+            {/* Google reviews */}
+            <div className="mt-6 space-y-2">
+              <a
+                href="https://search.google.com/local/reviews?placeid=ChIJ64XS8CiH5jkRhVPjjCbPA_0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-urbane-gold transition-colors"
+              >
+                <Star size={14} fill="currentColor" className="text-urbane-gold" /> Read reviews on Google
+              </a>
+              <a
+                href="https://search.google.com/local/writereview?placeid=ChIJ64XS8CiH5jkRhVPjjCbPA_0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-sm text-gray-400 hover:text-urbane-gold transition-colors"
+              >
+                Write us a review →
+              </a>
+            </div>
+
             <div className="mt-6">
               <p className="text-sm text-gray-400">GSTIN: {HOTEL_CONTACT.gstin}</p>
             </div>

@@ -1593,6 +1593,74 @@ const AdminDashboard: React.FC = () => {
                                </div>
                           </div>
                       </div>
+
+                      {/* Room Photos — one uploader per room */}
+                      <div>
+                          <h3 className="text-sm font-bold text-gray-700 mb-2">Room Photos</h3>
+                          <p className="text-xs text-gray-500 mb-5">
+                              These show on the homepage <em>Curated Spaces</em> section and the <em>/rooms</em> page. Upload real photos of each room — recommended 1600×1067px, JPG or PNG, under 5MB.
+                          </p>
+                          <div className="space-y-6">
+                              {rooms.length === 0 ? (
+                                  <div className="text-sm text-gray-400 italic">Loading rooms…</div>
+                              ) : (
+                                  rooms.map((room) => (
+                                      <div key={room.id} className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start border border-gray-100 rounded-lg p-5 bg-gray-50/50">
+                                          <div className="col-span-2 relative h-44 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 group bg-gradient-to-br from-urbane-darkGreen to-urbane-charcoal flex items-center justify-center">
+                                              {room.image ? (
+                                                  <img
+                                                      src={room.image}
+                                                      alt={room.name}
+                                                      width={600}
+                                                      height={176}
+                                                      loading="lazy"
+                                                      decoding="async"
+                                                      className="absolute inset-0 w-full h-full object-cover"
+                                                  />
+                                              ) : (
+                                                  <div className="text-white/70 text-xs uppercase tracking-widest font-semibold">
+                                                      No photo yet
+                                                  </div>
+                                              )}
+                                              <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10">
+                                                  <label className="cursor-pointer bg-white text-gray-900 px-4 py-2 rounded font-bold text-xs uppercase tracking-wider hover:bg-urbane-gold hover:text-white transition-colors">
+                                                      {room.image ? 'Change Photo' : 'Upload Photo'}
+                                                      <input
+                                                          type="file"
+                                                          className="hidden"
+                                                          accept="image/*"
+                                                          onChange={(e) =>
+                                                              handleImageUpload(e, (url) => {
+                                                                  updateRoom({ ...room, image: url });
+                                                                  showNotification(`${room.name} photo updated`);
+                                                              })
+                                                          }
+                                                      />
+                                                  </label>
+                                              </div>
+                                          </div>
+                                          <div className="text-sm">
+                                              <p className="text-xs uppercase tracking-wider text-urbane-gold font-bold">{room.category}</p>
+                                              <p className="font-semibold text-gray-800 mt-1">{room.name}</p>
+                                              <p className="text-gray-500 text-xs mt-2 leading-relaxed">{room.description}</p>
+                                              {room.image && (
+                                                  <button
+                                                      type="button"
+                                                      onClick={() => {
+                                                          updateRoom({ ...room, image: '' });
+                                                          showNotification(`${room.name} photo cleared`);
+                                                      }}
+                                                      className="mt-3 text-xs text-red-500 hover:text-red-700 underline"
+                                                  >
+                                                      Remove photo
+                                                  </button>
+                                              )}
+                                          </div>
+                                      </div>
+                                  ))
+                              )}
+                          </div>
+                      </div>
                   </div>
                </div>
             </div>

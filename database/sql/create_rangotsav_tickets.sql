@@ -184,6 +184,68 @@ $$;
 REVOKE ALL ON FUNCTION public.rangotsav_tickets_remaining() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.rangotsav_tickets_remaining() TO anon, authenticated;
 
+-- 4b) Abandonment helpers ----------------------------------------------------
+-- Buyers reserve a row before paying, so abandoned attempts leave 'pending'
+-- rows that pollute the admin dashboard. Two helpers handle cleanup:
+--
+--   expire_stale_pending_rangotsav_tickets()
+--     Sweep: any 'pending' row older than 15 min is flipped to 'failed'.
+--     Inventory math already ignores it after 15 min (see remaining() above);
+--     this just keeps the table tidy. Called on every admin dashboard load.
+--
+--   mark_rangotsav_ticket_failed(ticket_id, order_id)
+--     Active cleanup: the buyer's own browser calls this when they dismiss
+--     the Razorpay modal or the payment errors. The order_id check makes
+--     this safe to expose to anon — only the browser that just received
+--     the order_id from create-rangotsav-order can mark its own row failed.
+
+CREATE OR REPLACE FUNCTION public.expire_stale_pending_rangotsav_tickets()
+RETURNS INT
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_count INT;
+BEGIN
+  UPDATE public.rangotsav_tickets
+  SET payment_status = 'failed'
+  WHERE payment_status = 'pending'
+    AND created_at < NOW() - INTERVAL '15 minutes';
+  GET DIAGNOSTICS v_count = ROW_COUNT;
+  RETURN v_count;
+END
+$$;
+
+REVOKE ALL ON FUNCTION public.expire_stale_pending_rangotsav_tickets() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.expire_stale_pending_rangotsav_tickets() TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.mark_rangotsav_ticket_failed(
+  p_ticket_id UUID,
+  p_order_id  TEXT
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_count INT;
+BEGIN
+  UPDATE public.rangotsav_tickets t
+  SET payment_status = 'failed'
+  WHERE t.id = p_ticket_id
+    AND t.razorpay_order_id = p_order_id
+    AND t.payment_status = 'pending'
+    AND t.created_at > NOW() - INTERVAL '30 minutes';
+  GET DIAGNOSTICS v_count = ROW_COUNT;
+  RETURN v_count > 0;
+END
+$$;
+
+REVOKE ALL ON FUNCTION public.mark_rangotsav_ticket_failed(UUID, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.mark_rangotsav_ticket_failed(UUID, TEXT) TO anon, authenticated;
+
 -- 5) RLS ---------------------------------------------------------------------
 ALTER TABLE public.rangotsav_tickets ENABLE ROW LEVEL SECURITY;
 

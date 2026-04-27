@@ -153,6 +153,15 @@ const AdminDashboard: React.FC = () => {
   const loadRangotsavData = async () => {
     setRangotsavLoading(true);
     try {
+      // Sweep abandoned pending tickets first so the panel reflects current
+      // truth. Failures here are logged but non-fatal — the SELECT below
+      // still returns useful data.
+      try {
+        await supabase.rpc('expire_stale_pending_rangotsav_tickets');
+      } catch (e) {
+        console.error('expire_stale_pending_rangotsav_tickets failed:', e);
+      }
+
       const [
         { data: regRows, error: regErr },
         { data: ticketSummaryRow },

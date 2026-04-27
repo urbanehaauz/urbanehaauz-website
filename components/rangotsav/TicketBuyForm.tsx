@@ -163,6 +163,23 @@ const TicketBuyForm: React.FC = () => {
       const ticketId: string = orderData.ticket_id;
       const ticketCode: string = orderData.ticket_code;
       const amount: number = Number(orderData.amount);
+      const orderId: string = orderData.order_id;
+
+      // Marks this buyer's pending row as failed when they close the
+      // Razorpay modal or the payment errors. Server-side RPC verifies the
+      // order_id matches before flipping status, so other people's rows
+      // can't be touched. Non-fatal — the periodic 15-min sweep is the
+      // backstop.
+      const markAbandoned = async () => {
+        try {
+          await supabase.rpc('mark_rangotsav_ticket_failed', {
+            p_ticket_id: ticketId,
+            p_order_id: orderId,
+          });
+        } catch (e) {
+          console.error('mark_rangotsav_ticket_failed failed:', e);
+        }
+      };
 
       const options = {
         key: RAZORPAY_KEY,
@@ -235,8 +252,10 @@ const TicketBuyForm: React.FC = () => {
         theme: { color: '#D4A574' },
         modal: {
           ondismiss: () => {
-            // User closed Razorpay modal without paying — ticket row stays pending
-            // and will be auto-released by reserve_rangotsav_tickets after 15 min.
+            // User closed Razorpay modal without paying — flip the row to
+            // 'failed' immediately so it disappears from admin "pending"
+            // counts and the dashboard. The 15-min sweep is the backstop.
+            markAbandoned();
             setStage('form');
           },
         },
@@ -245,6 +264,7 @@ const TicketBuyForm: React.FC = () => {
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', (response: any) => {
         console.error('Rangotsav payment failed:', response.error);
+        markAbandoned();
         setStage('form');
         setError(response?.error?.description || 'Payment failed. Please try again.');
       });

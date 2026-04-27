@@ -104,6 +104,14 @@ const RangotsavAdmin: React.FC = () => {
     let cancelled = false;
     setLoading(true);
     (async () => {
+      // Sweep stale pendings before reading so the inventory summary and
+      // recent-sales table reflect current truth. Non-fatal on failure.
+      try {
+        await supabase.rpc('expire_stale_pending_rangotsav_tickets');
+      } catch (e) {
+        console.error('expire_stale_pending_rangotsav_tickets failed:', e);
+      }
+
       const [{ data: summaryData }, { data: recentData }, { data: priceData }] = await Promise.all([
         supabase.from('rangotsav_inventory_summary').select('*').single(),
         supabase

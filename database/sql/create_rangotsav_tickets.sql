@@ -86,7 +86,10 @@ CREATE OR REPLACE FUNCTION public.reserve_rangotsav_tickets(
 RETURNS TABLE(ticket_id UUID, ticket_code TEXT, remaining INT)
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+-- pgcrypto lives in the `extensions` schema on Supabase; include it here so
+-- gen_random_bytes() resolves. Table refs below are aliased to avoid clashing
+-- with the RETURNS TABLE column names (ticket_code in particular).
+SET search_path = public, extensions, pg_temp
 AS $$
 DECLARE
   v_capacity INT;
@@ -99,9 +102,9 @@ BEGIN
   END IF;
 
   -- Lock the capacity row so concurrent reservations serialize on it
-  SELECT (value)::INT INTO v_capacity
-  FROM public.settings
-  WHERE key = 'rangotsav_total_capacity'
+  SELECT (s.value)::INT INTO v_capacity
+  FROM public.settings s
+  WHERE s.key = 'rangotsav_total_capacity'
   FOR UPDATE;
 
   IF v_capacity IS NULL THEN
@@ -109,10 +112,10 @@ BEGIN
   END IF;
 
   -- Count anything paid OR pending-but-recent (15-min hold for in-flight pays)
-  SELECT COALESCE(SUM(quantity), 0) INTO v_reserved
-  FROM public.rangotsav_tickets
-  WHERE payment_status = 'paid'
-     OR (payment_status = 'pending' AND created_at > NOW() - INTERVAL '15 minutes');
+  SELECT COALESCE(SUM(t.quantity), 0) INTO v_reserved
+  FROM public.rangotsav_tickets t
+  WHERE t.payment_status = 'paid'
+     OR (t.payment_status = 'pending' AND t.created_at > NOW() - INTERVAL '15 minutes');
 
   IF v_reserved + p_quantity > v_capacity THEN
     RAISE EXCEPTION 'SOLD_OUT: only % tickets remaining', GREATEST(v_capacity - v_reserved, 0);
@@ -120,9 +123,9 @@ BEGIN
 
   -- Generate a 6-char hex suffix, retry up to 3 times on the (extremely unlikely) collision
   FOR i IN 1..3 LOOP
-    v_code := 'RANG-2026-' || UPPER(ENCODE(GEN_RANDOM_BYTES(3), 'hex'));
+    v_code := 'RANG-2026-' || UPPER(ENCODE(extensions.gen_random_bytes(3), 'hex'));
     EXIT WHEN NOT EXISTS (
-      SELECT 1 FROM public.rangotsav_tickets WHERE ticket_code = v_code
+      SELECT 1 FROM public.rangotsav_tickets t WHERE t.ticket_code = v_code
     );
     v_code := NULL;
   END LOOP;
@@ -159,20 +162,20 @@ CREATE OR REPLACE FUNCTION public.rangotsav_tickets_remaining()
 RETURNS INT
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions, pg_temp
 STABLE
 AS $$
 DECLARE
   v_capacity INT;
   v_reserved INT;
 BEGIN
-  SELECT (value)::INT INTO v_capacity FROM public.settings WHERE key = 'rangotsav_total_capacity';
+  SELECT (s.value)::INT INTO v_capacity FROM public.settings s WHERE s.key = 'rangotsav_total_capacity';
   IF v_capacity IS NULL THEN v_capacity := 300; END IF;
 
-  SELECT COALESCE(SUM(quantity), 0) INTO v_reserved
-  FROM public.rangotsav_tickets
-  WHERE payment_status = 'paid'
-     OR (payment_status = 'pending' AND created_at > NOW() - INTERVAL '15 minutes');
+  SELECT COALESCE(SUM(t.quantity), 0) INTO v_reserved
+  FROM public.rangotsav_tickets t
+  WHERE t.payment_status = 'paid'
+     OR (t.payment_status = 'pending' AND t.created_at > NOW() - INTERVAL '15 minutes');
 
   RETURN GREATEST(v_capacity - v_reserved, 0);
 END

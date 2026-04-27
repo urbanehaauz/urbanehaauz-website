@@ -59,6 +59,8 @@ const AdminDashboard: React.FC = () => {
     sold_total: number;
     pending_held: number;
     revenue_collected: number;
+    checked_in_total: number;
+    checked_in_today: number;
   } | null>(null);
   const [recentTickets, setRecentTickets] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -88,6 +90,27 @@ const AdminDashboard: React.FC = () => {
   
   // Booking Status Management State
   const [editingRows, setEditingRows] = useState<Record<string, { status?: BookingStatus, paymentStatus?: PaymentStatus }>>({});
+
+  // Live updates on rangotsav_tickets — refresh the Rangotsav panel whenever
+  // a new sale or check-in happens, regardless of which staff member did it.
+  useEffect(() => {
+    if (!isAdmin || currentView !== 'rangotsav') return;
+    const channel = supabase
+      .channel('rangotsav_tickets_main_admin')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'rangotsav_tickets' },
+        () => loadRangotsavData(),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  // loadRangotsavData is recreated each render but it's idempotent; including
+  // it in deps would cause subscribe/unsubscribe churn so we intentionally
+  // depend only on view + admin state.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin, currentView]);
 
   // Redirect if not admin (wait for auth to finish loading)
   useEffect(() => {
@@ -202,6 +225,8 @@ const AdminDashboard: React.FC = () => {
           sold_total: Number(ticketSummaryRow.sold_total ?? 0),
           pending_held: Number(ticketSummaryRow.pending_held ?? 0),
           revenue_collected: Number(ticketSummaryRow.revenue_collected ?? 0),
+          checked_in_total: Number(ticketSummaryRow.checked_in_total ?? 0),
+          checked_in_today: Number(ticketSummaryRow.checked_in_today ?? 0),
         });
       }
       setRecentTickets(ticketRecent || []);
@@ -1327,7 +1352,7 @@ const AdminDashboard: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-white/[0.07] rounded-lg p-4">
                   <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Sold Online</p>
                   <p className="text-2xl font-bold text-white mt-1">{ticketSummary?.sold_online ?? '—'}</p>
@@ -1335,10 +1360,6 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-white/[0.07] rounded-lg p-4">
                   <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Sold Offline</p>
                   <p className="text-2xl font-bold text-amber-300 mt-1">{ticketSummary?.sold_offline ?? '—'}</p>
-                </div>
-                <div className="bg-white/[0.07] rounded-lg p-4">
-                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Pending (15-min hold)</p>
-                  <p className="text-2xl font-bold text-yellow-300 mt-1">{ticketSummary?.pending_held ?? '—'}</p>
                 </div>
                 <div className="bg-white/[0.07] rounded-lg p-4">
                   <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Remaining</p>
@@ -1349,12 +1370,30 @@ const AdminDashboard: React.FC = () => {
                   </p>
                 </div>
                 <div className="bg-white/[0.07] rounded-lg p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Checked In Today</p>
+                  <p className="text-2xl font-bold text-green-300 mt-1">{ticketSummary?.checked_in_today ?? '—'}</p>
+                </div>
+                <div className="bg-white/[0.07] rounded-lg p-4">
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Checked In Total</p>
+                  <p className="text-2xl font-bold text-white mt-1">
+                    {ticketSummary ? `${ticketSummary.checked_in_total}/${ticketSummary.sold_total}` : '—'}
+                  </p>
+                </div>
+                <div className="bg-white/[0.07] rounded-lg p-4">
                   <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Revenue</p>
                   <p className="text-2xl font-bold text-urbane-gold mt-1">
                     {ticketSummary ? `₹${ticketSummary.revenue_collected.toLocaleString('en-IN')}` : '—'}
                   </p>
                 </div>
               </div>
+
+              {/* Pending hold + live badge */}
+              {(ticketSummary?.pending_held ?? 0) > 0 && (
+                <div className="mt-4 inline-flex items-center gap-2 bg-yellow-500/15 border border-yellow-400/40 text-yellow-100 text-xs px-3 py-2 rounded-lg">
+                  <span className="w-1.5 h-1.5 rounded-full bg-yellow-300 animate-pulse" />
+                  {ticketSummary?.pending_held} pending in 15-min Razorpay hold
+                </div>
+              )}
             </div>
 
             {/* Recent ticket sales */}
@@ -1375,6 +1414,7 @@ const AdminDashboard: React.FC = () => {
                       <th className="px-5 py-3 font-bold tracking-wider">Amount</th>
                       <th className="px-5 py-3 font-bold tracking-wider">Source</th>
                       <th className="px-5 py-3 font-bold tracking-wider">Status</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Checked-in</th>
                       <th className="px-5 py-3 font-bold tracking-wider">When</th>
                     </tr>
                   </thead>
@@ -1404,6 +1444,21 @@ const AdminDashboard: React.FC = () => {
                           }`}>
                             {t.payment_status}
                           </span>
+                        </td>
+                        <td className="px-5 py-3 text-xs">
+                          {t.payment_status !== 'paid' ? (
+                            <span className="text-gray-400">—</span>
+                          ) : t.checked_in_count >= t.quantity ? (
+                            <span className="inline-flex items-center gap-1 text-green-700 font-bold">
+                              {t.checked_in_count}/{t.quantity} ✓
+                            </span>
+                          ) : t.checked_in_count > 0 ? (
+                            <span className="text-amber-700 font-semibold">
+                              {t.checked_in_count}/{t.quantity}
+                            </span>
+                          ) : (
+                            <span className="text-gray-500">0/{t.quantity}</span>
+                          )}
                         </td>
                         <td className="px-5 py-3 text-gray-400 text-xs">
                           {new Date(t.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}

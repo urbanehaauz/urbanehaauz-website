@@ -304,6 +304,9 @@ CREATE TRIGGER trg_rangotsav_tickets_updated_at
   EXECUTE FUNCTION public.touch_rangotsav_tickets_updated_at();
 
 -- 7) Helpful view for admin dashboard ---------------------------------------
+-- Now includes check-in metrics so the dashboards can show "1/1 ✓" rows and
+-- "Checked In Today" KPIs without per-row aggregation on the client.
+-- "today" is computed in IST so the festival-day cut-off is intuitive.
 CREATE OR REPLACE VIEW public.rangotsav_inventory_summary AS
 SELECT
   (SELECT (value)::INT FROM public.settings WHERE key = 'rangotsav_total_capacity') AS total_capacity,
@@ -313,7 +316,23 @@ SELECT
   COALESCE(SUM(CASE WHEN payment_status = 'pending'
                       AND created_at > NOW() - INTERVAL '15 minutes'
                     THEN quantity END), 0) AS pending_held,
-  COALESCE(SUM(CASE WHEN payment_status = 'paid' THEN total_amount END), 0) AS revenue_collected
+  COALESCE(SUM(CASE WHEN payment_status = 'paid' THEN total_amount END), 0) AS revenue_collected,
+  COALESCE(SUM(CASE WHEN payment_status = 'paid' THEN checked_in_count END), 0) AS checked_in_total,
+  COALESCE(SUM(CASE WHEN payment_status = 'paid'
+                      AND checked_in_at IS NOT NULL
+                      AND DATE(checked_in_at AT TIME ZONE 'Asia/Kolkata') = (NOW() AT TIME ZONE 'Asia/Kolkata')::DATE
+                    THEN checked_in_count END), 0) AS checked_in_today
 FROM public.rangotsav_tickets;
 
 -- View inherits RLS from underlying table; admins are the only readers.
+
+-- 8) Realtime ----------------------------------------------------------------
+-- Enable Postgres realtime on the tickets table so admin dashboards subscribe
+-- to inserts/updates and reflect new sales + check-ins without manual refresh.
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.rangotsav_tickets;
+EXCEPTION
+  WHEN duplicate_object THEN
+    NULL; -- already in publication, idempotent
+END $$;

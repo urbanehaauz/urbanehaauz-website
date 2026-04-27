@@ -35,6 +35,8 @@ interface InventorySummary {
   sold_total: number;
   pending_held: number;
   revenue_collected: number;
+  checked_in_total: number;
+  checked_in_today: number;
 }
 
 interface TicketRow {
@@ -99,6 +101,24 @@ const RangotsavAdmin: React.FC = () => {
 
   const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
+  // Live updates: any insert/update/delete on rangotsav_tickets triggers a
+  // refresh so check-ins by another staff member or new sales appear without
+  // anyone hitting the Refresh button.
+  useEffect(() => {
+    if (!isAdmin) return;
+    const channel = supabase
+      .channel('rangotsav_tickets_admin_dashboard')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'rangotsav_tickets' },
+        () => refresh(),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isAdmin, refresh]);
+
   useEffect(() => {
     if (!isAdmin) return;
     let cancelled = false;
@@ -132,6 +152,8 @@ const RangotsavAdmin: React.FC = () => {
           sold_total: Number(summaryData.sold_total ?? 0),
           pending_held: Number(summaryData.pending_held ?? 0),
           revenue_collected: Number(summaryData.revenue_collected ?? 0),
+          checked_in_total: Number(summaryData.checked_in_total ?? 0),
+          checked_in_today: Number(summaryData.checked_in_today ?? 0),
         });
       }
       if (recentData) setRecent(recentData as TicketRow[]);
@@ -268,7 +290,19 @@ const InventoryTab: React.FC<{
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard
+          label="Checked In Today"
+          value={summary?.checked_in_today ?? '—'}
+          tone="green"
+          subtitle="Entered today (IST)"
+        />
+        <StatCard
+          label="Checked In · Total"
+          value={summary ? `${summary.checked_in_total}/${summary.sold_total}` : '—'}
+          tone="neutral"
+          subtitle="All-time admissions"
+        />
         <StatCard
           label="Pending (15-min hold)"
           value={summary?.pending_held ?? '—'}
@@ -320,6 +354,7 @@ const InventoryTab: React.FC<{
                   <th className="px-4 py-3 text-left">Amount</th>
                   <th className="px-4 py-3 text-left">Source</th>
                   <th className="px-4 py-3 text-left">Status</th>
+                  <th className="px-4 py-3 text-left">Checked-in</th>
                   <th className="px-4 py-3 text-left">When</th>
                 </tr>
               </thead>
@@ -349,6 +384,21 @@ const InventoryTab: React.FC<{
                       }`}>
                         {r.payment_status}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-xs">
+                      {r.payment_status !== 'paid' ? (
+                        <span className="text-gray-400">—</span>
+                      ) : r.checked_in_count >= r.quantity ? (
+                        <span className="inline-flex items-center gap-1 text-green-700 font-semibold">
+                          {r.checked_in_count}/{r.quantity} ✓
+                        </span>
+                      ) : r.checked_in_count > 0 ? (
+                        <span className="text-amber-700 font-semibold">
+                          {r.checked_in_count}/{r.quantity}
+                        </span>
+                      ) : (
+                        <span className="text-gray-500">0/{r.quantity}</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-xs text-gray-500">
                       {new Date(r.created_at).toLocaleString('en-IN', {

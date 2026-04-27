@@ -658,6 +658,9 @@ const AdminDashboard: React.FC = () => {
                 <TrendingUp size={16} /> <span>Tracker</span>
             </button>
             */}
+            <button onClick={() => { setCurrentView('rangotsav'); loadRangotsavData(); }} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'rangotsav' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
+                <Briefcase size={16} /> <span>Rangotsav</span>
+            </button>
             <button onClick={() => setCurrentView('settings')} className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-colors ${currentView === 'settings' ? 'bg-urbane-gold text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200'}`}>
                 <Settings size={16} /> <span>Settings</span>
             </button>

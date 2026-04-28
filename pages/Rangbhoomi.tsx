@@ -800,6 +800,258 @@ const ArtistsSection: React.FC = () => {
 };
 
 /* -------------------------------------------------------------------------- */
+/*                            PERFORMERS SECTION                              */
+/* -------------------------------------------------------------------------- */
+
+const SIKKIMESE_DANCES = [
+  {
+    name: 'Maruni Dance',
+    origin: 'Nepali · Tihar festival',
+    body: 'A very popular Nepali-origin dance in Sikkim, performed during festivals like Tihar. It features colourful costumes and both male and female performers.',
+    accent: '#C84B0F',
+  },
+  {
+    name: 'Tamang Selo',
+    origin: 'Tamang community',
+    body: 'A lively dance of the Tamang community, usually performed with the damphu — a traditional drum — and rhythmic singing.',
+    accent: '#D4A574',
+  },
+  {
+    name: 'Kaura Dance',
+    origin: 'Gurung people',
+    body: 'A traditional dance of the Gurung people, often performed in a group with synchronised steps and songs about daily life and nature.',
+    accent: '#4A7C59',
+  },
+  {
+    name: 'Chutkay Dance',
+    origin: 'Folk celebration',
+    body: 'A lesser-known but cheerful folk dance, often performed during social gatherings and celebrations across Sikkim.',
+    accent: '#A67833',
+  },
+  {
+    name: 'Singhi Chham',
+    origin: 'Buddhist · Sikkim',
+    body: 'A famous masked dance representing the snow lion — the cultural symbol of Sikkim. Performed during Buddhist festivals.',
+    accent: '#2C5F7C',
+  },
+];
+
+const PUJA_BANIK_PHOTOS = [
+  '/performers/puja-banik-1.jpeg',
+  '/performers/puja-banik-2.jpeg',
+  '/performers/puja-banik-3.jpeg',
+];
+
+const PerformersSection: React.FC = () => {
+  const [activePhoto, setActivePhoto] = useState(0);
+  return (
+    <section className="relative py-28 md:py-36 px-6 md:px-12 bg-[#FAF7F2] text-[#1C1C1C] overflow-hidden">
+      {/* Warm radial accent */}
+      <div
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(ellipse at 20% 0%, rgba(200,75,15,0.08), transparent 55%), radial-gradient(ellipse at 80% 100%, rgba(74,124,89,0.06), transparent 60%)',
+        }}
+      />
+
+      <div className="relative z-10 max-w-7xl mx-auto">
+        {/* Header */}
+        <Reveal>
+          <div className="text-center mb-16 md:mb-20 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 mb-5">
+              <span className="h-px w-10 bg-[#A67833]/50" />
+              <span className="text-[11px] uppercase tracking-[0.45em] text-[#A67833] font-semibold">
+                Live Performances
+              </span>
+              <span className="h-px w-10 bg-[#A67833]/50" />
+            </div>
+            <h2 className="font-serif text-4xl md:text-6xl leading-tight">
+              On Stage at Rangotsav
+            </h2>
+            <p className="mt-5 text-[#1C1C1C]/65 text-base md:text-lg leading-relaxed">
+              From Bengal's Baul tradition to Sikkim's living folk dances —
+              two traditions of devotion, told through voice, drum, and movement.
+            </p>
+          </div>
+        </Reveal>
+
+        {/* ========== Featured: Mastaani · Puja Banik (Baul Singer) ========== */}
+        <Reveal>
+          <div className="mb-20 md:mb-28">
+            <div className="text-center mb-10">
+              <p className="text-[10px] uppercase tracking-[0.45em] text-[#C84B0F] font-bold mb-3">
+                Featured · Baul Singer
+              </p>
+              <h3 className="font-serif text-3xl md:text-5xl text-[#1C1C1C]">
+                Mastaani
+              </h3>
+              <p className="mt-2 text-[#8B6F47] text-sm tracking-[0.2em] uppercase">
+                The Artistry of Puja Banik
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+              {/* Photo column */}
+              <div className="relative">
+                <div
+                  aria-hidden
+                  className="absolute -inset-6 rounded-[28px] blur-3xl opacity-50 pointer-events-none"
+                  style={{
+                    background:
+                      'radial-gradient(circle at 50% 50%, rgba(200,75,15,0.30), transparent 70%)',
+                  }}
+                />
+                <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-15px_rgba(139,111,71,0.4)] border border-[#A67833]/20 bg-[#1C1C1C]">
+                  <img
+                    src={PUJA_BANIK_PHOTOS[activePhoto]}
+                    alt={`Puja Banik (Mastaani) performing — image ${activePhoto + 1}`}
+                    width={800}
+                    height={600}
+                    className="w-full aspect-[4/3] object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+
+                {/* Thumbnails */}
+                <div className="mt-4 flex justify-center gap-3">
+                  {PUJA_BANIK_PHOTOS.map((src, i) => (
+                    <button
+                      key={src}
+                      type="button"
+                      onClick={() => setActivePhoto(i)}
+                      aria-label={`View photo ${i + 1}`}
+                      className={`w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        activePhoto === i
+                          ? 'border-[#C84B0F] scale-105'
+                          : 'border-[#A67833]/20 opacity-60 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={src}
+                        alt=""
+                        width={80}
+                        height={80}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bio column */}
+              <div>
+                <div className="bg-gradient-to-br from-[#fff8eb] to-[#f3e6c9] border border-[#A67833]/25 rounded-2xl p-7 md:p-9 shadow-sm">
+                  <div className="flex items-center gap-3 mb-5">
+                    <Music className="w-5 h-5 text-[#C84B0F]" />
+                    <span className="text-[11px] uppercase tracking-[0.35em] text-[#C84B0F] font-bold">
+                      Folk · Baul · Rabindra Sangeet
+                    </span>
+                  </div>
+
+                  <p className="font-serif text-xl text-[#1C1C1C] leading-relaxed italic mb-5">
+                    "Mastaani — one who is deeply in love with the Divine."
+                  </p>
+
+                  <p className="text-[#1C1C1C]/80 leading-relaxed mb-4">
+                    Raised in the culturally resonant heart of North Kolkata, Puja's
+                    foundational training spanned Indian Classical, Rabindra Sangeet,
+                    and Nazrul Geeti — yet it was the soul-stirring resonance of{' '}
+                    <strong className="text-[#1C1C1C]">Folk and Baul</strong> that
+                    became her true calling.
+                  </p>
+                  <p className="text-[#1C1C1C]/80 leading-relaxed mb-6">
+                    She travelled across the rural landscapes of Bengal, learning directly
+                    from the masters of the soil — the traditional Baul musicians whose
+                    living history forms the bedrock of her expression.
+                  </p>
+
+                  {/* Album highlight */}
+                  <div className="bg-white/60 border border-[#A67833]/30 rounded-xl px-5 py-4 mb-6">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[#A67833] font-bold mb-1">
+                      Featured Album · 2025
+                    </p>
+                    <p className="font-serif text-2xl text-[#1C1C1C] mb-1">Aleklata</p>
+                    <p className="text-[#1C1C1C]/65 text-sm">
+                      Eight distinct folk genres — a modern homage to tradition.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3">
+                    <a
+                      href="https://www.youtube.com/@Mastaaniconnect"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-[#1C1C1C] text-[#FAF7F2] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:bg-[#C84B0F] transition-colors"
+                    >
+                      YouTube · @Mastaaniconnect <ExternalLink className="w-3 h-3" />
+                    </a>
+                    <span className="inline-flex items-center gap-2 border border-[#A67833]/40 text-[#8B6F47] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold">
+                      Search "Aleklata" on any music app
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ========== Sikkimese Dances ========== */}
+        <Reveal delay={150}>
+          <div>
+            <div className="text-center mb-12">
+              <p className="text-[10px] uppercase tracking-[0.45em] text-[#4A7C59] font-bold mb-3">
+                Folk Traditions of Sikkim
+              </p>
+              <h3 className="font-serif text-3xl md:text-5xl text-[#1C1C1C] mb-3">
+                Dances of the Mountains
+              </h3>
+              <p className="text-[#1C1C1C]/65 text-base max-w-2xl mx-auto leading-relaxed">
+                Five living folk traditions performed by communities across Sikkim — each with
+                its own drum, costume, and story.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {SIKKIMESE_DANCES.map((d, i) => (
+                <Reveal key={d.name} delay={i * 80}>
+                  <div className="h-full bg-white border border-[#1C1C1C]/8 rounded-2xl p-7 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group">
+                    <div
+                      className="h-1 w-12 mb-5 rounded-full transition-all group-hover:w-20"
+                      style={{ background: d.accent }}
+                    />
+                    <h4 className="font-serif text-2xl text-[#1C1C1C] mb-1">
+                      {d.name}
+                    </h4>
+                    <p
+                      className="text-[10px] uppercase tracking-[0.3em] font-bold mb-4"
+                      style={{ color: d.accent }}
+                    >
+                      {d.origin}
+                    </p>
+                    <p className="text-[#1C1C1C]/70 text-sm leading-relaxed">
+                      {d.body}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+
+            <p className="mt-10 text-center text-[#1C1C1C]/45 text-xs tracking-wide max-w-xl mx-auto leading-relaxed italic">
+              Confirmed troupes and performance schedule will be announced closer to the festival.
+            </p>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
 /*                                FOOD SECTION                                */
 /* -------------------------------------------------------------------------- */
 
@@ -1363,6 +1615,7 @@ const Rangbhoomi: React.FC = () => (
       <ProgramSection />
       <CulturalConglomerateSection />
       <ArtistsSection />
+      <PerformersSection />
       <FoodSection />
       <TicketsSection />
       <RegistrationSection />

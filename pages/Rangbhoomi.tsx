@@ -141,17 +141,18 @@ const StandaloneHeader: React.FC = () => (
 );
 
 const HeroSection: React.FC = () => (
-  <section className="relative min-h-screen overflow-hidden flex items-center">
+  <section className="relative min-h-screen overflow-hidden flex items-center justify-center">
+    {/* Soft dark gradient frame so the poster reads cleanly on any screen */}
     <div
       className="absolute inset-0"
       style={{
         background:
-          'linear-gradient(180deg, #1a0533 0%, #2d1b69 15%, #6b3fa0 30%, #c84b0f 50%, #d4a574 65%, #2c5f7c 80%, #1c1c1c 100%)',
+          'radial-gradient(ellipse at 50% 30%, #2d1b69 0%, #1a0533 40%, #0a0418 80%, #000000 100%)',
       }}
     />
-    {/* Paint-texture overlay */}
+    {/* Subtle noise texture */}
     <div
-      className="absolute inset-0 mix-blend-soft-light opacity-[0.12] pointer-events-none"
+      className="absolute inset-0 mix-blend-soft-light opacity-[0.10] pointer-events-none"
       style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         backgroundSize: '150px 150px',
@@ -159,72 +160,55 @@ const HeroSection: React.FC = () => (
     />
     <NoiseOverlay />
 
-    {/* Floating decorative orchid images */}
-    <img src="/orchid-flower.png" alt="" aria-hidden="true" width={160} height={160} loading="lazy" decoding="async" className="absolute top-[18%] left-[6%] w-28 md:w-36 h-28 md:h-36 opacity-80 rotate-12 animate-[rb-float_9s_ease-in-out_infinite]" />
-    <img src="/orchid-flower.png" alt="" aria-hidden="true" width={160} height={160} loading="lazy" decoding="async" className="absolute top-[14%] right-[8%] w-32 md:w-40 h-32 md:h-40 opacity-80 -rotate-6 animate-[rb-float_11s_ease-in-out_infinite_0.5s]" />
-    <img src="/orchid-flower.png" alt="" aria-hidden="true" width={160} height={160} loading="lazy" decoding="async" className="absolute bottom-[30%] right-[14%] w-24 md:w-28 h-24 md:h-28 opacity-80 rotate-45 animate-[rb-float_13s_ease-in-out_infinite_1.5s]" />
-    <img src="/orchid-flower.png" alt="" aria-hidden="true" width={160} height={160} loading="lazy" decoding="async" className="absolute bottom-[34%] left-[12%] w-24 md:w-32 h-24 md:h-32 opacity-80 -rotate-12 animate-[rb-float_10s_ease-in-out_infinite_2s]" />
-    <MountainRangeSVG className="absolute bottom-0 left-0 w-full h-[38%]" />
-
-    {/* Ornamental frame */}
-    <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute top-24 left-6 right-6 md:left-12 md:right-12 h-px bg-gradient-to-r from-transparent via-[#D4A574]/50 to-transparent" />
-      <div className="absolute bottom-24 left-6 right-6 md:left-12 md:right-12 h-px bg-gradient-to-r from-transparent via-[#D4A574]/50 to-transparent" />
-    </div>
+    {/* Warm spotlight behind the poster */}
+    <div
+      aria-hidden
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        background:
+          'radial-gradient(ellipse at 50% 50%, rgba(212,165,116,0.20), transparent 55%)',
+      }}
+    />
 
     <StandaloneHeader />
 
-    <div className="relative z-10 w-full px-6 md:px-12 pt-32 pb-24 text-center">
-      <div className="animate-fade-in">
-        <span className="inline-block text-[#D4A574] text-[10px] md:text-xs uppercase tracking-[0.4em] mb-8 border border-[#D4A574]/30 px-5 py-2 rounded-full backdrop-blur-sm font-medium">
-          A Cultural Conglomerate
-        </span>
+    <div className="relative z-10 w-full px-4 sm:px-6 md:px-12 pt-28 pb-16 md:pt-32 md:pb-24 flex flex-col items-center">
+      {/* Poster — the dominant element */}
+      <div className="relative animate-fade-in-up">
+        <div
+          aria-hidden
+          className="absolute -inset-6 rounded-[28px] blur-3xl opacity-60 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(circle at 50% 50%, rgba(212,165,116,0.45), transparent 70%)',
+          }}
+        />
+        <img
+          src="/rangotsav-poster.jpg"
+          alt="Rangotsav 2026 — A Celebration of Art, Culture & Food from Sikkim & Bengal. 25–26 May 2026, Pelling, Sikkim."
+          width={1024}
+          height={1536}
+          fetchPriority="high"
+          className="relative max-h-[78vh] w-auto rounded-xl shadow-[0_30px_80px_-15px_rgba(0,0,0,0.7)] border border-[#D4A574]/30"
+        />
       </div>
 
-      <h1
-        className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[0.9] text-[#FAF7F2] animate-fade-in-up"
-        style={{ fontWeight: 700, letterSpacing: '-0.02em' }}
-      >
-        Rangotsav
-      </h1>
-
-      <div className="mt-5 md:mt-6 flex items-center justify-center gap-4 animate-fade-in-up">
-        <span className="h-px w-12 bg-[#D4A574]/50" />
-        <p className="text-sm md:text-base text-[#D4A574] uppercase tracking-[0.35em] font-medium">
-          The Tale Of Two States
-        </p>
-        <span className="h-px w-12 bg-[#D4A574]/50" />
-      </div>
-
-      <p className="mt-8 md:mt-10 text-base md:text-xl text-[#FAF7F2]/90 font-serif italic max-w-2xl mx-auto animate-fade-in-up leading-relaxed">
-        Art is in the Air; Music is in the Mist and Flavours on your Plate.
-      </p>
-      <p className="mt-3 text-xs md:text-sm text-[#FAF7F2]/50 max-w-lg mx-auto animate-fade-in-up tracking-wide leading-relaxed">
-        From Bengal's Soul to Sikkim's Spirit. From Bengal's red soil to Sikkim's mountain rocks — A Cultural Confluence.
-      </p>
-
-      <div className="mt-10 flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6 animate-fade-in-up">
-        <div className="inline-flex items-center gap-2 text-[#FAF7F2] bg-[#1C1C1C]/30 backdrop-blur-sm px-5 py-2.5 rounded-full border border-[#FAF7F2]/20">
-          <Calendar className="w-4 h-4 text-[#D4A574]" />
-          <span className="uppercase text-xs tracking-[0.3em]">25–26 May, 2026</span>
-        </div>
-        <div className="inline-flex items-center gap-2 text-[#FAF7F2] bg-[#1C1C1C]/30 backdrop-blur-sm px-5 py-2.5 rounded-full border border-[#FAF7F2]/20">
-          <MapPin className="w-4 h-4 text-[#D4A574]" />
-          <span className="uppercase text-xs tracking-[0.3em]">Pelling, West Sikkim</span>
-        </div>
-      </div>
+      <h1 className="sr-only">Rangotsav 2026 — The Tale Of Two States</h1>
 
       <a
         href="#tickets"
-      onClick={(e: React.MouseEvent) => { e.preventDefault(); document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' }); }}
-        className="group mt-12 inline-flex items-center gap-3 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-9 py-4 rounded-full transition-all shadow-2xl shadow-[#C84B0F]/30 hover:shadow-[#D4A574]/50 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-sm animate-fade-in-up"
+        onClick={(e: React.MouseEvent) => {
+          e.preventDefault();
+          document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        className="group mt-10 inline-flex items-center gap-3 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-9 py-4 rounded-full transition-all shadow-2xl shadow-[#C84B0F]/40 hover:shadow-[#D4A574]/60 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-sm animate-fade-in-up"
       >
         Get Your Pass · ₹100
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </a>
 
-      <p className="mt-16 text-[#FAF7F2]/60 text-xs uppercase tracking-[0.4em] animate-fade-in">
-        Hosted by Urbane Haauz
+      <p className="mt-8 text-[#FAF7F2]/55 text-[10px] md:text-xs uppercase tracking-[0.4em] animate-fade-in">
+        Hosted by Urbane Haauz · Pelling, West Sikkim
       </p>
     </div>
 

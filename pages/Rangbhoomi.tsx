@@ -141,15 +141,25 @@ const StandaloneHeader: React.FC = () => (
 );
 
 const HeroSection: React.FC = () => (
-  <section className="relative h-screen w-full overflow-hidden bg-black">
-    {/* Full-bleed poster */}
+  <section className="relative min-h-screen w-full overflow-hidden bg-black flex items-center justify-center">
+    {/* Soft dark frame so the letterboxed sides don't read as empty */}
+    <div
+      aria-hidden
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        background:
+          'radial-gradient(ellipse at 50% 50%, #1a0533 0%, #0a0418 60%, #000000 100%)',
+      }}
+    />
+
+    {/* Full poster — contain so the title + logo never crop */}
     <img
       src="/rangotsav-poster.jpg"
       alt="Rangotsav 2026 — A Celebration of Art, Culture & Food from Sikkim & Bengal. 25–26 May 2026, Pelling, Sikkim."
       width={1024}
       height={1245}
       fetchPriority="high"
-      className="absolute inset-0 w-full h-full object-cover object-center"
+      className="relative z-0 w-auto max-w-full h-screen max-h-screen object-contain"
     />
 
     <StandaloneHeader />
@@ -157,7 +167,7 @@ const HeroSection: React.FC = () => (
     {/* SEO-only headline (poster text is not crawlable) */}
     <h1 className="sr-only">Rangotsav 2026 — The Tale Of Two States · 25–26 May 2026, Pelling, Sikkim</h1>
 
-    {/* Subtle scroll hint at the bottom */}
+    {/* Floating CTA */}
     <a
       href="#tickets"
       onClick={(e: React.MouseEvent) => {
@@ -165,7 +175,7 @@ const HeroSection: React.FC = () => (
         document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' });
       }}
       aria-label="Scroll to ticket purchase"
-      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-2 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-7 py-3 rounded-full transition-all shadow-2xl shadow-black/50 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-xs animate-fade-in-up"
+      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-2 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-7 py-3 rounded-full transition-all shadow-2xl shadow-black/60 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-xs animate-fade-in-up"
     >
       Get Your Pass · ₹100
       <ArrowRight className="w-3.5 h-3.5" />

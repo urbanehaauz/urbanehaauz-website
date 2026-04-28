@@ -141,76 +141,35 @@ const StandaloneHeader: React.FC = () => (
 );
 
 const HeroSection: React.FC = () => (
-  <section className="relative min-h-screen overflow-hidden flex items-center justify-center">
-    {/* Soft dark gradient frame so the poster reads cleanly on any screen */}
-    <div
-      className="absolute inset-0"
-      style={{
-        background:
-          'radial-gradient(ellipse at 50% 30%, #2d1b69 0%, #1a0533 40%, #0a0418 80%, #000000 100%)',
-      }}
-    />
-    {/* Subtle noise texture */}
-    <div
-      className="absolute inset-0 mix-blend-soft-light opacity-[0.10] pointer-events-none"
-      style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-        backgroundSize: '150px 150px',
-      }}
-    />
-    <NoiseOverlay />
-
-    {/* Warm spotlight behind the poster */}
-    <div
-      aria-hidden
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        background:
-          'radial-gradient(ellipse at 50% 50%, rgba(212,165,116,0.20), transparent 55%)',
-      }}
+  <section className="relative h-screen w-full overflow-hidden bg-black">
+    {/* Full-bleed poster */}
+    <img
+      src="/rangotsav-poster.jpg"
+      alt="Rangotsav 2026 — A Celebration of Art, Culture & Food from Sikkim & Bengal. 25–26 May 2026, Pelling, Sikkim."
+      width={1024}
+      height={1245}
+      fetchPriority="high"
+      className="absolute inset-0 w-full h-full object-cover object-center"
     />
 
     <StandaloneHeader />
 
-    <div className="relative z-10 w-full px-4 sm:px-6 md:px-12 pt-28 pb-16 md:pt-32 md:pb-24 flex flex-col items-center">
-      {/* Poster — the dominant element */}
-      <div className="relative animate-fade-in-up">
-        <div
-          aria-hidden
-          className="absolute -inset-6 rounded-[28px] blur-3xl opacity-60 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(circle at 50% 50%, rgba(212,165,116,0.45), transparent 70%)',
-          }}
-        />
-        <img
-          src="/rangotsav-poster.jpg"
-          alt="Rangotsav 2026 — A Celebration of Art, Culture & Food from Sikkim & Bengal. 25–26 May 2026, Pelling, Sikkim."
-          width={1024}
-          height={1536}
-          fetchPriority="high"
-          className="relative max-h-[78vh] w-auto rounded-xl shadow-[0_30px_80px_-15px_rgba(0,0,0,0.7)] border border-[#D4A574]/30"
-        />
-      </div>
+    {/* SEO-only headline (poster text is not crawlable) */}
+    <h1 className="sr-only">Rangotsav 2026 — The Tale Of Two States · 25–26 May 2026, Pelling, Sikkim</h1>
 
-      <h1 className="sr-only">Rangotsav 2026 — The Tale Of Two States</h1>
-
-      <a
-        href="#tickets"
-        onClick={(e: React.MouseEvent) => {
-          e.preventDefault();
-          document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' });
-        }}
-        className="group mt-10 inline-flex items-center gap-3 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-9 py-4 rounded-full transition-all shadow-2xl shadow-[#C84B0F]/40 hover:shadow-[#D4A574]/60 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-sm animate-fade-in-up"
-      >
-        Get Your Pass · ₹100
-        <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-      </a>
-
-      <p className="mt-8 text-[#FAF7F2]/55 text-[10px] md:text-xs uppercase tracking-[0.4em] animate-fade-in">
-        Hosted by Urbane Haauz · Pelling, West Sikkim
-      </p>
-    </div>
+    {/* Subtle scroll hint at the bottom */}
+    <a
+      href="#tickets"
+      onClick={(e: React.MouseEvent) => {
+        e.preventDefault();
+        document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' });
+      }}
+      aria-label="Scroll to ticket purchase"
+      className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 inline-flex items-center gap-2 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-7 py-3 rounded-full transition-all shadow-2xl shadow-black/50 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-xs animate-fade-in-up"
+    >
+      Get Your Pass · ₹100
+      <ArrowRight className="w-3.5 h-3.5" />
+    </a>
 
     <style>{`
       @keyframes rb-float {

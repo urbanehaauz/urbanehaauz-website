@@ -970,30 +970,14 @@ const PerformersSection: React.FC = () => {
                     living history forms the bedrock of her expression.
                   </p>
 
-                  {/* Album highlight */}
-                  <div className="bg-white/60 border border-[#A67833]/30 rounded-xl px-5 py-4 mb-6">
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-[#A67833] font-bold mb-1">
-                      Featured Album · 2025
-                    </p>
-                    <p className="font-serif text-2xl text-[#1C1C1C] mb-1">Aleklata</p>
-                    <p className="text-[#1C1C1C]/65 text-sm">
-                      Eight distinct folk genres — a modern homage to tradition.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-3">
-                    <a
-                      href="https://www.youtube.com/@Mastaaniconnect"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 bg-[#1C1C1C] text-[#FAF7F2] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:bg-[#C84B0F] transition-colors"
-                    >
-                      YouTube · @Mastaaniconnect <ExternalLink className="w-3 h-3" />
-                    </a>
-                    <span className="inline-flex items-center gap-2 border border-[#A67833]/40 text-[#8B6F47] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-semibold">
-                      Search "Aleklata" on any music app
-                    </span>
-                  </div>
+                  <a
+                    href="https://www.youtube.com/@Mastaaniconnect"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#1C1C1C] text-[#FAF7F2] px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:bg-[#C84B0F] transition-colors"
+                  >
+                    YouTube · @Mastaaniconnect <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
               </div>
             </div>
@@ -1041,9 +1025,21 @@ const PerformersSection: React.FC = () => {
               ))}
             </div>
 
-            <p className="mt-10 text-center text-[#1C1C1C]/45 text-xs tracking-wide max-w-xl mx-auto leading-relaxed italic">
-              Confirmed troupes and performance schedule will be announced closer to the festival.
-            </p>
+            <div className="mt-12 text-center">
+              <a
+                href="https://www.facebook.com/profile.php?id=61571759375050"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#1877F2] text-white px-6 py-3 rounded-full text-xs uppercase tracking-[0.2em] font-bold hover:bg-[#0e5fc7] transition-colors"
+              >
+                <Facebook className="w-4 h-4" />
+                Follow on Facebook
+                <ExternalLink className="w-3 h-3" />
+              </a>
+              <p className="mt-5 text-[#1C1C1C]/45 text-xs tracking-wide max-w-xl mx-auto leading-relaxed italic">
+                Confirmed troupes and performance schedule will be announced closer to the festival.
+              </p>
+            </div>
           </div>
         </Reveal>
       </div>

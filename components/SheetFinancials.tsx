@@ -250,6 +250,55 @@ const SheetFinancials: React.FC<Props> = ({ hidden }) => {
         </button>
       </div>
 
+      {/* Tab diagnostics — surfaces what tabs the Edge Function actually
+          received vs what the parser expects. Lets admins spot a renamed
+          tab in the sheet at a glance. */}
+      {data && (() => {
+        const expected = ['BalanceSheet', 'Room bookings', 'Driver Room Bookings', 'Restaurant Billing', 'UH Ops Expenses'];
+        const actualNames = data.tabs.map(t => t.name);
+        const norm = (s: string) => s.trim().toLowerCase();
+        const matches = expected.map(name => ({
+          name,
+          found: actualNames.some(a => norm(a) === norm(name)),
+        }));
+        const missing = matches.filter(m => !m.found);
+        if (missing.length === 0) return null;
+        return (
+          <details className="glassmorphism-strong rounded-lg p-4 border border-amber-500/40 mb-6" open>
+            <summary className="cursor-pointer flex items-center space-x-3 text-amber-200 font-semibold">
+              <AlertCircle size={18} />
+              <span>{missing.length} expected tab{missing.length > 1 ? 's' : ''} not found in the sheet</span>
+            </summary>
+            <div className="mt-4 grid md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-warm-ivory text-opacity-70 font-semibold mb-2">Parser expects:</p>
+                <ul className="space-y-1">
+                  {matches.map(m => (
+                    <li key={m.name} className="flex items-center space-x-2">
+                      <span className={m.found ? 'text-green-300' : 'text-red-300 font-bold'}>{m.found ? '✓' : '✗'}</span>
+                      <code className="text-warm-ivory text-opacity-90">{m.name}</code>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-warm-ivory text-opacity-70 font-semibold mb-2">Tabs in sheet ({actualNames.length}):</p>
+                <ul className="space-y-1">
+                  {actualNames.map(n => (
+                    <li key={n} className="text-warm-ivory text-opacity-80">
+                      <code>{n}</code>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <p className="mt-4 text-warm-ivory text-opacity-50 text-xs">
+              Sheet ID: <code>{data.sheetId}</code>. Rename the tab in your Google Sheet to one of the expected names — matching is case-insensitive but the words must match exactly.
+            </p>
+          </details>
+        );
+      })()}
+
       {error && (
         <div className="glassmorphism-strong rounded-lg p-6 border border-red-500/40">
           <div className="flex items-start space-x-3">

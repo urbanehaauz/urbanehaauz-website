@@ -784,6 +784,22 @@ const SheetOverview: React.FC = () => {
     );
   }
 
+  // Tab diagnostics — flag any expected tab that's missing in the sheet so
+  // admins can spot a renamed tab without digging into source code.
+  const tabDiagnostics = (() => {
+    if (!data) return null;
+    const expected = ['BalanceSheet', 'Room bookings', 'Driver Room Bookings', 'Restaurant Billing', 'UH Ops Expenses'];
+    const actualNames = data.tabs.map(t => t.name);
+    const norm = (s: string) => s.trim().toLowerCase();
+    const matches = expected.map(name => ({
+      name,
+      found: actualNames.some(a => norm(a) === norm(name)),
+    }));
+    const missing = matches.filter(m => !m.found);
+    if (missing.length === 0) return null;
+    return { matches, missing, actualNames, sheetId: data.sheetId };
+  })();
+
   return (
     <div className="animate-fade-in space-y-8">
       {/* Header */}
@@ -809,6 +825,42 @@ const SheetOverview: React.FC = () => {
           <span>{loading ? 'Refreshing…' : 'Refresh'}</span>
         </button>
       </div>
+
+      {/* Diagnostics — only renders when an expected tab is missing */}
+      {tabDiagnostics && (
+        <details className="glassmorphism-strong rounded-lg p-4 border border-amber-500/40" open>
+          <summary className="cursor-pointer flex items-center space-x-3 text-amber-200 font-semibold">
+            <AlertCircle size={18} />
+            <span>{tabDiagnostics.missing.length} expected tab{tabDiagnostics.missing.length > 1 ? 's' : ''} not found — restaurant / room / expense data may be missing</span>
+          </summary>
+          <div className="mt-4 grid md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-warm-ivory text-opacity-70 font-semibold mb-2">Parser expects:</p>
+              <ul className="space-y-1">
+                {tabDiagnostics.matches.map(m => (
+                  <li key={m.name} className="flex items-center space-x-2">
+                    <span className={m.found ? 'text-green-300' : 'text-red-300 font-bold'}>{m.found ? '✓' : '✗'}</span>
+                    <code className="text-warm-ivory text-opacity-90">{m.name}</code>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-warm-ivory text-opacity-70 font-semibold mb-2">Tabs in sheet ({tabDiagnostics.actualNames.length}):</p>
+              <ul className="space-y-1">
+                {tabDiagnostics.actualNames.map(n => (
+                  <li key={n} className="text-warm-ivory text-opacity-80">
+                    <code>{n}</code>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <p className="mt-4 text-warm-ivory text-opacity-50 text-xs">
+            Sheet ID: <code>{tabDiagnostics.sheetId}</code>. Rename a tab to one of the expected names — matching is case-insensitive but the words and spaces must match.
+          </p>
+        </details>
+      )}
 
       {/* Hero KPI cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -129,7 +129,7 @@ const Home: React.FC = () => {
                 to="/rangotsav"
                 className="group bg-transparent text-white px-10 py-4 transition-all duration-300 text-sm font-bold tracking-[0.2em] uppercase shadow-lg border-2 border-white/60 hover:bg-urbane-gold hover:border-urbane-gold hover:text-white hover:shadow-xl hover:-translate-y-1"
               >
-                Rangotsav · 25 May
+                Rangotsav · 25–26 May
               </Link>
             </div>
             <p className="text-white/80 text-xs tracking-[0.15em] uppercase drop-shadow-md">

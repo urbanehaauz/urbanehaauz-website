@@ -803,36 +803,53 @@ const ArtistsSection: React.FC = () => {
 /*                            PERFORMERS SECTION                              */
 /* -------------------------------------------------------------------------- */
 
+// Reference photos sourced from Wikimedia Commons (CC BY 2.0 / CC BY-SA 4.0).
+// Photographer attribution rendered on each card per CC licence terms.
 const SIKKIMESE_DANCES = [
   {
     name: 'Maruni Dance',
     origin: 'Nepali · Tihar festival',
     body: 'A very popular Nepali-origin dance in Sikkim, performed during festivals like Tihar. It features colourful costumes and both male and female performers.',
     accent: '#C84B0F',
+    image: '/performers/maruni.jpg',
+    photoCredit: 'Ramesh Lalwani · CC BY 2.0',
+    photoLink: 'https://commons.wikimedia.org/wiki/File:Maruni_Dancers_Sikkim.jpg',
   },
   {
     name: 'Tamang Selo',
     origin: 'Tamang community',
     body: 'A lively dance of the Tamang community, usually performed with the damphu — a traditional drum — and rhythmic singing.',
     accent: '#D4A574',
+    image: '/performers/tamang-selo.jpg',
+    photoCredit: 'Damfutamang · CC BY-SA 4.0',
+    photoLink: 'https://commons.wikimedia.org/wiki/File:Tamang_woman_dancing_on_their_traditional_song,_Tamang_selo.png',
   },
   {
     name: 'Kaura Dance',
     origin: 'Gurung people',
     body: 'A traditional dance of the Gurung people, often performed in a group with synchronised steps and songs about daily life and nature.',
     accent: '#4A7C59',
+    image: '/performers/kaura.jpg',
+    photoCredit: 'S Pakhrin · CC BY 2.0',
+    photoLink: 'https://commons.wikimedia.org/wiki/File:Kaura_dance_at_Everest_Day_New_York_2019.jpg',
   },
   {
     name: 'Chutkay Dance',
     origin: 'Folk celebration',
     body: 'A lesser-known but cheerful folk dance, often performed during social gatherings and celebrations across Sikkim.',
     accent: '#A67833',
+    image: '/performers/chutkay.jpg',
+    photoCredit: 'Ramesh Lalwani · CC BY 2.0',
+    photoLink: 'https://commons.wikimedia.org/wiki/File:Chukey_Dance_Sikkim.jpg',
   },
   {
     name: 'Singhi Chham',
     origin: 'Buddhist · Sikkim',
     body: 'A famous masked dance representing the snow lion — the cultural symbol of Sikkim. Performed during Buddhist festivals.',
     accent: '#2C5F7C',
+    image: '/performers/singhi-chham.jpg',
+    photoCredit: 'Michael Eisenriegler · CC BY 2.0',
+    photoLink: 'https://commons.wikimedia.org/wiki/File:Snow_lion_dance_at_the_%22Karma_Temple%22_Bodhgaya.jpg',
   },
 ];
 
@@ -1003,23 +1020,54 @@ const PerformersSection: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {SIKKIMESE_DANCES.map((d, i) => (
                 <Reveal key={d.name} delay={i * 80}>
-                  <div className="h-full bg-white border border-[#1C1C1C]/8 rounded-2xl p-7 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group">
-                    <div
-                      className="h-1 w-12 mb-5 rounded-full transition-all group-hover:w-20"
-                      style={{ background: d.accent }}
-                    />
-                    <h4 className="font-serif text-2xl text-[#1C1C1C] mb-1">
-                      {d.name}
-                    </h4>
-                    <p
-                      className="text-[10px] uppercase tracking-[0.3em] font-bold mb-4"
-                      style={{ color: d.accent }}
-                    >
-                      {d.origin}
-                    </p>
-                    <p className="text-[#1C1C1C]/70 text-sm leading-relaxed">
-                      {d.body}
-                    </p>
+                  <div className="h-full flex flex-col bg-white border border-[#1C1C1C]/8 rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group">
+                    {/* Photo */}
+                    <div className="relative aspect-[4/3] overflow-hidden bg-[#1C1C1C]">
+                      <img
+                        src={d.image}
+                        alt={`${d.name} — performed by communities of Sikkim`}
+                        width={800}
+                        height={600}
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      {/* Subtle overlay so accent stripe + attribution read on any photo */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+                    </div>
+
+                    {/* Body */}
+                    <div className="p-7 flex-1 flex flex-col">
+                      <div
+                        className="h-1 w-12 mb-5 rounded-full transition-all group-hover:w-20"
+                        style={{ background: d.accent }}
+                      />
+                      <h4 className="font-serif text-2xl text-[#1C1C1C] mb-1">
+                        {d.name}
+                      </h4>
+                      <p
+                        className="text-[10px] uppercase tracking-[0.3em] font-bold mb-4"
+                        style={{ color: d.accent }}
+                      >
+                        {d.origin}
+                      </p>
+                      <p className="text-[#1C1C1C]/70 text-sm leading-relaxed flex-1">
+                        {d.body}
+                      </p>
+
+                      {/* CC attribution per Wikimedia Commons licence terms */}
+                      <p className="mt-5 pt-3 border-t border-[#1C1C1C]/8 text-[10px] text-[#1C1C1C]/40 leading-relaxed">
+                        Photo:{' '}
+                        <a
+                          href={d.photoLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-[#A67833] underline-offset-2 hover:underline"
+                        >
+                          {d.photoCredit}
+                        </a>
+                      </p>
+                    </div>
                   </div>
                 </Reveal>
               ))}

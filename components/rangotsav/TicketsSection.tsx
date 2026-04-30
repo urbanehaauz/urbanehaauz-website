@@ -112,7 +112,7 @@ const PassVisual: React.FC = () => (
           <p className="font-serif text-[58px] md:text-[68px] leading-none text-[#1C1C1C]">
             ₹100<span className="text-[#8B6F47] text-3xl md:text-4xl font-light"> /day</span>
           </p>
-          <p className="text-[#8B6F47] text-xs italic mt-1.5">₹200 for both days · all-inclusive</p>
+          <p className="text-[#8B6F47] text-xs italic mt-1.5">₹175 for both days · all-inclusive</p>
         </div>
 
         <ul className="space-y-2.5 text-[14px] text-[#1C1C1C]/85 max-w-xs mx-auto">
@@ -195,7 +195,7 @@ const TicketsSection: React.FC = () => (
           <p className="mt-6 text-[#1C1C1C]/70 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
             Pick a day or do both. Every performance, the art exhibition, and access to the food
             stalls — from <span className="text-[#A67833] font-semibold">₹100 per day</span>
-            <span className="text-[#1C1C1C]/55"> · ₹200 for both days</span>.
+            <span className="text-[#1C1C1C]/55"> · ₹175 for both days</span>.
           </p>
         </div>
       </Reveal>

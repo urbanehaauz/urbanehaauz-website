@@ -85,22 +85,28 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    // 1) Read current per-day ticket price (server-authoritative — never trust client)
-    const { data: priceRow, error: priceErr } = await admin
+    // 1) Read current pricing — server-authoritative, never trust the client.
+    //    Two keys: per-day price (₹100) and the discounted both-days bundle (₹175).
+    const { data: priceRows, error: priceErr } = await admin
       .from('settings')
-      .select('value')
-      .eq('key', 'rangotsav_ticket_price')
-      .single();
+      .select('key, value')
+      .in('key', ['rangotsav_ticket_price', 'rangotsav_both_days_price']);
 
-    if (priceErr || !priceRow?.value) {
-      console.error('Failed to read rangotsav_ticket_price:', priceErr);
+    if (priceErr || !priceRows || priceRows.length === 0) {
+      console.error('Failed to read rangotsav pricing:', priceErr);
       return jsonError('Ticket pricing unavailable', 500);
     }
 
-    const unitPrice = Number(priceRow.value);
+    const priceMap = Object.fromEntries(priceRows.map((r) => [r.key, r.value]));
+    const unitPrice = Number(priceMap['rangotsav_ticket_price']);
     if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
       return jsonError('Invalid ticket price configuration', 500);
     }
+    // Bundle price falls back to 2× single-day if not configured (defensive).
+    const rawBundle = priceMap['rangotsav_both_days_price'];
+    const bothDaysPrice = rawBundle != null && Number.isFinite(Number(rawBundle)) && Number(rawBundle) > 0
+      ? Number(rawBundle)
+      : unitPrice * 2;
 
     // 2) Atomic reservation — RPC handles per-day SOLD_OUT and capacity locking
     const { data: reserveData, error: reserveErr } = await admin.rpc(
@@ -111,6 +117,7 @@ Deno.serve(async (req) => {
         p_buyer_email: buyerEmail,
         p_buyer_phone: buyerPhone,
         p_unit_price: unitPrice,
+        p_both_days_price: bothDaysPrice,
         p_source: 'online',
         p_payment_method: 'razorpay',
       },
@@ -199,6 +206,7 @@ Deno.serve(async (req) => {
         })),
         amount: totalAmount,
         unit_price: unitPrice,
+        both_days_price: bothDaysPrice,
         remaining_day_1: rows[0].remaining_day_1,
         remaining_day_2: rows[0].remaining_day_2,
       }),

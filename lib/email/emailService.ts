@@ -943,7 +943,7 @@ export interface RangotsavTicketItem {
   ticketCode: string;
   daySelection: 'day_1' | 'day_2' | 'both';
   quantity: number;
-  unitPrice: number;   // effective per-pass price for this row (₹100 or ₹200)
+  unitPrice: number;   // effective per-pass price for this row (₹100 single-day, ₹175 both-days bundle)
   totalAmount: number; // unitPrice × quantity
 }
 

@@ -98,6 +98,7 @@ const RangotsavAdmin: React.FC = () => {
   const [summary, setSummary] = useState<InventorySummary | null>(null);
   const [recent, setRecent] = useState<TicketRow[]>([]);
   const [unitPrice, setUnitPrice] = useState<number | null>(null);
+  const [bothDaysPrice, setBothDaysPrice] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -161,7 +162,7 @@ const RangotsavAdmin: React.FC = () => {
           )
           .order('created_at', { ascending: false })
           .limit(50),
-        supabase.from('settings').select('value').eq('key', 'rangotsav_ticket_price').single(),
+        supabase.from('settings').select('key, value').in('key', ['rangotsav_ticket_price', 'rangotsav_both_days_price']),
       ]);
       if (cancelled) return;
       if (summaryData) {
@@ -186,7 +187,17 @@ const RangotsavAdmin: React.FC = () => {
         });
       }
       if (recentData) setRecent(recentData as TicketRow[]);
-      if (priceData?.value) setUnitPrice(Number(priceData.value));
+      if (priceData) {
+        const map = Object.fromEntries(priceData.map((r: any) => [r.key, r.value]));
+        const p = Number(map['rangotsav_ticket_price']);
+        const b = Number(map['rangotsav_both_days_price']);
+        if (Number.isFinite(p) && p > 0) setUnitPrice(p);
+        if (Number.isFinite(b) && b > 0) {
+          setBothDaysPrice(b);
+        } else if (Number.isFinite(p) && p > 0) {
+          setBothDaysPrice(p * 2);
+        }
+      }
       setLoading(false);
     })();
     return () => {
@@ -259,6 +270,7 @@ const RangotsavAdmin: React.FC = () => {
         {tab === 'sell' && (
           <SellOfflineTab
             unitPrice={unitPrice}
+            bothDaysPrice={bothDaysPrice}
             soldByUserId={user?.id ?? null}
             onSold={refresh}
             remainingDay1={summary ? Math.max(summary.total_capacity_day_1 - summary.occupied_day_1 - summary.pending_day_1, 0) : null}
@@ -541,11 +553,12 @@ const StatCard: React.FC<{
 
 const SellOfflineTab: React.FC<{
   unitPrice: number | null;
+  bothDaysPrice: number | null;
   soldByUserId: string | null;
   remainingDay1: number | null;
   remainingDay2: number | null;
   onSold: () => void;
-}> = ({ unitPrice, soldByUserId, remainingDay1, remainingDay2, onSold }) => {
+}> = ({ unitPrice, bothDaysPrice, soldByUserId, remainingDay1, remainingDay2, onSold }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -563,8 +576,9 @@ const SellOfflineTab: React.FC<{
   const totalQty = cart.day_1 + cart.day_2 + cart.both;
   const total = useMemo(() => {
     if (!unitPrice) return 0;
-    return cart.day_1 * unitPrice + cart.day_2 * unitPrice + cart.both * unitPrice * 2;
-  }, [cart, unitPrice]);
+    const bundle = bothDaysPrice ?? unitPrice * 2;
+    return cart.day_1 * unitPrice + cart.day_2 * unitPrice + cart.both * bundle;
+  }, [cart, unitPrice, bothDaysPrice]);
 
   const capFor = (key: keyof typeof cart) => {
     const headroomTotal = 10 - (totalQty - cart[key]);
@@ -623,6 +637,7 @@ const SellOfflineTab: React.FC<{
         p_buyer_email: emailCheck.sanitizedValue,
         p_buyer_phone: phoneCheck.sanitizedValue,
         p_unit_price: unitPrice,
+        p_both_days_price: bothDaysPrice ?? unitPrice * 2,
         p_source: 'offline',
         p_payment_method: paymentMethod,
         p_sold_by: soldByUserId,
@@ -678,7 +693,7 @@ const SellOfflineTab: React.FC<{
   const renderStepperRow = (key: keyof typeof cart) => {
     const cap = capFor(key);
     const value = cart[key];
-    const price = !unitPrice ? 0 : key === 'both' ? unitPrice * 2 : unitPrice;
+    const price = !unitPrice ? 0 : key === 'both' ? (bothDaysPrice ?? unitPrice * 2) : unitPrice;
     const dayLabel = DAY_LABELS[key];
     const dayRem = key === 'day_1' ? remainingDay1
                  : key === 'day_2' ? remainingDay2
@@ -751,7 +766,7 @@ const SellOfflineTab: React.FC<{
               Sell tickets offline
             </h3>
             <p className="text-sm text-gray-500">
-              Walk-in / phone / cash sale. {unitPrice ? `${formatINR(unitPrice)} per day · ${formatINR(unitPrice * 2)} for both days.` : ''}
+              Walk-in / phone / cash sale. {unitPrice ? `${formatINR(unitPrice)} per day · ${formatINR(bothDaysPrice ?? unitPrice * 2)} for both days.` : ''}
             </p>
           </div>
 

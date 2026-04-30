@@ -30,7 +30,7 @@ export const RANGOTSAV_BREADCRUMB_JSONLD = {
  *  - Two-day event 2026-05-25 → 2026-05-26, 10:00–22:00 IST each day (timing approximate)
  *  - Location address mirrors hotel NAP (SH-510, Skywalk Road, Upper Pelling)
  *  - eventStatus: EventScheduled (update to EventPostponed/Cancelled if needed)
- *  - offers: ₹100/day per Festival Pass; both-days bundle ₹200; 300 tickets per day
+ *  - offers: ₹100/day per Festival Pass; both-days bundle ₹175 (₹25 discount); 300 tickets per day
  */
 export const RANGOTSAV_EVENT_JSONLD = {
   '@context': 'https://schema.org',
@@ -104,8 +104,8 @@ export const RANGOTSAV_EVENT_JSONLD = {
       '@type': 'Offer',
       url: 'https://urbanehaauz.com/rangotsav#tickets',
       name: 'Rangotsav Both-Day Pass',
-      description: 'Two-day pass valid for 25 and 26 May 2026.',
-      price: '200',
+      description: 'Two-day bundle pass valid for 25 and 26 May 2026 (₹25 off vs single-day passes).',
+      price: '175',
       priceCurrency: 'INR',
       availability: 'https://schema.org/InStock',
       validFrom: '2026-04-01T00:00:00+05:30',

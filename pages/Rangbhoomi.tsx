@@ -1221,7 +1221,7 @@ const TIERS = [
     body: 'Entry to art, performances, food stalls, and the full Rangotsav programme. Buy a single-day pass or a both-day bundle.',
     accent: '#D4A574',
     featured: true,
-    price: '₹100/day · ₹200 both days',
+    price: '₹100/day · ₹175 both days',
   },
   {
     name: 'Participants',

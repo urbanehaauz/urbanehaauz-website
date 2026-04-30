@@ -86,10 +86,12 @@ CREATE INDEX IF NOT EXISTS idx_rangotsav_tickets_day
 -- 2) Settings seed (price + per-day capacity) --------------------------------
 -- The settings table is {key TEXT, value TEXT}; existing public read policy
 -- already lets anon read these, so the buy form can fetch the price.
--- ticket_price is per-day-per-admit; a 'both' ticket charges 2× this amount.
+-- ticket_price is per-day-per-admit (₹100). both_days_price is the bundle
+-- discount price for a single 'both' admit (₹175, vs ₹200 if unbundled).
 INSERT INTO public.settings (key, value)
 VALUES
   ('rangotsav_ticket_price',     '100'),
+  ('rangotsav_both_days_price',  '175'),
   ('rangotsav_capacity_day_1',   '300'),
   ('rangotsav_capacity_day_2',   '300')
 ON CONFLICT (key) DO NOTHING;
@@ -97,22 +99,31 @@ ON CONFLICT (key) DO NOTHING;
 -- 3) Atomic reservation function --------------------------------------------
 -- Drop the legacy single-quantity signature first.
 DROP FUNCTION IF EXISTS public.reserve_rangotsav_tickets(INT, TEXT, TEXT, TEXT, NUMERIC, TEXT, TEXT, UUID, TEXT) CASCADE;
+-- Drop the prior JSONB signature (without p_both_days_price) so re-running this
+-- migration doesn't leave overloaded versions sitting side-by-side.
+DROP FUNCTION IF EXISTS public.reserve_rangotsav_tickets(JSONB, TEXT, TEXT, TEXT, NUMERIC, TEXT, TEXT, UUID, TEXT) CASCADE;
 
 -- Accepts a JSONB array of line items: [{"day_selection":"day_1","quantity":2}, ...]
 -- Locks both day-capacity setting rows so concurrent buyers serialize on
 -- per-day inventory. Counts paid + recently-pending rows (15-min hold for
 -- in-flight Razorpay flows). Offline sales are marked paid immediately;
 -- online sales start as pending and flip to paid on verify.
+--
+-- p_both_days_price is the discounted bundle price for a 'both' admit
+-- (₹175 by default, vs ₹200 if it were unbundled). When NULL, falls back
+-- to p_unit_price × 2 — keeps older callers working but new ones (edge
+-- function + admin sell tab) always pass it explicitly.
 CREATE OR REPLACE FUNCTION public.reserve_rangotsav_tickets(
-  p_items           JSONB,
-  p_buyer_name      TEXT,
-  p_buyer_email     TEXT,
-  p_buyer_phone     TEXT,
-  p_unit_price      NUMERIC,
-  p_source          TEXT DEFAULT 'online',
-  p_payment_method  TEXT DEFAULT 'razorpay',
-  p_sold_by         UUID DEFAULT NULL,
-  p_notes           TEXT DEFAULT NULL
+  p_items            JSONB,
+  p_buyer_name       TEXT,
+  p_buyer_email      TEXT,
+  p_buyer_phone      TEXT,
+  p_unit_price       NUMERIC,
+  p_source           TEXT    DEFAULT 'online',
+  p_payment_method   TEXT    DEFAULT 'razorpay',
+  p_sold_by          UUID    DEFAULT NULL,
+  p_notes            TEXT    DEFAULT NULL,
+  p_both_days_price  NUMERIC DEFAULT NULL
 )
 RETURNS TABLE(
   ticket_id          UUID,
@@ -222,7 +233,13 @@ BEGIN
   FOR v_item IN SELECT * FROM jsonb_array_elements(p_items) LOOP
     v_item_day := v_item->>'day_selection';
     v_item_qty := (v_item->>'quantity')::INT;
-    v_item_unit := p_unit_price * (CASE WHEN v_item_day = 'both' THEN 2 ELSE 1 END);
+    -- 'both' tickets use the bundle price (₹175) when supplied, else fall back
+    -- to 2× single-day price (₹200). Single-day rows always use p_unit_price.
+    IF v_item_day = 'both' THEN
+      v_item_unit := COALESCE(p_both_days_price, p_unit_price * 2);
+    ELSE
+      v_item_unit := p_unit_price;
+    END IF;
 
     -- Generate a 6-char hex suffix, retry up to 3× on (extremely unlikely) collision
     v_code := NULL;
@@ -269,8 +286,8 @@ BEGIN
 END
 $$;
 
-REVOKE ALL ON FUNCTION public.reserve_rangotsav_tickets(JSONB, TEXT, TEXT, TEXT, NUMERIC, TEXT, TEXT, UUID, TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.reserve_rangotsav_tickets(JSONB, TEXT, TEXT, TEXT, NUMERIC, TEXT, TEXT, UUID, TEXT) TO anon, authenticated;
+REVOKE ALL ON FUNCTION public.reserve_rangotsav_tickets(JSONB, TEXT, TEXT, TEXT, NUMERIC, TEXT, TEXT, UUID, TEXT, NUMERIC) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.reserve_rangotsav_tickets(JSONB, TEXT, TEXT, TEXT, NUMERIC, TEXT, TEXT, UUID, TEXT, NUMERIC) TO anon, authenticated;
 
 -- 4) Public remaining-capacity helper (per day) ------------------------------
 -- Drop legacy INT-returning version if present; replace with TABLE return.

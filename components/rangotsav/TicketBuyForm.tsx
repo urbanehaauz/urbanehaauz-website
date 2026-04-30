@@ -60,13 +60,14 @@ const TicketBuyForm: React.FC = () => {
   const [cart, setCart] = useState<CartCounts>({ day_1: 0, day_2: 0, both: 0 });
 
   const [unitPrice, setUnitPrice] = useState<number | null>(null);
+  const [bothDaysPrice, setBothDaysPrice] = useState<number | null>(null);
   const [remaining, setRemaining] = useState<RemainingPerDay | null>(null);
   const [stage, setStage] = useState<Stage>('form');
   const [error, setError] = useState<string | null>(null);
   const [successItems, setSuccessItems] = useState<TicketSuccessItem[] | null>(null);
   const [successTotal, setSuccessTotal] = useState<number>(0);
 
-  // Load price + per-day remaining capacity on mount
+  // Load both prices + per-day remaining capacity on mount
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -74,17 +75,24 @@ const TicketBuyForm: React.FC = () => {
         const [{ data: priceData }, { data: remainingData, error: rpcErr }] = await Promise.all([
           supabase
             .from('settings')
-            .select('value')
-            .eq('key', 'rangotsav_ticket_price')
-            .single(),
+            .select('key, value')
+            .in('key', ['rangotsav_ticket_price', 'rangotsav_both_days_price']),
           supabase.rpc('rangotsav_tickets_remaining'),
         ]);
 
         if (cancelled) return;
 
-        if (priceData?.value) {
-          const p = Number(priceData.value);
+        if (priceData) {
+          const map = Object.fromEntries(priceData.map((r) => [r.key, r.value]));
+          const p = Number(map['rangotsav_ticket_price']);
+          const b = Number(map['rangotsav_both_days_price']);
           if (Number.isFinite(p) && p > 0) setUnitPrice(p);
+          if (Number.isFinite(b) && b > 0) {
+            setBothDaysPrice(b);
+          } else if (Number.isFinite(p) && p > 0) {
+            // Defensive fallback if the bundle key isn't seeded yet
+            setBothDaysPrice(p * 2);
+          }
         }
 
         if (!rpcErr) {
@@ -110,8 +118,9 @@ const TicketBuyForm: React.FC = () => {
   const totalQty = cart.day_1 + cart.day_2 + cart.both;
   const totalAmount = useMemo(() => {
     if (!unitPrice) return 0;
-    return cart.day_1 * unitPrice + cart.day_2 * unitPrice + cart.both * unitPrice * 2;
-  }, [cart, unitPrice]);
+    const bundle = bothDaysPrice ?? unitPrice * 2;
+    return cart.day_1 * unitPrice + cart.day_2 * unitPrice + cart.both * bundle;
+  }, [cart, unitPrice, bothDaysPrice]);
 
   // Per-row caps: respect total cart cap of 10 AND per-day remaining
   const capFor = (key: keyof CartCounts) => {
@@ -381,7 +390,7 @@ const TicketBuyForm: React.FC = () => {
     'block text-[#A67833] text-[11px] uppercase tracking-[0.22em] mb-2 font-bold';
 
   const dayPriceFor = (key: keyof CartCounts) =>
-    !unitPrice ? 0 : key === 'both' ? unitPrice * 2 : unitPrice;
+    !unitPrice ? 0 : key === 'both' ? (bothDaysPrice ?? unitPrice * 2) : unitPrice;
 
   const renderStepper = (key: keyof CartCounts) => {
     const cap = capFor(key);
@@ -453,7 +462,7 @@ const TicketBuyForm: React.FC = () => {
         <p className="text-[#1C1C1C]/60 text-sm">
           {unitPrice ? (
             <>
-              ₹{unitPrice.toLocaleString('en-IN')} per day · ₹{(unitPrice * 2).toLocaleString('en-IN')} for both days · 25–26 May 2026 · Pelling
+              ₹{unitPrice.toLocaleString('en-IN')} per day · ₹{(bothDaysPrice ?? unitPrice * 2).toLocaleString('en-IN')} for both days · 25–26 May 2026 · Pelling
             </>
           ) : (
             'Loading pricing…'

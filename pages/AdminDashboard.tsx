@@ -1347,7 +1347,7 @@ const AdminDashboard: React.FC = () => {
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-urbane-gold font-bold mb-1">Ticket Sales · per day</p>
                   <h3 className="font-serif text-2xl md:text-3xl font-bold">
-                    ₹100/day · ₹200 for both days
+                    ₹100/day · ₹175 for both days
                   </h3>
                 </div>
                 <button

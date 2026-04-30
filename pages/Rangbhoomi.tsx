@@ -219,7 +219,7 @@ const HeroSection: React.FC = () => (
       onClick={(e: React.MouseEvent) => { e.preventDefault(); document.getElementById('tickets')?.scrollIntoView({ behavior: 'smooth' }); }}
         className="group mt-12 inline-flex items-center gap-3 bg-[#D4A574] hover:bg-[#e6bd8e] text-[#1C1C1C] font-semibold px-9 py-4 rounded-full transition-all shadow-2xl shadow-[#C84B0F]/30 hover:shadow-[#D4A574]/50 hover:-translate-y-0.5 uppercase tracking-[0.18em] text-sm animate-fade-in-up"
       >
-        Get Your Pass · ₹100
+        Get Your Pass · From ₹100/day
         <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
       </a>
 
@@ -1217,11 +1217,11 @@ const TIERS = [
   },
   {
     name: 'Festival Pass',
-    sub: 'Two days · all access',
-    body: 'Entry across both festival days — art, performances, food stalls, and the full Rangotsav programme.',
+    sub: 'Pick a day or do both',
+    body: 'Entry to art, performances, food stalls, and the full Rangotsav programme. Buy a single-day pass or a both-day bundle.',
     accent: '#D4A574',
     featured: true,
-    price: '₹100 per person',
+    price: '₹100/day · ₹200 both days',
   },
   {
     name: 'Participants',

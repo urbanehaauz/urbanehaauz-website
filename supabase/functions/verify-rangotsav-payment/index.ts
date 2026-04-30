@@ -28,10 +28,10 @@ Deno.serve(async (req) => {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      ticket_id,
+      purchase_group_id,
     } = await req.json();
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !ticket_id) {
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !purchase_group_id) {
       return jsonError('Missing required fields', 400);
     }
 
@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     const isValid = await verifyHmac(keySecret, signedData, razorpay_signature);
 
     if (!isValid) {
-      console.error('Rangotsav payment signature verification failed for ticket:', ticket_id);
+      console.error('Rangotsav payment signature verification failed for group:', purchase_group_id);
       return jsonError('Payment verification failed', 400);
     }
 
@@ -54,53 +54,58 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    // Sanity-check: the order_id we stored must match (defends against ticket_id swap)
-    const { data: ticketRow, error: fetchErr } = await admin
+    // Fetch all sibling rows in the purchase group. The order_id match defends
+    // against group_id swap; both must align with what we saved on creation.
+    const { data: rows, error: fetchErr } = await admin
       .from('rangotsav_tickets')
-      .select('id, ticket_code, razorpay_order_id, payment_status, quantity, total_amount, buyer_name, buyer_email')
-      .eq('id', ticket_id)
-      .single();
+      .select('id, ticket_code, day_selection, quantity, unit_price, total_amount, razorpay_order_id, payment_status, buyer_name, buyer_email')
+      .eq('purchase_group_id', purchase_group_id)
+      .eq('razorpay_order_id', razorpay_order_id);
 
-    if (fetchErr || !ticketRow) {
-      console.error('Ticket lookup failed:', fetchErr);
-      return jsonError('Ticket not found', 404);
+    if (fetchErr) {
+      console.error('Group lookup failed:', fetchErr);
+      return jsonError('Lookup failed', 500);
+    }
+    if (!rows || rows.length === 0) {
+      return jsonError('Tickets not found for this order', 404);
     }
 
-    if (ticketRow.razorpay_order_id && ticketRow.razorpay_order_id !== razorpay_order_id) {
-      console.error('Order id mismatch for ticket', ticket_id);
-      return jsonError('Order/ticket mismatch', 400);
+    // Idempotent: if all rows are already paid, just return success without rewriting
+    const allPaid = rows.every((r) => r.payment_status === 'paid');
+
+    if (!allPaid) {
+      const { error: updateErr } = await admin
+        .from('rangotsav_tickets')
+        .update({
+          payment_status: 'paid',
+          razorpay_payment_id,
+        })
+        .eq('purchase_group_id', purchase_group_id)
+        .eq('razorpay_order_id', razorpay_order_id);
+
+      if (updateErr) {
+        console.error('Failed to mark group paid:', updateErr);
+        return jsonError('Failed to update tickets', 500);
+      }
     }
 
-    // Idempotent: if already paid, just return success without rewriting
-    if (ticketRow.payment_status === 'paid') {
-      return new Response(
-        JSON.stringify({ success: true, ticket_code: ticketRow.ticket_code }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-      );
-    }
-
-    const { error: updateErr } = await admin
-      .from('rangotsav_tickets')
-      .update({
-        payment_status: 'paid',
-        razorpay_payment_id,
-        razorpay_order_id,
-      })
-      .eq('id', ticket_id);
-
-    if (updateErr) {
-      console.error('Failed to mark ticket paid:', updateErr);
-      return jsonError('Failed to update ticket', 500);
-    }
+    const totalAmount = rows.reduce((sum, r) => sum + Number(r.total_amount), 0);
 
     return new Response(
       JSON.stringify({
         success: true,
-        ticket_code: ticketRow.ticket_code,
-        quantity: ticketRow.quantity,
-        total_amount: Number(ticketRow.total_amount),
-        buyer_name: ticketRow.buyer_name,
-        buyer_email: ticketRow.buyer_email,
+        purchase_group_id,
+        items: rows.map((r) => ({
+          ticket_id: r.id,
+          ticket_code: r.ticket_code,
+          day_selection: r.day_selection,
+          quantity: r.quantity,
+          unit_price: Number(r.unit_price),
+          total_amount: Number(r.total_amount),
+        })),
+        total_amount: Math.round(totalAmount * 100) / 100,
+        buyer_name: rows[0].buyer_name,
+        buyer_email: rows[0].buyer_email,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );

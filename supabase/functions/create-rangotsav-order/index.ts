@@ -1,11 +1,26 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+type DaySelection = 'day_1' | 'day_2' | 'both';
+
+interface CartItem {
+  day_selection: DaySelection;
+  quantity: number;
+}
+
 interface ReserveRow {
   ticket_id: string;
   ticket_code: string;
-  remaining: number;
+  day_selection: DaySelection;
+  quantity: number;
+  unit_price: number;
+  total_amount: number;
+  purchase_group_id: string;
+  remaining_day_1: number;
+  remaining_day_2: number;
 }
+
+const VALID_DAYS: DaySelection[] = ['day_1', 'day_2', 'both'];
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -14,14 +29,40 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json();
-    const quantity   = Number(body?.quantity);
+    const rawItems = body?.items;
     const buyerName  = String(body?.buyerName  ?? '').trim();
     const buyerEmail = String(body?.buyerEmail ?? '').trim().toLowerCase();
     const buyerPhone = String(body?.buyerPhone ?? '').trim();
 
-    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 10) {
-      return jsonError('Quantity must be between 1 and 10', 400);
+    // Validate items array
+    if (!Array.isArray(rawItems) || rawItems.length === 0 || rawItems.length > 3) {
+      return jsonError('Items must be a non-empty array of up to 3 line items', 400);
     }
+
+    const items: CartItem[] = [];
+    let totalQty = 0;
+    const seenDays = new Set<DaySelection>();
+
+    for (const raw of rawItems) {
+      const day = raw?.day_selection;
+      const qty = Number(raw?.quantity);
+      if (!VALID_DAYS.includes(day)) {
+        return jsonError(`Invalid day_selection: ${day}`, 400);
+      }
+      if (!Number.isInteger(qty) || qty < 1 || qty > 10) {
+        return jsonError('Each item quantity must be 1-10', 400);
+      }
+      if (seenDays.has(day)) {
+        return jsonError(`Duplicate day_selection in items: ${day}`, 400);
+      }
+      seenDays.add(day);
+      totalQty += qty;
+      items.push({ day_selection: day, quantity: qty });
+    }
+    if (totalQty < 1 || totalQty > 10) {
+      return jsonError('Total quantity across all line items must be 1-10', 400);
+    }
+
     if (!buyerName || buyerName.length < 2 || buyerName.length > 100) {
       return jsonError('Invalid buyer name', 400);
     }
@@ -44,7 +85,7 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
-    // 1) Read current ticket price (server-authoritative — never trust client)
+    // 1) Read current per-day ticket price (server-authoritative — never trust client)
     const { data: priceRow, error: priceErr } = await admin
       .from('settings')
       .select('value')
@@ -61,13 +102,11 @@ Deno.serve(async (req) => {
       return jsonError('Invalid ticket price configuration', 500);
     }
 
-    const totalAmount = Math.round(unitPrice * quantity * 100) / 100;
-
-    // 2) Atomic reservation — RPC handles SOLD_OUT and capacity locking
+    // 2) Atomic reservation — RPC handles per-day SOLD_OUT and capacity locking
     const { data: reserveData, error: reserveErr } = await admin.rpc(
       'reserve_rangotsav_tickets',
       {
-        p_quantity: quantity,
+        p_items: items, // JSONB-coerced server-side
         p_buyer_name: buyerName,
         p_buyer_email: buyerEmail,
         p_buyer_phone: buyerPhone,
@@ -79,22 +118,32 @@ Deno.serve(async (req) => {
 
     if (reserveErr) {
       const msg = reserveErr.message ?? '';
-      if (msg.includes('SOLD_OUT')) {
+      if (msg.includes('SOLD_OUT_DAY_1')) {
         return new Response(
-          JSON.stringify({ error: 'SOLD_OUT', message: msg }),
+          JSON.stringify({ error: 'SOLD_OUT_DAY_1', message: msg }),
+          { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
+      }
+      if (msg.includes('SOLD_OUT_DAY_2')) {
+        return new Response(
+          JSON.stringify({ error: 'SOLD_OUT_DAY_2', message: msg }),
           { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
         );
       }
       console.error('reserve_rangotsav_tickets failed:', reserveErr);
-      return jsonError('Failed to reserve ticket', 500);
+      return jsonError('Failed to reserve tickets', 500);
     }
 
-    const row = (Array.isArray(reserveData) ? reserveData[0] : reserveData) as ReserveRow | undefined;
-    if (!row?.ticket_id || !row?.ticket_code) {
-      return jsonError('Reservation returned no ticket', 500);
+    const rows = (Array.isArray(reserveData) ? reserveData : [reserveData]) as ReserveRow[];
+    if (!rows.length || !rows[0]?.purchase_group_id) {
+      return jsonError('Reservation returned no rows', 500);
     }
 
-    // 3) Create Razorpay order — secret never leaves the server
+    const groupId = rows[0].purchase_group_id;
+    const totalAmount =
+      Math.round(rows.reduce((sum, r) => sum + Number(r.total_amount), 0) * 100) / 100;
+
+    // 3) Create one Razorpay order for the full checkout — secret never leaves the server
     const credentials = btoa(`${keyId}:${keySecret}`);
     const razorpayRes = await fetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
@@ -105,12 +154,12 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         amount: Math.round(totalAmount * 100), // paise
         currency: 'INR',
-        receipt: row.ticket_code,
+        receipt: `RANG-${groupId.slice(0, 8)}`,
         notes: {
           kind: 'rangotsav',
-          ticket_id: row.ticket_id,
-          ticket_code: row.ticket_code,
-          quantity: String(quantity),
+          purchase_group_id: groupId,
+          ticket_count: String(rows.length),
+          total_qty: String(totalQty),
         },
       }),
     });
@@ -119,32 +168,39 @@ Deno.serve(async (req) => {
       const err = await razorpayRes.json().catch(() => ({}));
       console.error('Razorpay order creation failed:', err);
 
-      // Roll the reservation back to 'failed' so it stops counting against inventory immediately.
+      // Roll all sibling rows back to 'failed' so they stop counting against inventory immediately.
       await admin
         .from('rangotsav_tickets')
         .update({ payment_status: 'failed' })
-        .eq('id', row.ticket_id);
+        .eq('purchase_group_id', groupId);
 
       return jsonError('Failed to create payment order', 502);
     }
 
     const order = await razorpayRes.json();
 
-    // 4) Persist order_id back on the ticket row for reconciliation
+    // 4) Persist order_id back on every row in the group for reconciliation
     await admin
       .from('rangotsav_tickets')
       .update({ razorpay_order_id: order.id })
-      .eq('id', row.ticket_id);
+      .eq('purchase_group_id', groupId);
 
     return new Response(
       JSON.stringify({
         order_id: order.id,
-        ticket_id: row.ticket_id,
-        ticket_code: row.ticket_code,
+        purchase_group_id: groupId,
+        items: rows.map((r) => ({
+          ticket_id: r.ticket_id,
+          ticket_code: r.ticket_code,
+          day_selection: r.day_selection,
+          quantity: r.quantity,
+          unit_price: Number(r.unit_price),
+          total_amount: Number(r.total_amount),
+        })),
         amount: totalAmount,
         unit_price: unitPrice,
-        quantity,
-        remaining: row.remaining,
+        remaining_day_1: rows[0].remaining_day_1,
+        remaining_day_2: rows[0].remaining_day_2,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );

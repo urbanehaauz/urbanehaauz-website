@@ -939,76 +939,127 @@ export async function sendRangotsavVendorRejected(data: {
   return result.success;
 }
 
-export async function sendRangotsavTicketConfirmation(data: {
+export interface RangotsavTicketItem {
   ticketCode: string;
+  daySelection: 'day_1' | 'day_2' | 'both';
+  quantity: number;
+  unitPrice: number;   // effective per-pass price for this row (₹100 or ₹200)
+  totalAmount: number; // unitPrice × quantity
+}
+
+function rangotsavDayLabel(d: 'day_1' | 'day_2' | 'both'): { short: string; full: string } {
+  switch (d) {
+    case 'day_1': return { short: 'Day 1', full: 'Day 1 · 25 May' };
+    case 'day_2': return { short: 'Day 2', full: 'Day 2 · 26 May' };
+    case 'both':  return { short: 'Both Days', full: 'Both Days · 25–26 May' };
+  }
+}
+
+export async function sendRangotsavTicketConfirmation(data: {
   buyerName: string;
   buyerEmail: string;
-  quantity: number;
-  unitPrice: number;
+  items: RangotsavTicketItem[];
   totalAmount: number;
 }): Promise<boolean> {
+  if (!data.items.length) {
+    console.error('sendRangotsavTicketConfirmation called with empty items');
+    return false;
+  }
+
   const name = escHtml(data.buyerName);
-  const code = escHtml(data.ticketCode);
-  const subject = `Your Rangotsav 2026 Pass — ${data.ticketCode}`;
+  const isMulti = data.items.length > 1;
+  const subject = isMulti
+    ? `Your Rangotsav 2026 Passes (${data.items.length} codes)`
+    : `Your Rangotsav 2026 Pass — ${data.items[0].ticketCode}`;
 
-  // QR encodes a deep link to the admin check-in page so staff phones jump
-  // straight into the lookup with the code pre-filled. Hardcoded to the
-  // canonical production URL so screenshots/forwards from prod buyers always
-  // resolve correctly even if a future preview env sends emails.
-  const checkInUrl = `https://urbanehaauz.com/admin/rangotsav?code=${encodeURIComponent(data.ticketCode)}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data=${encodeURIComponent(
-    checkInUrl,
-  )}`;
+  // Build one pass card per line item. Each gets its own QR linking to the
+  // admin check-in deep-link with that code pre-filled.
+  const passCards = data.items.map((item) => {
+    const code = escHtml(item.ticketCode);
+    const dayLabel = rangotsavDayLabel(item.daySelection);
+    const checkInUrl = `https://urbanehaauz.com/admin/rangotsav?code=${encodeURIComponent(item.ticketCode)}`;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=12&data=${encodeURIComponent(checkInUrl)}`;
 
+    return `
+      <tr>
+        <td style="padding: 12px 40px;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color: rgba(212,165,116,0.05); border: 1px solid rgba(212,165,116,0.25); border-radius: 12px;">
+            <tr>
+              <td style="padding: 28px 28px 8px; text-align: center;">
+                <p style="color: #D4A574; margin: 0 0 6px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">${escHtml(dayLabel.full)}</p>
+                <p style="color: rgba(250,247,242,0.55); margin: 0 0 14px; font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-family: Arial, sans-serif;">Show this at entry</p>
+                <img src="${qrUrl}" alt="Rangotsav ticket QR — ${code}" width="200" height="200" style="display: block; width: 200px; height: 200px; margin: 0 auto; background-color: #FAF7F2; border: 6px solid #FAF7F2; border-radius: 8px; outline: none; text-decoration: none;">
+                <p style="color: #FAF7F2; margin: 18px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.18em; font-family: 'Courier New', Courier, monospace;">${code}</p>
+                <p style="color: rgba(250,247,242,0.55); margin: 0; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-family: Arial, sans-serif;">${item.quantity} ${item.quantity > 1 ? 'admits' : 'admit'} · ${escHtml(dayLabel.short)}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 0 28px 24px;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px; border-top: 1px solid rgba(212,165,116,0.2); padding-top: 20px;">
+                  <tr>
+                    <td style="padding: 6px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Subtotal</td>
+                    <td style="padding: 6px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">&#8377;${item.totalAmount.toLocaleString('en-IN')} <span style="color: rgba(250,247,242,0.45); font-size: 11px;">(&#8377;${item.unitPrice.toLocaleString('en-IN')} &times; ${item.quantity})</span></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    `;
+  }).join('\n');
+
+  // WhatsApp share lists one line per ticket
+  const waLines = data.items
+    .map((i) => `${i.ticketCode} — ${rangotsavDayLabel(i.daySelection).short} (${i.quantity} ${i.quantity > 1 ? 'admits' : 'admit'})`)
+    .join('\n');
   const waMessage = encodeURIComponent(
-    `My Rangotsav 2026 Pass — Code: ${data.ticketCode} (${data.quantity} ${data.quantity > 1 ? 'admits' : 'admit'}). Pelling, 25–26 May 2026.`,
+    `My Rangotsav 2026 Pass${isMulti ? 'es' : ''}:\n${waLines}\nPelling, 25–26 May 2026.`,
   );
 
+  const codeListForCalendar = data.items.map((i) => i.ticketCode).join(', ');
   const calendarUrl =
     'https://calendar.google.com/calendar/render?action=TEMPLATE' +
     '&text=' + encodeURIComponent('Rangotsav 2026 — Urbane Haauz, Pelling') +
     '&dates=20260525T043000Z/20260526T163000Z' +
     '&details=' + encodeURIComponent(
-      `A Bengal–Sikkim cultural conglomerate. Your ticket code: ${data.ticketCode}. Show this code (or QR) at the entrance.`,
+      `A Bengal–Sikkim cultural conglomerate. Your ticket code${isMulti ? 's' : ''}: ${codeListForCalendar}. Show the QR (or code) at the entrance.`,
     ) +
     '&location=' + encodeURIComponent('Urbane Haauz, SH-510, Skywalk Road, Upper Pelling, West Sikkim 737113');
 
+  // Total admits (across days) — a 'both' ticket counts twice
+  const totalAdmits = data.items.reduce(
+    (sum, i) => sum + i.quantity * (i.daySelection === 'both' ? 2 : 1),
+    0,
+  );
+  const passSummary = data.items
+    .map((i) => `${i.quantity}× ${rangotsavDayLabel(i.daySelection).short}`)
+    .join(' · ');
+
   const bodyBlocks = `
+    ${passCards}
+
     <tr>
-      <td style="padding: 32px 40px;">
-        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: rgba(212,165,116,0.05); border: 1px solid rgba(212,165,116,0.25); border-radius: 12px;">
+      <td style="padding: 8px 40px 0;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid rgba(212,165,116,0.25); padding-top: 16px;">
           <tr>
-            <td style="padding: 28px 28px 8px; text-align: center;">
-              <p style="color: #D4A574; margin: 0 0 14px; font-size: 10px; letter-spacing: 0.4em; text-transform: uppercase; font-family: Arial, sans-serif;">Show this at entry</p>
-              <img src="${qrUrl}" alt="Rangotsav ticket QR — ${code}" width="200" height="200" style="display: block; width: 200px; height: 200px; margin: 0 auto; background-color: #FAF7F2; border: 6px solid #FAF7F2; border-radius: 8px; outline: none; text-decoration: none;">
-              <p style="color: #FAF7F2; margin: 18px 0 4px; font-size: 22px; font-weight: 700; letter-spacing: 0.18em; font-family: 'Courier New', Courier, monospace;">${code}</p>
-              <p style="color: rgba(250,247,242,0.55); margin: 0; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-family: Arial, sans-serif;">Your unique pass code</p>
-            </td>
+            <td style="padding: 4px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Pass Holder</td>
+            <td style="padding: 4px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">${name}</td>
           </tr>
           <tr>
-            <td style="padding: 0 28px 24px;">
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 20px; border-top: 1px solid rgba(212,165,116,0.2); padding-top: 20px;">
-                <tr>
-                  <td style="padding: 6px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Pass Holder</td>
-                  <td style="padding: 6px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">${name}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Admits</td>
-                  <td style="padding: 6px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">${data.quantity} ${data.quantity > 1 ? 'persons' : 'person'}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Paid</td>
-                  <td style="padding: 6px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">&#8377;${data.totalAmount.toLocaleString('en-IN')} <span style="color: rgba(250,247,242,0.45); font-size: 11px;">(&#8377;${data.unitPrice.toLocaleString('en-IN')} &times; ${data.quantity})</span></td>
-                </tr>
-              </table>
-            </td>
+            <td style="padding: 4px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Passes</td>
+            <td style="padding: 4px 0; color: #FAF7F2; font-size: 14px; text-align: right; font-family: Georgia, serif;">${escHtml(passSummary)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 4px 0; color: rgba(250,247,242,0.55); font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif;">Total Paid</td>
+            <td style="padding: 4px 0; color: #FAF7F2; font-size: 16px; font-weight: 700; text-align: right; font-family: Georgia, serif;">&#8377;${data.totalAmount.toLocaleString('en-IN')}</td>
           </tr>
         </table>
       </td>
     </tr>
 
     <tr>
-      <td style="padding: 8px 40px 0; text-align: center;">
+      <td style="padding: 16px 40px 0; text-align: center;">
         <a href="https://wa.me/?text=${waMessage}" style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700; margin: 0 6px 12px;">Save to WhatsApp</a>
         <a href="${calendarUrl}" style="display: inline-block; background-color: rgba(212,165,116,0.12); color: #D4A574; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; font-family: Arial, sans-serif; font-weight: 700; border: 1px solid rgba(212,165,116,0.4); margin: 0 6px 12px;">Add to Calendar</a>
       </td>
@@ -1018,7 +1069,7 @@ export async function sendRangotsavTicketConfirmation(data: {
       <td style="padding: 32px 40px 0;">
         <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">When &amp; Where</h3>
         <p style="color: rgba(250,247,242,0.75); margin: 0 0 8px; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
-          <strong style="color: #FAF7F2;">25–26 May 2026</strong> &middot; Two days of art, music, and food.
+          <strong style="color: #FAF7F2;">25–26 May 2026</strong> &middot; Two days of art, music, and food. Each pass is valid only for the day(s) shown above.
         </p>
         <p style="color: rgba(250,247,242,0.75); margin: 0; font-size: 14px; line-height: 1.75; font-family: Georgia, serif;">
           Urbane Haauz, SH-510 Skywalk Road, Upper Pelling, West Sikkim 737113.
@@ -1030,10 +1081,10 @@ export async function sendRangotsavTicketConfirmation(data: {
       <td style="padding: 24px 40px 0;">
         <h3 style="color: #D4A574; margin: 0 0 14px; font-size: 11px; letter-spacing: 0.35em; text-transform: uppercase; font-family: Arial, sans-serif;">At the gate</h3>
         <ul style="color: rgba(250,247,242,0.75); margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.85; font-family: Georgia, serif;">
-          <li>Show this email (or just the QR / code <strong style="color: #FAF7F2;">${code}</strong>) at the entrance.</li>
+          <li>Show this email (or the QR / code) at the entrance for the day(s) printed on each pass.</li>
           <li>Carry a government photo ID matching the pass holder name.</li>
-          <li>One pass admits ${data.quantity} ${data.quantity > 1 ? 'people' : 'person'}. Children under 5 enter free.</li>
-          <li>This pass is non-transferable and refunds are not available once issued.</li>
+          <li>${totalAdmits} ${totalAdmits > 1 ? 'admits' : 'admit'} total across the days you booked. Children under 5 enter free.</li>
+          <li>Passes are non-transferable and refunds are not available once issued.</li>
         </ul>
       </td>
     </tr>
@@ -1041,17 +1092,19 @@ export async function sendRangotsavTicketConfirmation(data: {
     <tr>
       <td style="padding: 24px 40px 0;">
         <p style="color: rgba(250,247,242,0.55); margin: 0; font-size: 13px; line-height: 1.7; font-family: Georgia, serif; font-style: italic;">
-          Lost the email? Reply with your pass code and we'll resend it.
+          Lost the email? Reply with your pass code${isMulti ? 's' : ''} and we'll resend it.
         </p>
       </td>
     </tr>
   `;
 
   const html = rangotsavShellHtml({
-    title: 'Rangotsav — Your Pass',
-    eyebrow: 'Pass Confirmed',
+    title: isMulti ? 'Rangotsav — Your Passes' : 'Rangotsav — Your Pass',
+    eyebrow: isMulti ? 'Passes Confirmed' : 'Pass Confirmed',
     heading: `You're in, ${name}.`,
-    lead: 'Your Rangotsav 2026 pass is below. Save it, screenshot it, or just keep this email handy on festival day.',
+    lead: isMulti
+      ? `Your Rangotsav 2026 passes are below — one QR per pass. Each is valid only for the day(s) shown. Save them, screenshot them, or keep this email handy on festival day.`
+      : 'Your Rangotsav 2026 pass is below. Save it, screenshot it, or just keep this email handy on festival day.',
     bodyBlocks,
     signOff: "See you in the mountains. The festival begins the moment you arrive.",
   });

@@ -6,7 +6,7 @@ const SoldOutBanner: React.FC<{ onNotifyClick?: () => void }> = ({ onNotifyClick
       Sold Out
     </p>
     <h4 className="font-serif text-2xl text-[#1C1C1C] mb-3">
-      All 300 passes are gone.
+      Both festival days are sold out.
     </h4>
     <p className="text-[#1C1C1C]/65 text-sm mb-5 max-w-md mx-auto leading-relaxed">
       Thank you for the love. If we open a small wait-list or release returns, we'll write to you first.

@@ -56,8 +56,10 @@ Deno.serve(async (req) => {
 
   // Route by notes.kind: Rangotsav tickets vs room bookings.
   if (notes?.kind === 'rangotsav') {
-    const ticketId: string = notes?.ticket_id ?? '';
-    if (!ticketId) {
+    // A single Razorpay order maps to N ticket rows (mixed-cart per-day model);
+    // they share a purchase_group_id we set in notes when creating the order.
+    const groupId: string = notes?.purchase_group_id ?? '';
+    if (!groupId) {
       return new Response(JSON.stringify({ received: true }), { status: 200 });
     }
 
@@ -69,13 +71,13 @@ Deno.serve(async (req) => {
           razorpay_payment_id: paymentId,
           razorpay_order_id: orderId || undefined,
         })
-        .eq('id', ticketId);
+        .eq('purchase_group_id', groupId);
     } else if (event.event === 'payment.failed') {
-      // Mark failed so reserve_rangotsav_tickets stops counting it against inventory.
+      // Mark all sibling rows failed so reserve_rangotsav_tickets stops counting them.
       await supabase
         .from('rangotsav_tickets')
         .update({ payment_status: 'failed' })
-        .eq('id', ticketId);
+        .eq('purchase_group_id', groupId);
     }
 
     return new Response(JSON.stringify({ received: true, kind: 'rangotsav' }), {

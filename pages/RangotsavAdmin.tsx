@@ -28,13 +28,24 @@ function extractTicketCode(scanned: string): string | null {
   return null;
 }
 
+type DaySelection = 'day_1' | 'day_2' | 'both';
+
 interface InventorySummary {
-  total_capacity: number;
+  total_capacity_day_1: number;
+  total_capacity_day_2: number;
+  sold_day_1_only: number;
+  sold_day_2_only: number;
+  sold_both: number;
+  occupied_day_1: number;
+  occupied_day_2: number;
   sold_online: number;
   sold_offline: number;
-  sold_total: number;
-  pending_held: number;
+  sold_total_admits: number;
+  pending_day_1: number;
+  pending_day_2: number;
   revenue_collected: number;
+  checked_in_day_1: number;
+  checked_in_day_2: number;
   checked_in_total: number;
   checked_in_today: number;
 }
@@ -42,6 +53,8 @@ interface InventorySummary {
 interface TicketRow {
   id: string;
   ticket_code: string;
+  purchase_group_id: string;
+  day_selection: DaySelection;
   buyer_name: string;
   buyer_email: string;
   buyer_phone: string;
@@ -51,11 +64,18 @@ interface TicketRow {
   source: 'online' | 'offline';
   payment_status: 'pending' | 'paid' | 'failed' | 'refunded';
   payment_method: string | null;
-  checked_in_count: number;
+  checked_in_day_1: number;
+  checked_in_day_2: number;
   checked_in_at: string | null;
   notes: string | null;
   created_at: string;
 }
+
+const DAY_LABELS: Record<DaySelection, { short: string; full: string; chipClass: string }> = {
+  day_1: { short: 'Day 1',     full: 'Day 1 · 25 May', chipClass: 'bg-rose-100 text-rose-800' },
+  day_2: { short: 'Day 2',     full: 'Day 2 · 26 May', chipClass: 'bg-indigo-100 text-indigo-800' },
+  both:  { short: 'Both Days', full: 'Both · 25–26 May', chipClass: 'bg-emerald-100 text-emerald-800' },
+};
 
 const formatINR = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
@@ -137,7 +157,7 @@ const RangotsavAdmin: React.FC = () => {
         supabase
           .from('rangotsav_tickets')
           .select(
-            'id, ticket_code, buyer_name, buyer_email, buyer_phone, quantity, unit_price, total_amount, source, payment_status, payment_method, checked_in_count, checked_in_at, notes, created_at',
+            'id, ticket_code, purchase_group_id, day_selection, buyer_name, buyer_email, buyer_phone, quantity, unit_price, total_amount, source, payment_status, payment_method, checked_in_day_1, checked_in_day_2, checked_in_at, notes, created_at',
           )
           .order('created_at', { ascending: false })
           .limit(50),
@@ -146,12 +166,21 @@ const RangotsavAdmin: React.FC = () => {
       if (cancelled) return;
       if (summaryData) {
         setSummary({
-          total_capacity: Number(summaryData.total_capacity ?? 300),
+          total_capacity_day_1: Number(summaryData.total_capacity_day_1 ?? 300),
+          total_capacity_day_2: Number(summaryData.total_capacity_day_2 ?? 300),
+          sold_day_1_only: Number(summaryData.sold_day_1_only ?? 0),
+          sold_day_2_only: Number(summaryData.sold_day_2_only ?? 0),
+          sold_both: Number(summaryData.sold_both ?? 0),
+          occupied_day_1: Number(summaryData.occupied_day_1 ?? 0),
+          occupied_day_2: Number(summaryData.occupied_day_2 ?? 0),
           sold_online: Number(summaryData.sold_online ?? 0),
           sold_offline: Number(summaryData.sold_offline ?? 0),
-          sold_total: Number(summaryData.sold_total ?? 0),
-          pending_held: Number(summaryData.pending_held ?? 0),
+          sold_total_admits: Number(summaryData.sold_total_admits ?? 0),
+          pending_day_1: Number(summaryData.pending_day_1 ?? 0),
+          pending_day_2: Number(summaryData.pending_day_2 ?? 0),
           revenue_collected: Number(summaryData.revenue_collected ?? 0),
+          checked_in_day_1: Number(summaryData.checked_in_day_1 ?? 0),
+          checked_in_day_2: Number(summaryData.checked_in_day_2 ?? 0),
           checked_in_total: Number(summaryData.checked_in_total ?? 0),
           checked_in_today: Number(summaryData.checked_in_today ?? 0),
         });
@@ -185,7 +214,7 @@ const RangotsavAdmin: React.FC = () => {
               Ticket Operations
             </h1>
             <p className="text-gray-500 text-sm mt-1">
-              Inventory · offline sales · door check-in. 25–26 May, 2026 · Pelling.
+              Inventory · offline sales · per-day check-in. 25–26 May, 2026 · Pelling.
             </p>
           </div>
           <button
@@ -232,7 +261,8 @@ const RangotsavAdmin: React.FC = () => {
             unitPrice={unitPrice}
             soldByUserId={user?.id ?? null}
             onSold={refresh}
-            remaining={summary ? summary.total_capacity - summary.sold_total - summary.pending_held : null}
+            remainingDay1={summary ? Math.max(summary.total_capacity_day_1 - summary.occupied_day_1 - summary.pending_day_1, 0) : null}
+            remainingDay2={summary ? Math.max(summary.total_capacity_day_2 - summary.occupied_day_2 - summary.pending_day_2, 0) : null}
           />
         )}
         {tab === 'checkin' && <CheckInTab onRefresh={refresh} initialCode={initialCode} />}
@@ -251,10 +281,50 @@ const InventoryTab: React.FC<{
   loading: boolean;
   onRefresh: () => void;
 }> = ({ summary, recent, loading, onRefresh }) => {
-  const remaining = summary ? Math.max(summary.total_capacity - summary.sold_total - summary.pending_held, 0) : 0;
-  const pct = summary && summary.total_capacity > 0
-    ? Math.min(100, Math.round((summary.sold_total / summary.total_capacity) * 100))
+  const remainingDay1 = summary
+    ? Math.max(summary.total_capacity_day_1 - summary.occupied_day_1 - summary.pending_day_1, 0)
     : 0;
+  const remainingDay2 = summary
+    ? Math.max(summary.total_capacity_day_2 - summary.occupied_day_2 - summary.pending_day_2, 0)
+    : 0;
+  const pctDay1 = summary && summary.total_capacity_day_1 > 0
+    ? Math.min(100, Math.round((summary.occupied_day_1 / summary.total_capacity_day_1) * 100))
+    : 0;
+  const pctDay2 = summary && summary.total_capacity_day_2 > 0
+    ? Math.min(100, Math.round((summary.occupied_day_2 / summary.total_capacity_day_2) * 100))
+    : 0;
+
+  // Total unique passes sold (rows of paid status). A 'both' row counts once here.
+  const passesSold = summary
+    ? summary.sold_day_1_only + summary.sold_day_2_only + summary.sold_both
+    : 0;
+
+  // Helpers to render the per-day check-in counts on a row, accounting for day_selection.
+  const renderCheckIn = (r: TicketRow) => {
+    if (r.payment_status !== 'paid') return <span className="text-gray-400">—</span>;
+    if (r.day_selection === 'day_1') {
+      return r.checked_in_day_1 >= r.quantity
+        ? <span className="text-green-700 font-semibold">{r.checked_in_day_1}/{r.quantity} ✓</span>
+        : <span className="text-amber-700 font-semibold">{r.checked_in_day_1}/{r.quantity}</span>;
+    }
+    if (r.day_selection === 'day_2') {
+      return r.checked_in_day_2 >= r.quantity
+        ? <span className="text-green-700 font-semibold">{r.checked_in_day_2}/{r.quantity} ✓</span>
+        : <span className="text-amber-700 font-semibold">{r.checked_in_day_2}/{r.quantity}</span>;
+    }
+    // both
+    const max = r.quantity;
+    return (
+      <div className="text-xs">
+        <div className={r.checked_in_day_1 >= max ? 'text-green-700 font-semibold' : 'text-amber-700'}>
+          D1: {r.checked_in_day_1}/{max}
+        </div>
+        <div className={r.checked_in_day_2 >= max ? 'text-green-700 font-semibold' : 'text-amber-700'}>
+          D2: {r.checked_in_day_2}/{max}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -267,16 +337,84 @@ const InventoryTab: React.FC<{
         </button>
       </div>
 
+      {/* Per-day occupancy KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Day 1 */}
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+          <div className="flex justify-between items-baseline mb-2">
+            <span className="text-xs uppercase tracking-wide text-rose-700 font-semibold">Day 1 · 25 May</span>
+            <span className="text-xs text-gray-500">{pctDay1}%</span>
+          </div>
+          <div className="text-3xl font-bold text-gray-900">
+            {summary?.occupied_day_1 ?? '—'}
+            <span className="text-base text-gray-400 font-normal"> / {summary?.total_capacity_day_1 ?? 300}</span>
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            {remainingDay1} remaining · {summary?.pending_day_1 ?? 0} pending
+          </div>
+          <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mt-3">
+            <div
+              className={`h-full transition-all ${remainingDay1 < 30 ? 'bg-red-500' : 'bg-rose-500'}`}
+              style={{ width: `${pctDay1}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Day 2 */}
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
+          <div className="flex justify-between items-baseline mb-2">
+            <span className="text-xs uppercase tracking-wide text-indigo-700 font-semibold">Day 2 · 26 May</span>
+            <span className="text-xs text-gray-500">{pctDay2}%</span>
+          </div>
+          <div className="text-3xl font-bold text-gray-900">
+            {summary?.occupied_day_2 ?? '—'}
+            <span className="text-base text-gray-400 font-normal"> / {summary?.total_capacity_day_2 ?? 300}</span>
+          </div>
+          <div className="text-xs text-gray-500 mt-1">
+            {remainingDay2} remaining · {summary?.pending_day_2 ?? 0} pending
+          </div>
+          <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mt-3">
+            <div
+              className={`h-full transition-all ${remainingDay2 < 30 ? 'bg-red-500' : 'bg-indigo-500'}`}
+              style={{ width: `${pctDay2}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Pass-mix breakdown */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
-          label="Capacity"
-          value={summary?.total_capacity ?? '—'}
+          label="Day 1 only"
+          value={summary?.sold_day_1_only ?? '—'}
           tone="neutral"
+          subtitle="passes sold"
         />
+        <StatCard
+          label="Day 2 only"
+          value={summary?.sold_day_2_only ?? '—'}
+          tone="neutral"
+          subtitle="passes sold"
+        />
+        <StatCard
+          label="Both Days"
+          value={summary?.sold_both ?? '—'}
+          tone="green"
+          subtitle="passes sold"
+        />
+        <StatCard
+          label="Revenue"
+          value={summary ? formatINR(summary.revenue_collected) : '—'}
+          tone="green"
+          subtitle="paid only"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           label="Sold Online"
           value={summary?.sold_online ?? '—'}
-          tone="green"
+          tone="neutral"
         />
         <StatCard
           label="Sold Offline"
@@ -284,60 +422,24 @@ const InventoryTab: React.FC<{
           tone="amber"
         />
         <StatCard
-          label="Remaining"
-          value={summary ? remaining : '—'}
-          tone={remaining < 30 ? 'red' : 'neutral'}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard
           label="Checked In Today"
           value={summary?.checked_in_today ?? '—'}
           tone="green"
-          subtitle="Entered today (IST)"
+          subtitle="across both days (IST)"
         />
         <StatCard
           label="Checked In · Total"
-          value={summary ? `${summary.checked_in_total}/${summary.sold_total}` : '—'}
+          value={summary ? `${summary.checked_in_total}/${summary.sold_total_admits}` : '—'}
           tone="neutral"
-          subtitle="All-time admissions"
+          subtitle={`D1: ${summary?.checked_in_day_1 ?? 0} · D2: ${summary?.checked_in_day_2 ?? 0}`}
         />
-        <StatCard
-          label="Pending (15-min hold)"
-          value={summary?.pending_held ?? '—'}
-          tone="neutral"
-          subtitle="Razorpay orders mid-flight"
-        />
-        <StatCard
-          label="Revenue Collected"
-          value={summary ? formatINR(summary.revenue_collected) : '—'}
-          tone="green"
-          subtitle="Paid tickets only"
-        />
-      </div>
-
-      {/* Sold-progress bar */}
-      <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
-        <div className="flex justify-between items-baseline mb-2">
-          <span className="text-sm font-semibold text-gray-700">
-            {summary?.sold_total ?? 0} / {summary?.total_capacity ?? 300} sold
-          </span>
-          <span className="text-xs text-gray-500">{pct}%</span>
-        </div>
-        <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-urbane-gold to-urbane-darkGreen transition-all"
-            style={{ width: `${pct}%` }}
-          />
-        </div>
       </div>
 
       {/* Recent sales */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="px-5 py-4 border-b border-gray-100 flex justify-between items-center">
           <h3 className="font-semibold text-gray-900">Recent ticket activity</h3>
-          <span className="text-xs text-gray-500">Last 50</span>
+          <span className="text-xs text-gray-500">Last 50 · {passesSold} passes sold total</span>
         </div>
         {loading ? (
           <div className="p-6 text-center text-gray-400 text-sm">Loading…</div>
@@ -349,6 +451,7 @@ const InventoryTab: React.FC<{
               <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wide">
                 <tr>
                   <th className="px-4 py-3 text-left">Code</th>
+                  <th className="px-4 py-3 text-left">Day</th>
                   <th className="px-4 py-3 text-left">Buyer</th>
                   <th className="px-4 py-3 text-left">Qty</th>
                   <th className="px-4 py-3 text-left">Amount</th>
@@ -362,6 +465,11 @@ const InventoryTab: React.FC<{
                 {recent.map((r) => (
                   <tr key={r.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 font-mono text-xs">{r.ticket_code}</td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${DAY_LABELS[r.day_selection].chipClass}`}>
+                        {DAY_LABELS[r.day_selection].short}
+                      </span>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="font-medium text-gray-900">{r.buyer_name}</div>
                       <div className="text-xs text-gray-500">{r.buyer_email}</div>
@@ -385,21 +493,7 @@ const InventoryTab: React.FC<{
                         {r.payment_status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-xs">
-                      {r.payment_status !== 'paid' ? (
-                        <span className="text-gray-400">—</span>
-                      ) : r.checked_in_count >= r.quantity ? (
-                        <span className="inline-flex items-center gap-1 text-green-700 font-semibold">
-                          {r.checked_in_count}/{r.quantity} ✓
-                        </span>
-                      ) : r.checked_in_count > 0 ? (
-                        <span className="text-amber-700 font-semibold">
-                          {r.checked_in_count}/{r.quantity}
-                        </span>
-                      ) : (
-                        <span className="text-gray-500">0/{r.quantity}</span>
-                      )}
-                    </td>
+                    <td className="px-4 py-3 text-xs">{renderCheckIn(r)}</td>
                     <td className="px-4 py-3 text-xs text-gray-500">
                       {new Date(r.created_at).toLocaleString('en-IN', {
                         dateStyle: 'medium',
@@ -448,28 +542,51 @@ const StatCard: React.FC<{
 const SellOfflineTab: React.FC<{
   unitPrice: number | null;
   soldByUserId: string | null;
-  remaining: number | null;
+  remainingDay1: number | null;
+  remainingDay2: number | null;
   onSold: () => void;
-}> = ({ unitPrice, soldByUserId, remaining, onSold }) => {
+}> = ({ unitPrice, soldByUserId, remainingDay1, remainingDay2, onSold }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  const [cart, setCart] = useState<{ day_1: number; day_2: number; both: number }>({ day_1: 0, day_2: 0, both: 0 });
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'upi_offline' | 'card_offline'>('cash');
   const [notes, setNotes] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{
     ok: boolean;
-    code?: string;
+    codes?: Array<{ code: string; day: DaySelection; quantity: number }>;
     message?: string;
   } | null>(null);
 
-  const total = unitPrice ? unitPrice * quantity : 0;
-  const maxQty = Math.min(10, remaining ?? 10);
+  const totalQty = cart.day_1 + cart.day_2 + cart.both;
+  const total = useMemo(() => {
+    if (!unitPrice) return 0;
+    return cart.day_1 * unitPrice + cart.day_2 * unitPrice + cart.both * unitPrice * 2;
+  }, [cart, unitPrice]);
+
+  const capFor = (key: keyof typeof cart) => {
+    const headroomTotal = 10 - (totalQty - cart[key]);
+    let dayHeadroom = 10;
+    if (remainingDay1 !== null && remainingDay2 !== null) {
+      if (key === 'day_1') {
+        dayHeadroom = remainingDay1 - cart.both;
+      } else if (key === 'day_2') {
+        dayHeadroom = remainingDay2 - cart.both;
+      } else {
+        dayHeadroom = Math.min(remainingDay1 - cart.day_1, remainingDay2 - cart.day_2);
+      }
+    }
+    return Math.max(0, Math.min(headroomTotal, dayHeadroom));
+  };
+
+  const dec = (key: keyof typeof cart) => setCart((c) => ({ ...c, [key]: Math.max(0, c[key] - 1) }));
+  const inc = (key: keyof typeof cart) => setCart((c) => ({ ...c, [key]: Math.min(capFor(key), c[key] + 1) }));
 
   const reset = () => {
-    setName(''); setEmail(''); setPhone(''); setQuantity(1);
+    setName(''); setEmail(''); setPhone('');
+    setCart({ day_1: 0, day_2: 0, both: 0 });
     setPaymentMethod('cash'); setNotes(''); setResult(null);
   };
 
@@ -477,6 +594,10 @@ const SellOfflineTab: React.FC<{
     e.preventDefault();
     if (!unitPrice) {
       setResult({ ok: false, message: 'Ticket price is unavailable.' });
+      return;
+    }
+    if (totalQty < 1) {
+      setResult({ ok: false, message: 'Add at least one pass.' });
       return;
     }
     const nameCheck = validateName(name, 'Name');
@@ -487,12 +608,17 @@ const SellOfflineTab: React.FC<{
     if (!phoneCheck.isValid || !phoneCheck.sanitizedValue)
       return setResult({ ok: false, message: phoneCheck.error || 'Phone is required' });
 
+    const items: { day_selection: DaySelection; quantity: number }[] = [];
+    if (cart.day_1 > 0) items.push({ day_selection: 'day_1', quantity: cart.day_1 });
+    if (cart.day_2 > 0) items.push({ day_selection: 'day_2', quantity: cart.day_2 });
+    if (cart.both > 0)  items.push({ day_selection: 'both',  quantity: cart.both  });
+
     setSubmitting(true);
     setResult(null);
 
     try {
       const { data, error } = await supabase.rpc('reserve_rangotsav_tickets', {
-        p_quantity: quantity,
+        p_items: items,
         p_buyer_name: nameCheck.sanitizedValue,
         p_buyer_email: emailCheck.sanitizedValue,
         p_buyer_phone: phoneCheck.sanitizedValue,
@@ -505,29 +631,43 @@ const SellOfflineTab: React.FC<{
 
       if (error) throw error;
 
-      const row = Array.isArray(data) ? data[0] : data;
-      if (!row?.ticket_code) throw new Error('Reservation returned no ticket code');
+      const rows = Array.isArray(data) ? data : [data];
+      if (!rows.length || !rows[0]?.ticket_code) throw new Error('Reservation returned no rows');
 
       // Fire-and-forget confirmation email (don't block UX on it)
       try {
         const { sendRangotsavTicketConfirmation } = await import('../lib/email/emailService');
         sendRangotsavTicketConfirmation({
-          ticketCode: row.ticket_code,
           buyerName: nameCheck.sanitizedValue!,
           buyerEmail: emailCheck.sanitizedValue!,
-          quantity,
-          unitPrice,
+          items: rows.map((r: any) => ({
+            ticketCode: r.ticket_code,
+            daySelection: r.day_selection as DaySelection,
+            quantity: Number(r.quantity),
+            unitPrice: Number(r.unit_price),
+            totalAmount: Number(r.total_amount),
+          })),
           totalAmount: total,
         }).catch((e) => console.error('Offline ticket email failed:', e));
       } catch (e) {
         console.error('Failed to import emailService:', e);
       }
 
-      setResult({ ok: true, code: row.ticket_code, message: 'Ticket created.' });
+      setResult({
+        ok: true,
+        codes: rows.map((r: any) => ({
+          code: r.ticket_code,
+          day: r.day_selection as DaySelection,
+          quantity: Number(r.quantity),
+        })),
+        message: 'Tickets created.',
+      });
       onSold();
     } catch (err: any) {
-      const msg = err?.message?.includes('SOLD_OUT')
-        ? 'Sold out — no inventory remaining.'
+      const msg = err?.message?.includes('SOLD_OUT_DAY_1')
+        ? 'Day 1 is sold out.'
+        : err?.message?.includes('SOLD_OUT_DAY_2')
+        ? 'Day 2 is sold out.'
         : err?.message || 'Failed to create ticket.';
       setResult({ ok: false, message: msg });
     } finally {
@@ -535,37 +675,83 @@ const SellOfflineTab: React.FC<{
     }
   };
 
+  const renderStepperRow = (key: keyof typeof cart) => {
+    const cap = capFor(key);
+    const value = cart[key];
+    const price = !unitPrice ? 0 : key === 'both' ? unitPrice * 2 : unitPrice;
+    const dayLabel = DAY_LABELS[key];
+    const dayRem = key === 'day_1' ? remainingDay1
+                 : key === 'day_2' ? remainingDay2
+                 : remainingDay1 !== null && remainingDay2 !== null ? Math.min(remainingDay1, remainingDay2) : null;
+
+    return (
+      <div className="flex items-center justify-between gap-3 py-3 border-b border-gray-200 last:border-b-0">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-2">
+            <span className="font-medium text-gray-900">{dayLabel.short}</span>
+            <span className="text-xs text-gray-500 uppercase tracking-wide">{dayLabel.full.replace(`${dayLabel.short} · `, '')}</span>
+          </div>
+          <div className="text-xs text-gray-500">
+            {formatINR(price)} per pass {dayRem !== null && <span className="ml-1 text-amber-700">· {dayRem} left</span>}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => dec(key)}
+            disabled={submitting || value <= 0}
+            className="w-9 h-9 rounded-full border border-gray-300 hover:border-urbane-gold disabled:opacity-30"
+          >−</button>
+          <span className="w-7 text-center font-semibold text-gray-900">{value}</span>
+          <button
+            type="button"
+            onClick={() => inc(key)}
+            disabled={submitting || value >= cap}
+            className="w-9 h-9 rounded-full border border-gray-300 hover:border-urbane-gold disabled:opacity-30"
+          >+</button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white rounded-xl p-6 md:p-8 shadow-sm border border-gray-200">
-      {result?.ok && result.code ? (
+      {result?.ok && result.codes ? (
         <div className="text-center py-6">
-          <p className="text-xs uppercase tracking-[0.3em] text-green-700 font-semibold mb-2">
-            Ticket Created
+          <p className="text-xs uppercase tracking-[0.3em] text-green-700 font-semibold mb-3">
+            {result.codes.length === 1 ? 'Ticket Created' : `${result.codes.length} Tickets Created`}
           </p>
-          <p className="font-mono text-3xl text-gray-900 tracking-[0.18em] mb-2">{result.code}</p>
+          <div className="space-y-3 mb-6 max-w-md mx-auto">
+            {result.codes.map((c) => (
+              <div key={c.code} className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 flex items-center justify-between">
+                <div className="text-left">
+                  <p className="font-mono text-base text-gray-900 tracking-[0.15em]">{c.code}</p>
+                  <p className="text-xs text-gray-500">{DAY_LABELS[c.day].full} · {c.quantity} {c.quantity > 1 ? 'admits' : 'admit'}</p>
+                </div>
+                <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${DAY_LABELS[c.day].chipClass}`}>
+                  {DAY_LABELS[c.day].short}
+                </span>
+              </div>
+            ))}
+          </div>
           <p className="text-gray-500 text-sm mb-6">
             Confirmation email sent to the buyer.
           </p>
-          <div className="flex justify-center gap-3">
-            <button
-              onClick={reset}
-              className="bg-urbane-darkGreen text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-opacity-90"
-            >
-              Sell another
-            </button>
-          </div>
+          <button
+            onClick={reset}
+            className="bg-urbane-darkGreen text-white px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-opacity-90"
+          >
+            Sell another
+          </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5 max-w-xl mx-auto">
           <div>
             <h3 className="font-serif text-xl font-bold text-gray-900 mb-1">
-              Sell ticket offline
+              Sell tickets offline
             </h3>
             <p className="text-sm text-gray-500">
-              Walk-in / phone / cash sale. {unitPrice ? `Price: ${formatINR(unitPrice)} per person.` : ''}
-              {remaining !== null && (
-                <span className="ml-2 text-amber-700">{remaining} remaining</span>
-              )}
+              Walk-in / phone / cash sale. {unitPrice ? `${formatINR(unitPrice)} per day · ${formatINR(unitPrice * 2)} for both days.` : ''}
             </p>
           </div>
 
@@ -595,32 +781,28 @@ const SellOfflineTab: React.FC<{
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">
-                Phone *
-              </label>
-              <input
-                required
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 ..."
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:border-urbane-gold focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">
-                Quantity
-              </label>
-              <input
-                type="number"
-                min={1}
-                max={maxQty}
-                value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, Math.min(maxQty, Number(e.target.value) || 1)))}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:border-urbane-gold focus:outline-none"
-              />
+          <div>
+            <label className="block text-xs uppercase tracking-wide text-gray-600 font-semibold mb-1">
+              Phone *
+            </label>
+            <input
+              required
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+91 ..."
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:border-urbane-gold focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-wide text-gray-600 font-semibold mb-2">
+              Pick day(s) — max 10 passes total
+            </label>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg px-5">
+              {renderStepperRow('day_1')}
+              {renderStepperRow('day_2')}
+              {renderStepperRow('both')}
             </div>
           </div>
 
@@ -680,10 +862,10 @@ const SellOfflineTab: React.FC<{
 
           <button
             type="submit"
-            disabled={submitting || !unitPrice}
+            disabled={submitting || !unitPrice || totalQty < 1}
             className="w-full bg-urbane-gold hover:bg-opacity-90 disabled:opacity-50 text-white font-bold px-6 py-3.5 rounded-lg uppercase tracking-wide transition"
           >
-            {submitting ? 'Creating ticket…' : 'Create offline ticket'}
+            {submitting ? 'Creating tickets…' : totalQty < 1 ? 'Add at least one pass' : 'Create offline ticket(s)'}
           </button>
         </form>
       )}
@@ -694,6 +876,31 @@ const SellOfflineTab: React.FC<{
 /* -------------------------------------------------------------------------- */
 /*                                Check-in                                    */
 /* -------------------------------------------------------------------------- */
+
+type ActiveDay = 'day_1' | 'day_2';
+const ACTIVE_DAY_KEY = 'rangotsav_active_checkin_day';
+
+// Default the active day toggle to today's date if it matches the festival,
+// else fall back to whatever localStorage has, else Day 1.
+function defaultActiveDay(): ActiveDay {
+  if (typeof window !== 'undefined') {
+    try {
+      const istNow = new Date();
+      // Compare against IST date (festival is in IST). Crude check: festival days are May 25 + 26 2026.
+      const istDateStr = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit',
+      }).format(istNow);
+      if (istDateStr === '2026-05-25') return 'day_1';
+      if (istDateStr === '2026-05-26') return 'day_2';
+
+      const saved = window.localStorage.getItem(ACTIVE_DAY_KEY);
+      if (saved === 'day_1' || saved === 'day_2') return saved;
+    } catch {
+      // ignore
+    }
+  }
+  return 'day_1';
+}
 
 const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }> = ({
   onRefresh,
@@ -706,8 +913,18 @@ const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }
   const [info, setInfo] = useState<string | null>(null);
   const [scannerActive, setScannerActive] = useState(false);
   const [scannerError, setScannerError] = useState<string | null>(null);
+  const [activeDay, setActiveDay] = useState<ActiveDay>(defaultActiveDay);
   const scannerRef = useRef<any>(null);
   const scannerRegionId = 'rangotsav-qr-region';
+
+  // Persist the toggle so a shift swap remembers between page loads
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(ACTIVE_DAY_KEY, activeDay);
+    } catch {
+      // ignore
+    }
+  }, [activeDay]);
 
   // Look up a code without requiring a form submit (used by deep link + scanner).
   const lookupCode = useCallback(async (raw: string) => {
@@ -746,7 +963,17 @@ const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }
     lookupCode(code);
   };
 
-  const remainingAdmits = ticket ? ticket.quantity - ticket.checked_in_count : 0;
+  // Whether this ticket is valid for the currently-active door day
+  const isValidForActiveDay = (t: TicketRow): boolean => {
+    if (t.day_selection === 'both') return true;
+    return t.day_selection === activeDay;
+  };
+
+  // Per-active-day check-in count + cap for this ticket
+  const activeDayCheckedIn = ticket
+    ? activeDay === 'day_1' ? ticket.checked_in_day_1 : ticket.checked_in_day_2
+    : 0;
+  const remainingAdmits = ticket ? Math.max(ticket.quantity - activeDayCheckedIn, 0) : 0;
 
   const checkInOne = async (n: number) => {
     if (!ticket) return;
@@ -754,18 +981,28 @@ const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }
       setError('Ticket payment is not confirmed. Cannot check in.');
       return;
     }
+    if (!isValidForActiveDay(ticket)) {
+      setError(`This pass is not valid for ${DAY_LABELS[activeDay].short}.`);
+      return;
+    }
     if (n < 1 || n > remainingAdmits) return;
 
     setError(null);
     setInfo(null);
 
-    const newCount = ticket.checked_in_count + n;
+    const newCount = activeDayCheckedIn + n;
+    const updates: Partial<TicketRow> = {
+      checked_in_at: ticket.checked_in_at ?? new Date().toISOString(),
+    };
+    if (activeDay === 'day_1') {
+      updates.checked_in_day_1 = newCount;
+    } else {
+      updates.checked_in_day_2 = newCount;
+    }
+
     const { data, error: err } = await supabase
       .from('rangotsav_tickets')
-      .update({
-        checked_in_count: newCount,
-        checked_in_at: ticket.checked_in_at ?? new Date().toISOString(),
-      })
+      .update(updates)
       .eq('id', ticket.id)
       .select()
       .single();
@@ -775,7 +1012,9 @@ const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }
       return;
     }
     setTicket(data as TicketRow);
-    setInfo(`${n} ${n === 1 ? 'guest' : 'guests'} checked in. ${ticket.quantity - newCount} remaining.`);
+    setInfo(
+      `${n} ${n === 1 ? 'guest' : 'guests'} checked in for ${DAY_LABELS[activeDay].short}. ${ticket.quantity - newCount} remaining on this pass for today.`,
+    );
     onRefresh();
   };
 
@@ -883,6 +1122,31 @@ const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }
         <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">RANG-2026-A4F2K9</code>).
       </p>
 
+      {/* Active day toggle — every check-in is logged against this day */}
+      <div className="mb-5 bg-gray-50 border border-gray-200 rounded-lg px-4 py-3">
+        <p className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-2">
+          Today's door — set this once per shift
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          {(['day_1', 'day_2'] as ActiveDay[]).map((d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => setActiveDay(d)}
+              className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition border-2 ${
+                activeDay === d
+                  ? d === 'day_1'
+                    ? 'bg-rose-100 border-rose-500 text-rose-900'
+                    : 'bg-indigo-100 border-indigo-500 text-indigo-900'
+                  : 'bg-white border-gray-200 text-gray-600 hover:border-gray-400'
+              }`}
+            >
+              {DAY_LABELS[d].full}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {scannerActive && (
         <div className="mb-5 rounded-xl border border-gray-200 overflow-hidden bg-black">
           <div id={scannerRegionId} className="w-full max-w-md mx-auto" />
@@ -928,6 +1192,9 @@ const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }
       {ticket && (
         <TicketDetail
           ticket={ticket}
+          activeDay={activeDay}
+          isValidForActiveDay={isValidForActiveDay(ticket)}
+          activeDayCheckedIn={activeDayCheckedIn}
           remainingAdmits={remainingAdmits}
           onCheckIn={checkInOne}
         />
@@ -938,9 +1205,12 @@ const CheckInTab: React.FC<{ onRefresh: () => void; initialCode: string | null }
 
 const TicketDetail: React.FC<{
   ticket: TicketRow;
+  activeDay: ActiveDay;
+  isValidForActiveDay: boolean;
+  activeDayCheckedIn: number;
   remainingAdmits: number;
   onCheckIn: (n: number) => void;
-}> = ({ ticket, remainingAdmits, onCheckIn }) => {
+}> = ({ ticket, activeDay, isValidForActiveDay, activeDayCheckedIn, remainingAdmits, onCheckIn }) => {
   const stepOptions = useMemo(() => {
     const opts = [];
     for (let i = 1; i <= Math.min(remainingAdmits, 10); i++) opts.push(i);
@@ -949,27 +1219,33 @@ const TicketDetail: React.FC<{
 
   const isPaid = ticket.payment_status === 'paid';
   const fullyCheckedIn = remainingAdmits === 0;
+  const dayLabel = DAY_LABELS[ticket.day_selection];
 
   return (
     <div className="border border-gray-200 rounded-xl p-5">
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <p className="font-mono text-lg text-gray-900 tracking-[0.15em]">{ticket.ticket_code}</p>
+      <div className="flex justify-between items-start mb-4 gap-3">
+        <div className="min-w-0">
+          <p className="font-mono text-lg text-gray-900 tracking-[0.15em] break-all">{ticket.ticket_code}</p>
           <p className="text-sm text-gray-500">{ticket.buyer_name} · {ticket.buyer_phone}</p>
         </div>
-        <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-          isPaid ? 'bg-green-100 text-green-800' :
-          ticket.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-          'bg-red-100 text-red-800'
-        }`}>
-          {ticket.payment_status.toUpperCase()}
-        </span>
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+            isPaid ? 'bg-green-100 text-green-800' :
+            ticket.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+            'bg-red-100 text-red-800'
+          }`}>
+            {ticket.payment_status.toUpperCase()}
+          </span>
+          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${dayLabel.chipClass}`}>
+            {dayLabel.full}
+          </span>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 text-sm mb-5">
         <div>
           <div className="text-xs text-gray-500 uppercase tracking-wide">Email</div>
-          <div className="text-gray-900">{ticket.buyer_email}</div>
+          <div className="text-gray-900 break-all">{ticket.buyer_email}</div>
         </div>
         <div>
           <div className="text-xs text-gray-500 uppercase tracking-wide">Source</div>
@@ -980,11 +1256,31 @@ const TicketDetail: React.FC<{
           <div className="text-gray-900">{formatINR(Number(ticket.total_amount))}</div>
         </div>
         <div>
-          <div className="text-xs text-gray-500 uppercase tracking-wide">Admits</div>
-          <div className="text-gray-900">
-            <strong>{ticket.checked_in_count}</strong> / {ticket.quantity} entered
-          </div>
+          <div className="text-xs text-gray-500 uppercase tracking-wide">Quantity</div>
+          <div className="text-gray-900">{ticket.quantity} {ticket.quantity > 1 ? 'admits' : 'admit'}</div>
         </div>
+      </div>
+
+      {/* Per-day check-in counters — always shown for context */}
+      <div className="grid grid-cols-2 gap-3 mb-5">
+        {(ticket.day_selection === 'day_1' || ticket.day_selection === 'both') && (
+          <div className={`rounded-lg px-4 py-3 border ${activeDay === 'day_1' ? 'bg-rose-50 border-rose-200' : 'bg-gray-50 border-gray-200'}`}>
+            <div className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Day 1 · 25 May</div>
+            <div className="text-lg font-bold text-gray-900">
+              {ticket.checked_in_day_1} / {ticket.quantity}
+              {ticket.checked_in_day_1 >= ticket.quantity && <span className="text-green-700 ml-2">✓</span>}
+            </div>
+          </div>
+        )}
+        {(ticket.day_selection === 'day_2' || ticket.day_selection === 'both') && (
+          <div className={`rounded-lg px-4 py-3 border ${activeDay === 'day_2' ? 'bg-indigo-50 border-indigo-200' : 'bg-gray-50 border-gray-200'}`}>
+            <div className="text-xs uppercase tracking-wide text-gray-500 font-semibold">Day 2 · 26 May</div>
+            <div className="text-lg font-bold text-gray-900">
+              {ticket.checked_in_day_2} / {ticket.quantity}
+              {ticket.checked_in_day_2 >= ticket.quantity && <span className="text-green-700 ml-2">✓</span>}
+            </div>
+          </div>
+        )}
       </div>
 
       {!isPaid && (
@@ -993,16 +1289,25 @@ const TicketDetail: React.FC<{
         </div>
       )}
 
-      {isPaid && fullyCheckedIn && (
-        <div className="bg-blue-50 border border-blue-200 text-blue-900 rounded-lg px-4 py-3 text-sm">
-          All {ticket.quantity} guests on this pass have already entered.
+      {isPaid && !isValidForActiveDay && (
+        <div className="bg-amber-50 border border-amber-300 text-amber-900 rounded-lg px-4 py-3 text-sm">
+          This pass is valid only for <strong>{dayLabel.full}</strong>, but the door is set to{' '}
+          <strong>{DAY_LABELS[activeDay].full}</strong>. Switch the door toggle above, or politely refuse entry.
         </div>
       )}
 
-      {isPaid && !fullyCheckedIn && (
+      {isPaid && isValidForActiveDay && fullyCheckedIn && (
+        <div className="bg-blue-50 border border-blue-200 text-blue-900 rounded-lg px-4 py-3 text-sm">
+          All {ticket.quantity} {ticket.quantity > 1 ? 'guests' : 'guest'} on this pass already entered for{' '}
+          {DAY_LABELS[activeDay].short} ({activeDayCheckedIn}/{ticket.quantity}).
+        </div>
+      )}
+
+      {isPaid && isValidForActiveDay && !fullyCheckedIn && (
         <div>
           <p className="text-sm text-gray-700 mb-3">
-            Mark how many of the {remainingAdmits} remaining {remainingAdmits === 1 ? 'guest' : 'guests'} are entering now:
+            Admitting for <strong>{DAY_LABELS[activeDay].short}</strong>. Mark how many of the{' '}
+            {remainingAdmits} remaining {remainingAdmits === 1 ? 'guest' : 'guests'} are entering now:
           </p>
           <div className="flex flex-wrap gap-2">
             {stepOptions.map((n) => (

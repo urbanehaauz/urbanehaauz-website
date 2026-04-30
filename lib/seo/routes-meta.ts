@@ -134,13 +134,13 @@ export const ROUTES_META: RouteMeta[] = [
     path: '/rangotsav',
     title: 'Rangotsav · The Tale Of Two States | Urbane Haauz',
     description:
-      'Rangotsav — a Bengal-Sikkim cultural celebration bringing artists, music, and cuisine together in Pelling, West Sikkim. 25–26 May 2026, hosted by Urbane Haauz.',
+      'Rangotsav — a Bengal-Sikkim cultural celebration in Pelling, West Sikkim. 25–26 May 2026 · ₹100/day or ₹200 for both days. Hosted by Urbane Haauz.',
     ogImage: `${SITE}/rangotsav-ganesh.jpeg`,
     ogType: 'event',
     canonical: `${SITE}/rangotsav`,
     h1: 'Rangotsav · The Tale Of Two States',
     lede: [
-      "Rangotsav 2026 — a two-day Bengal-Sikkim cultural conglomerate at Urbane Haauz, Upper Pelling, on 25–26 May 2026. Art, music, folk performances, cuisine. Festival Pass at ₹100, capacity 300.",
+      "Rangotsav 2026 — a two-day Bengal-Sikkim cultural conglomerate at Urbane Haauz, Upper Pelling, on 25–26 May 2026. Art, music, folk performances, cuisine. Day passes ₹100, both-day pass ₹200; capacity 300 per day.",
     ],
   },
   {

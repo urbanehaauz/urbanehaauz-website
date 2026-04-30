@@ -53,12 +53,21 @@ const AdminDashboard: React.FC = () => {
   const [rangotsavVolunteers, setRangotsavVolunteers] = useState<any[]>([]);
   const [rangotsavLoading, setRangotsavLoading] = useState(false);
   const [ticketSummary, setTicketSummary] = useState<{
-    total_capacity: number;
+    total_capacity_day_1: number;
+    total_capacity_day_2: number;
+    occupied_day_1: number;
+    occupied_day_2: number;
+    sold_day_1_only: number;
+    sold_day_2_only: number;
+    sold_both: number;
     sold_online: number;
     sold_offline: number;
-    sold_total: number;
-    pending_held: number;
+    sold_total_admits: number;
+    pending_day_1: number;
+    pending_day_2: number;
     revenue_collected: number;
+    checked_in_day_1: number;
+    checked_in_day_2: number;
     checked_in_total: number;
     checked_in_today: number;
   } | null>(null);
@@ -195,7 +204,7 @@ const AdminDashboard: React.FC = () => {
         supabase
           .from('rangotsav_tickets')
           .select(
-            'id, ticket_code, buyer_name, buyer_email, quantity, total_amount, source, payment_status, payment_method, checked_in_count, created_at',
+            'id, ticket_code, day_selection, buyer_name, buyer_email, quantity, total_amount, source, payment_status, payment_method, checked_in_day_1, checked_in_day_2, created_at',
           )
           .order('created_at', { ascending: false })
           .limit(10),
@@ -219,12 +228,21 @@ const AdminDashboard: React.FC = () => {
 
       if (ticketSummaryRow) {
         setTicketSummary({
-          total_capacity: Number(ticketSummaryRow.total_capacity ?? 300),
+          total_capacity_day_1: Number(ticketSummaryRow.total_capacity_day_1 ?? 300),
+          total_capacity_day_2: Number(ticketSummaryRow.total_capacity_day_2 ?? 300),
+          occupied_day_1: Number(ticketSummaryRow.occupied_day_1 ?? 0),
+          occupied_day_2: Number(ticketSummaryRow.occupied_day_2 ?? 0),
+          sold_day_1_only: Number(ticketSummaryRow.sold_day_1_only ?? 0),
+          sold_day_2_only: Number(ticketSummaryRow.sold_day_2_only ?? 0),
+          sold_both: Number(ticketSummaryRow.sold_both ?? 0),
           sold_online: Number(ticketSummaryRow.sold_online ?? 0),
           sold_offline: Number(ticketSummaryRow.sold_offline ?? 0),
-          sold_total: Number(ticketSummaryRow.sold_total ?? 0),
-          pending_held: Number(ticketSummaryRow.pending_held ?? 0),
+          sold_total_admits: Number(ticketSummaryRow.sold_total_admits ?? 0),
+          pending_day_1: Number(ticketSummaryRow.pending_day_1 ?? 0),
+          pending_day_2: Number(ticketSummaryRow.pending_day_2 ?? 0),
           revenue_collected: Number(ticketSummaryRow.revenue_collected ?? 0),
+          checked_in_day_1: Number(ticketSummaryRow.checked_in_day_1 ?? 0),
+          checked_in_day_2: Number(ticketSummaryRow.checked_in_day_2 ?? 0),
           checked_in_total: Number(ticketSummaryRow.checked_in_total ?? 0),
           checked_in_today: Number(ticketSummaryRow.checked_in_today ?? 0),
         });
@@ -1323,13 +1341,13 @@ const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
-            {/* TICKET SALES — primary KPI block */}
+            {/* TICKET SALES — per-day primary KPI block */}
             <div className="bg-gradient-to-br from-urbane-darkGreen to-[#0f3621] rounded-xl p-6 md:p-8 text-white shadow-lg">
               <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-urbane-gold font-bold mb-1">Ticket Sales</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-urbane-gold font-bold mb-1">Ticket Sales · per day</p>
                   <h3 className="font-serif text-2xl md:text-3xl font-bold">
-                    {ticketSummary ? `${ticketSummary.sold_total} / ${ticketSummary.total_capacity} sold` : '— / 300 sold'}
+                    ₹100/day · ₹200 for both days
                   </h3>
                 </div>
                 <button
@@ -1340,44 +1358,66 @@ const AdminDashboard: React.FC = () => {
                 </button>
               </div>
 
-              {/* Progress bar */}
-              <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden mb-6">
-                <div
-                  className="h-full bg-urbane-gold transition-all"
-                  style={{
-                    width: ticketSummary && ticketSummary.total_capacity > 0
-                      ? `${Math.min(100, (ticketSummary.sold_total / ticketSummary.total_capacity) * 100)}%`
-                      : '0%',
-                  }}
-                />
+              {/* Per-day occupancy bars */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {(() => {
+                  const cap1 = ticketSummary?.total_capacity_day_1 ?? 300;
+                  const occ1 = ticketSummary?.occupied_day_1 ?? 0;
+                  const cap2 = ticketSummary?.total_capacity_day_2 ?? 300;
+                  const occ2 = ticketSummary?.occupied_day_2 ?? 0;
+                  const pct1 = cap1 > 0 ? Math.min(100, (occ1 / cap1) * 100) : 0;
+                  const pct2 = cap2 > 0 ? Math.min(100, (occ2 / cap2) * 100) : 0;
+                  const rem1 = Math.max(cap1 - occ1 - (ticketSummary?.pending_day_1 ?? 0), 0);
+                  const rem2 = Math.max(cap2 - occ2 - (ticketSummary?.pending_day_2 ?? 0), 0);
+                  return (
+                    <>
+                      <div className="bg-white/[0.07] rounded-lg p-4">
+                        <div className="flex items-baseline justify-between mb-2">
+                          <p className="text-[11px] uppercase tracking-wider text-rose-300 font-bold">Day 1 · 25 May</p>
+                          <p className="text-xs text-white/55">{Math.round(pct1)}%</p>
+                        </div>
+                        <p className="text-2xl font-bold text-white">
+                          {occ1}<span className="text-base text-white/40 font-normal"> / {cap1}</span>
+                        </p>
+                        <p className="text-xs text-white/55 mt-0.5">{rem1} remaining</p>
+                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mt-2">
+                          <div className="h-full bg-rose-400 transition-all" style={{ width: `${pct1}%` }} />
+                        </div>
+                      </div>
+                      <div className="bg-white/[0.07] rounded-lg p-4">
+                        <div className="flex items-baseline justify-between mb-2">
+                          <p className="text-[11px] uppercase tracking-wider text-indigo-300 font-bold">Day 2 · 26 May</p>
+                          <p className="text-xs text-white/55">{Math.round(pct2)}%</p>
+                        </div>
+                        <p className="text-2xl font-bold text-white">
+                          {occ2}<span className="text-base text-white/40 font-normal"> / {cap2}</span>
+                        </p>
+                        <p className="text-xs text-white/55 mt-0.5">{rem2} remaining</p>
+                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mt-2">
+                          <div className="h-full bg-indigo-400 transition-all" style={{ width: `${pct2}%` }} />
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-white/[0.07] rounded-lg p-4">
-                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Sold Online</p>
-                  <p className="text-2xl font-bold text-white mt-1">{ticketSummary?.sold_online ?? '—'}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">D1-only / D2-only / Both</p>
+                  <p className="text-lg font-bold text-white mt-1">
+                    {ticketSummary ? `${ticketSummary.sold_day_1_only} · ${ticketSummary.sold_day_2_only} · ${ticketSummary.sold_both}` : '—'}
+                  </p>
                 </div>
                 <div className="bg-white/[0.07] rounded-lg p-4">
-                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Sold Offline</p>
-                  <p className="text-2xl font-bold text-amber-300 mt-1">{ticketSummary?.sold_offline ?? '—'}</p>
-                </div>
-                <div className="bg-white/[0.07] rounded-lg p-4">
-                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Remaining</p>
-                  <p className="text-2xl font-bold text-white mt-1">
-                    {ticketSummary
-                      ? Math.max(ticketSummary.total_capacity - ticketSummary.sold_total - ticketSummary.pending_held, 0)
-                      : '—'}
+                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Online / Offline</p>
+                  <p className="text-lg font-bold text-white mt-1">
+                    {ticketSummary ? `${ticketSummary.sold_online} · ${ticketSummary.sold_offline}` : '—'}
                   </p>
                 </div>
                 <div className="bg-white/[0.07] rounded-lg p-4">
                   <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Checked In Today</p>
                   <p className="text-2xl font-bold text-green-300 mt-1">{ticketSummary?.checked_in_today ?? '—'}</p>
-                </div>
-                <div className="bg-white/[0.07] rounded-lg p-4">
-                  <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Checked In Total</p>
-                  <p className="text-2xl font-bold text-white mt-1">
-                    {ticketSummary ? `${ticketSummary.checked_in_total}/${ticketSummary.sold_total}` : '—'}
-                  </p>
                 </div>
                 <div className="bg-white/[0.07] rounded-lg p-4">
                   <p className="text-[10px] uppercase tracking-wider text-white/55 font-bold">Revenue</p>
@@ -1388,10 +1428,10 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Pending hold + live badge */}
-              {(ticketSummary?.pending_held ?? 0) > 0 && (
+              {ticketSummary && (ticketSummary.pending_day_1 + ticketSummary.pending_day_2) > 0 && (
                 <div className="mt-4 inline-flex items-center gap-2 bg-yellow-500/15 border border-yellow-400/40 text-yellow-100 text-xs px-3 py-2 rounded-lg">
                   <span className="w-1.5 h-1.5 rounded-full bg-yellow-300 animate-pulse" />
-                  {ticketSummary?.pending_held} pending in 15-min Razorpay hold
+                  D1: {ticketSummary.pending_day_1} · D2: {ticketSummary.pending_day_2} pending in 15-min Razorpay hold
                 </div>
               )}
             </div>
@@ -1409,6 +1449,7 @@ const AdminDashboard: React.FC = () => {
                   <thead>
                     <tr className="text-xs text-gray-400 uppercase border-b border-gray-100">
                       <th className="px-5 py-3 font-bold tracking-wider">Code</th>
+                      <th className="px-5 py-3 font-bold tracking-wider">Day</th>
                       <th className="px-5 py-3 font-bold tracking-wider">Buyer</th>
                       <th className="px-5 py-3 font-bold tracking-wider">Qty</th>
                       <th className="px-5 py-3 font-bold tracking-wider">Amount</th>
@@ -1419,52 +1460,66 @@ const AdminDashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="text-sm">
-                    {recentTickets.map((t) => (
-                      <tr key={t.id} className="border-b border-gray-50 hover:bg-gray-50/50">
-                        <td className="px-5 py-3 font-mono text-xs text-gray-700">{t.ticket_code}</td>
-                        <td className="px-5 py-3">
-                          <div className="font-semibold text-gray-800">{t.buyer_name}</div>
-                          <div className="text-xs text-gray-500">{t.buyer_email}</div>
-                        </td>
-                        <td className="px-5 py-3 text-gray-700">{t.quantity}</td>
-                        <td className="px-5 py-3 text-gray-700">₹{Number(t.total_amount).toLocaleString('en-IN')}</td>
-                        <td className="px-5 py-3">
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
-                            t.source === 'offline' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {t.source}
-                          </span>
-                        </td>
-                        <td className="px-5 py-3">
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
-                            t.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
-                            t.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                            t.payment_status === 'failed' ? 'bg-red-100 text-red-700' :
-                            'bg-gray-100 text-gray-700'
-                          }`}>
-                            {t.payment_status}
-                          </span>
-                        </td>
-                        <td className="px-5 py-3 text-xs">
-                          {t.payment_status !== 'paid' ? (
-                            <span className="text-gray-400">—</span>
-                          ) : t.checked_in_count >= t.quantity ? (
-                            <span className="inline-flex items-center gap-1 text-green-700 font-bold">
-                              {t.checked_in_count}/{t.quantity} ✓
+                    {recentTickets.map((t) => {
+                      const dayChip =
+                        t.day_selection === 'day_1' ? { label: 'Day 1', cls: 'bg-rose-100 text-rose-800' }
+                        : t.day_selection === 'day_2' ? { label: 'Day 2', cls: 'bg-indigo-100 text-indigo-800' }
+                        : { label: 'Both', cls: 'bg-emerald-100 text-emerald-800' };
+                      const renderCheckIn = () => {
+                        if (t.payment_status !== 'paid') return <span className="text-gray-400">—</span>;
+                        if (t.day_selection === 'day_1') {
+                          return t.checked_in_day_1 >= t.quantity
+                            ? <span className="text-green-700 font-bold">{t.checked_in_day_1}/{t.quantity} ✓</span>
+                            : <span className="text-amber-700 font-semibold">{t.checked_in_day_1}/{t.quantity}</span>;
+                        }
+                        if (t.day_selection === 'day_2') {
+                          return t.checked_in_day_2 >= t.quantity
+                            ? <span className="text-green-700 font-bold">{t.checked_in_day_2}/{t.quantity} ✓</span>
+                            : <span className="text-amber-700 font-semibold">{t.checked_in_day_2}/{t.quantity}</span>;
+                        }
+                        return (
+                          <div>
+                            <div className={t.checked_in_day_1 >= t.quantity ? 'text-green-700 font-bold' : 'text-amber-700'}>D1: {t.checked_in_day_1}/{t.quantity}</div>
+                            <div className={t.checked_in_day_2 >= t.quantity ? 'text-green-700 font-bold' : 'text-amber-700'}>D2: {t.checked_in_day_2}/{t.quantity}</div>
+                          </div>
+                        );
+                      };
+                      return (
+                        <tr key={t.id} className="border-b border-gray-50 hover:bg-gray-50/50">
+                          <td className="px-5 py-3 font-mono text-xs text-gray-700">{t.ticket_code}</td>
+                          <td className="px-5 py-3">
+                            <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${dayChip.cls}`}>{dayChip.label}</span>
+                          </td>
+                          <td className="px-5 py-3">
+                            <div className="font-semibold text-gray-800">{t.buyer_name}</div>
+                            <div className="text-xs text-gray-500">{t.buyer_email}</div>
+                          </td>
+                          <td className="px-5 py-3 text-gray-700">{t.quantity}</td>
+                          <td className="px-5 py-3 text-gray-700">₹{Number(t.total_amount).toLocaleString('en-IN')}</td>
+                          <td className="px-5 py-3">
+                            <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
+                              t.source === 'offline' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+                            }`}>
+                              {t.source}
                             </span>
-                          ) : t.checked_in_count > 0 ? (
-                            <span className="text-amber-700 font-semibold">
-                              {t.checked_in_count}/{t.quantity}
+                          </td>
+                          <td className="px-5 py-3">
+                            <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider ${
+                              t.payment_status === 'paid' ? 'bg-green-100 text-green-700' :
+                              t.payment_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                              t.payment_status === 'failed' ? 'bg-red-100 text-red-700' :
+                              'bg-gray-100 text-gray-700'
+                            }`}>
+                              {t.payment_status}
                             </span>
-                          ) : (
-                            <span className="text-gray-500">0/{t.quantity}</span>
-                          )}
-                        </td>
-                        <td className="px-5 py-3 text-gray-400 text-xs">
-                          {new Date(t.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td className="px-5 py-3 text-xs">{renderCheckIn()}</td>
+                          <td className="px-5 py-3 text-gray-400 text-xs">
+                            {new Date(t.created_at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               )}

@@ -109,15 +109,15 @@ const PassVisual: React.FC = () => (
           <p className="text-[10px] tracking-[0.42em] uppercase text-[#8B6F47] font-semibold mb-1">
             Festival Pass
           </p>
-          <p className="font-serif text-[68px] md:text-[80px] leading-none text-[#1C1C1C]">
-            ₹100
+          <p className="font-serif text-[58px] md:text-[68px] leading-none text-[#1C1C1C]">
+            ₹100<span className="text-[#8B6F47] text-3xl md:text-4xl font-light"> /day</span>
           </p>
-          <p className="text-[#8B6F47] text-xs italic mt-1.5">per person · all-inclusive</p>
+          <p className="text-[#8B6F47] text-xs italic mt-1.5">₹200 for both days · all-inclusive</p>
         </div>
 
         <ul className="space-y-2.5 text-[14px] text-[#1C1C1C]/85 max-w-xs mx-auto">
           {[
-            'Both festival days · 25–26 May 2026',
+            'Pick Day 1, Day 2, or both',
             'All live performances',
             'Art exhibition & installations',
             'Food stalls (purchase separately)',
@@ -133,7 +133,7 @@ const PassVisual: React.FC = () => (
         </ul>
 
         <div className="mt-7 pt-5 border-t border-dashed border-[#A67833]/35 flex items-center justify-between text-[10px] tracking-[0.28em] uppercase text-[#8B6F47] font-semibold">
-          <span>Capacity · 300</span>
+          <span>300 / day</span>
           <span>Pass № pending</span>
         </div>
       </div>
@@ -193,8 +193,9 @@ const TicketsSection: React.FC = () => (
             Get your festival pass
           </h2>
           <p className="mt-6 text-[#1C1C1C]/70 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-            One pass, two days. Both festival days, every performance, the art exhibition,
-            and access to the food stalls — all from <span className="text-[#A67833] font-semibold">₹100 per person</span>.
+            Pick a day or do both. Every performance, the art exhibition, and access to the food
+            stalls — from <span className="text-[#A67833] font-semibold">₹100 per day</span>
+            <span className="text-[#1C1C1C]/55"> · ₹200 for both days</span>.
           </p>
         </div>
       </Reveal>
@@ -243,7 +244,7 @@ const TicketsSection: React.FC = () => (
       {/* Fine print */}
       <Reveal delay={400}>
         <p className="mt-14 text-center text-[#1C1C1C]/45 text-xs tracking-wide max-w-xl mx-auto leading-relaxed">
-          Capacity is capped at 300 across online and offline sales combined.
+          Capacity is capped at 300 per day across online and offline sales combined.
           Passes are non-transferable and refunds are not available once issued.
           Children under 5 enter free with a paying adult.
         </p>
